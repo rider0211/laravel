@@ -22,29 +22,16 @@ class Connector {
 	 */
 	public static function connect($config)
 	{
-		// -----------------------------------------------------
-		// Connect to SQLite.
-		// -----------------------------------------------------
+		// ---------------------------------------------------
+		// Establish a SQLite PDO connection.
+		// ---------------------------------------------------
 		if ($config->driver == 'sqlite')
 		{
-			// -----------------------------------------------------
-			// Check the application/db directory first.
-			// -----------------------------------------------------
-			if (file_exists($path = APP_PATH.'db/'.$config->database.'.sqlite'))
-			{
-				return new \PDO('sqlite:'.$path, null, null, static::$options);
-			}
-			// -----------------------------------------------------
-			// Is the database name the full path?
-			// -----------------------------------------------------
-			elseif (file_exists($config->database))
-			{
-				return new \PDO('sqlite:'.$config->database, null, null, static::$options);
-			}
+			return new \PDO('sqlite:'.APP_PATH.'db/'.$config->database.'.sqlite', null, null, static::$options);
 		}
-		// -----------------------------------------------------
-		// Connect to MySQL or Postgres.
-		// -----------------------------------------------------
+		// ---------------------------------------------------
+		// Establish a MySQL or Postgres PDO connection.
+		// ---------------------------------------------------
 		elseif ($config->driver == 'mysql' or $config->driver == 'pgsql')
 		{
 			$connection = new \PDO($config->driver.':host='.$config->host.';dbname='.$config->database, $config->username, $config->password, static::$options);
@@ -56,8 +43,10 @@ class Connector {
 
 			return $connection;
 		}
-
-		throw new \Exception('Database driver '.$config->driver.' is not supported.');
+		else
+		{
+			throw new \Exception('Database driver '.$config->driver.' is not supported.');
+		}		
 	}
 
 }
