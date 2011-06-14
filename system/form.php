@@ -3,13 +3,6 @@
 class Form {
 
 	/**
-	 * Stores labels names.
-	 *
-	 * @var array
-	 */
-	private static $labels = array();
-
-	/**
 	 * Open a HTML form.
 	 *
 	 * @param  string  $action
@@ -54,16 +47,6 @@ class Form {
 	}
 
 	/**
-	 * Close a HTML form.
-	 *
-	 * @return void
-	 */
-	public static function close()
-	{
-		return '</form>'.PHP_EOL;
-	}
-
-	/**
 	 * Generate a hidden field containing the current CSRF token.
 	 *
 	 * @return string
@@ -86,21 +69,6 @@ class Form {
 		}
 
 		return Session::get('csrf_token');
-	}
-
-	/**
-	 * Create a HTML label element.
-	 *
-	 * @param  string  $name
-	 * @param  string  $value
-	 * @param  array   $attributes
-	 * @return string
-	 */		
-	public static function label($name, $value, $attributes = array())
-	{
-		static::$labels[] = $name;
-		
-		return '<label for="'.$name.'"'.HTML::attributes($attributes).'>'.HTML::entities($value).'</label>'.PHP_EOL;
 	}
 
 	/**
@@ -221,8 +189,6 @@ class Form {
 		{
 			$attributes['checked'] = 'checked';
 		}
-		
-		(in_array($name, static::$labels)) ? $attributes['id'] = $name : null;
 
 		return static::input($type, $name, $value, $attributes);
 	}
@@ -238,7 +204,6 @@ class Form {
 	public static function textarea($name, $value = '', $attributes = array())
 	{
 		$attributes['name'] = $name;
-		(in_array($name, static::$labels)) ? $attributes['id'] = $name : null;
 
 		// -------------------------------------------------------
 		// Set the default number of rows.
@@ -271,7 +236,6 @@ class Form {
 	public static function select($name, $options = array(), $selected = null, $attributes = array())
 	{
 		$attributes['name'] = $name;
-		(in_array($name, static::$labels)) ? $attributes['id'] = $name : null;
 
 		$html_options = array();
 
@@ -301,7 +265,6 @@ class Form {
 		$attributes['type'] = $type;
 		$attributes['name'] = $name;
 		$attributes['value'] = $value;
-		(in_array($name, static::$labels)) ? $attributes['id'] = $name : null;
 
 		return '<input'.HTML::attributes($attributes).' />'.PHP_EOL;
 	}
