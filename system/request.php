@@ -36,12 +36,7 @@ class Request {
 		// -------------------------------------------------------
 		elseif (isset($_SERVER['REQUEST_URI']))
 		{
-			$uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-
-			if ($uri === false)
-			{
-				throw new \Exception("Malformed request URI. Request terminated.");
-			}
+			$uri = str_replace('/index.php', '', $_SERVER['REQUEST_URI']);
 		}
 		// -------------------------------------------------------
 		// Neither PATH_INFO or REQUEST_URI are available.
