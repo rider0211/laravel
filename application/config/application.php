@@ -103,7 +103,6 @@ return array(
 		'DB' => 'System\\DB',
 		'Download' => 'System\\Download',
 		'Eloquent' => 'System\\DB\\Eloquent',
-		'File' => 'System\\File',
 		'Form' => 'System\\Form',
 		'Hash' => 'System\\Hash',
 		'HTML' => 'System\\HTML',
