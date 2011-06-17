@@ -17,19 +17,8 @@ class Config {
 	 */
 	public static function get($key)
 	{
-
-		// -----------------------------------------------------
-		// We are are just pulling in a file, skip loading a key
-		// -----------------------------------------------------
-		if(strpos($key, '.') == 0)
-		{
-			static::load($key);
-
-			return static::$items[$key];
-		}
-
 		list($file, $key) = static::parse($key);
-		
+
 		static::load($file);
 
 		if (array_key_exists($key, static::$items[$file]))
