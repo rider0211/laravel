@@ -47,11 +47,6 @@ class Cookie {
 	/**
 	 * Create a new Cookie instance.
 	 *
-	 * Note: Cookies can be sent using the Cookie::put method.
-	 *       However, the number of parameters that method requires
-	 *       is somewhat cumbersome. Instantiating a new Cookie class
-	 *       and setting the properties can be a little easier on the eyes.
-	 *
 	 * @param  string  $name
 	 * @return void
 	 */
@@ -81,7 +76,7 @@ class Cookie {
 	{
 		if (is_null($this->name))
 		{
-			throw new \Exception("Attempting to send cookie without a name.");
+			throw new \Exception("Error sending cookie. The cookie does not have a name.");
 		}
 
 		return static::put($this->name, $this->value, $this->lifetime, $this->path, $this->domain, $this->secure);
@@ -95,7 +90,15 @@ class Cookie {
 	 */
 	public static function has($name)
 	{
-		return ! is_null(static::get($key));
+		foreach (func_get_args() as $key)
+		{
+			if (is_null(static::get($key)))
+			{
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	/**
@@ -126,8 +129,7 @@ class Cookie {
 	}
 
 	/**
-	 * Set the value of a cookie. If a negative number of minutes is
-	 * specified, the cookie will be deleted.
+	 * Set the value of a cookie.
 	 *
 	 * @param  string   $name
 	 * @param  string   $value
