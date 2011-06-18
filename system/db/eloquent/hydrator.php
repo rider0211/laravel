@@ -201,10 +201,7 @@ class Hydrator {
 		// -----------------------------------------------------
 		foreach ($parents as &$parent)
 		{
-			if (array_key_exists($parent->$relating_key, $children))
-			{
-				$parent->ignore[$include] = $children[$parent->$relating_key];
-			}
+			$parent->ignore[$include] = $children[$parent->$relating_key];
 		}
 	}
 
