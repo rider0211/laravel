@@ -1,6 +1,6 @@
 <?php namespace System\Cache\Driver;
 
-class Memcached implements \System\Cache\Driver {
+class APC implements \System\Cache\Driver {
 
 	/**
 	 * All of the loaded cache items.
@@ -29,13 +29,22 @@ class Memcached implements \System\Cache\Driver {
 	 */
 	public function get($key, $default = null)
 	{
+		// --------------------------------------------------
+		// If the item has already been loaded, return it.
+		// --------------------------------------------------
 		if (array_key_exists($key, $this->items))
 		{
 			return $this->items[$key];
 		}
 
-		$cache = \System\Memcached::instance()->get(\System\Config::get('cache.key').$key);
+		// --------------------------------------------------
+		// Attempt to the get the item from cache.
+		// --------------------------------------------------
+		$cache = apc_fetch(\System\Config::get('cache.key').$key);
 
+		// --------------------------------------------------
+		// Verify that the item was retrieved.
+		// --------------------------------------------------
 		if ($cache === false)
 		{
 			return $default;
@@ -54,7 +63,7 @@ class Memcached implements \System\Cache\Driver {
 	 */
 	public function put($key, $value, $minutes)
 	{
-		\System\Memcached::instance()->set(\System\Config::get('cache.key').$key, $value, 0, $minutes * 60);
+		apc_store(\System\Config::get('cache.key').$key, $value, $minutes * 60);
 	}
 
 	/**
@@ -65,7 +74,7 @@ class Memcached implements \System\Cache\Driver {
 	 */
 	public function forget($key)
 	{
-		\System\Memcached::instance()->delete(\System\Config::get('cache.key').$key);
+		apc_delete(\System\Config::get('cache.key').$key);
 	}
 
 }
