@@ -3,18 +3,11 @@
 class Route {
 
 	/**
-	 * The route key, including request method and URI.
-	 *
-	 * @var string
-	 */
-	public $key;
-
-	/**
 	 * The route callback or array.
 	 *
 	 * @var mixed
 	 */
-	public $callback;
+	public $route;
 
 	/**
 	 * The parameters that will passed to the route function.
@@ -26,15 +19,13 @@ class Route {
 	/**
 	 * Create a new Route instance.
 	 *
-	 * @param  string  $key
-	 * @param  mixed   $callback
-	 * @param  array   $parameters
+	 * @param  mixed  $route
+	 * @param  array  $parameters
 	 * @return void
 	 */
-	public function __construct($key, $callback, $parameters = array())
+	public function __construct($route, $parameters = array())
 	{
-		$this->key = $key;
-		$this->callback = $callback;
+		$this->route = $route;
 		$this->parameters = $parameters;
 	}
 
@@ -53,34 +44,34 @@ class Route {
 		// If the route value is just a function, all we have to do
 		// is execute the function! There are no filters to call.
 		// ------------------------------------------------------------
-		if (is_callable($this->callback))
+		if (is_callable($this->route))
 		{
-			$response = call_user_func_array($this->callback, $this->parameters);
+			$response = call_user_func_array($this->route, $this->parameters);
 		}
 		// ------------------------------------------------------------
 		// If the route value is an array, we'll need to check it for
 		// any filters that may be attached.
 		// ------------------------------------------------------------
-		elseif (is_array($this->callback))
+		elseif (is_array($this->route))
 		{
-			$response = isset($this->callback['before']) ? Filter::call($this->callback['before'], array(), true) : null;
+			$response = isset($this->route['before']) ? Filter::call($this->route['before'], array(), true) : null;
 
 			// ------------------------------------------------------------
 			// We verify that the before filters did not return a response
 			// Before filters can override the request cycle to make things
 			// like authentication convenient to implement.
 			// ------------------------------------------------------------
-			if (is_null($response) and isset($this->callback['do']))
+			if (is_null($response) and isset($this->route['do']))
 			{
-				$response = call_user_func_array($this->callback['do'], $this->parameters);
+				$response = call_user_func_array($this->route['do'], $this->parameters);
 			}
 		}
 
 		$response = Response::prepare($response);
 
-		if (is_array($this->callback) and isset($this->callback['after']))
+		if (is_array($this->route) and isset($this->route['after']))
 		{
-			Filter::call($this->callback['after'], array($response));
+			Filter::call($this->route['after'], array($response));
 		}
 
 		return $response;

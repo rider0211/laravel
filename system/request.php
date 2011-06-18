@@ -3,33 +3,14 @@
 class Request {
 
 	/**
-	 * The request URI.
-	 *
-	 * @var string
-	 */
-	public static $uri;
-
-	/**
-	 * The route handling the current request.
-	 *
-	 * @var Route
-	 */
-	public static $route;
-
-	/**
 	 * Get the request URI.
 	 *
 	 * @return string
 	 */
 	public static function uri()
 	{
-		if ( ! is_null(static::$uri))
-		{
-			return static::$uri;
-		}
-
 		// -------------------------------------------------------
-		// Use the PATH_INFO variable if it is available.
+		// If the PATH_INFO is available, use it.
 		// -------------------------------------------------------
 		if (isset($_SERVER['PATH_INFO']))
 		{
@@ -47,6 +28,9 @@ class Request {
 				throw new \Exception("Malformed request URI. Request terminated.");
 			}
 		}
+		// -------------------------------------------------------
+		// Neither PATH_INFO or REQUEST_URI are available.
+		// -------------------------------------------------------
 		else
 		{
 			throw new \Exception('Unable to determine the request URI.');
@@ -72,17 +56,6 @@ class Request {
 		// always return a single forward slash.
 		// -------------------------------------------------------
 		return ($uri == '') ? '/' : Str::lower($uri);
-	}
-
-	/**
-	 * Determine if the route handling the request is a given name.
-	 *
-	 * @param  string  $name
-	 * @return bool
-	 */
-	public static function is($name)
-	{
-		return (is_array(static::$route->callback) and isset(static::$route->callback['name']) and  static::$route->callback['name'] === $name);
 	}
 
 	/**
@@ -125,7 +98,7 @@ class Request {
 	 *
 	 * @return bool
 	 */
-	public static function secure()
+	public static function is_secure()
 	{
 		return (static::protocol() == 'https');
 	}
@@ -145,25 +118,9 @@ class Request {
 	 *
 	 * @return bool
 	 */
-	public static function ajax()
+	public static function is_ajax()
 	{
 		return (isset($_SERVER['HTTP_X_REQUESTED_WITH']) and Str::lower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest');
-	}
-
-	/**
-	 * Magic Method to handle dynamic static methods.
-	 */
-	public static function __callStatic($method, $parameters)
-	{
-		// --------------------------------------------------------------
-		// Dynamically call the "is" method using the given name.
-		//
-		// Example: Request::is_login()
-		// --------------------------------------------------------------
-		if (strpos($method, 'is_') === 0)
-		{
-			return static::is(substr($method, 3));
-		}
 	}
 
 }
