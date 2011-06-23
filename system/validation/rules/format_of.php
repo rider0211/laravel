@@ -5,7 +5,7 @@ use System\Validation\Rule;
 class Format_Of extends Rule {
 
 	/**
-	 * The regular expression that will be used to validate the attribute.
+	 * The regular expression that will be used to evaluate the attribute.
 	 *
 	 * @var string
 	 */

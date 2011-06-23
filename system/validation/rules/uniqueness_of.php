@@ -1,6 +1,7 @@
 <?php namespace System\Validation\Rules;
 
 use System\DB;
+use System\DB\Eloquent;
 use System\Validation\Rule;
 
 class Uniqueness_Of extends Rule {
