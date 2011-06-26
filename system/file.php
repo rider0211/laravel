@@ -186,4 +186,20 @@ class File {
 		return $response;
 	}
 
+	/**
+	 * Move an uploaded file to storage.
+	 *
+	 * @param  string  $key
+	 * @param  string  $path
+	 * @return bool
+	 */
+	public static function upload($key, $path)
+	{
+		if ( ! array_key_exists($key, $_FILES))
+		{
+			return false;
+		}
+
+		return move_uploaded_file($_FILES[$key]['tmp_name'], $path);
+	}
 }
