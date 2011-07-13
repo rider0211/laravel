@@ -41,9 +41,7 @@ class Router {
 			{
 				foreach (explode(', ', $keys) as $key)
 				{
-					$key = str_replace(':num', '[0-9]+', str_replace(':any', '[a-zA-Z0-9\-_]+', $key));
-
-					if (preg_match('#^'.$key.'$#', $uri))
+					if (preg_match('#^'.static::translate_wildcards($key).'$#', $uri))
 					{
 						return Request::$route = new Route($keys, $callback, static::parameters($uri, $key));
 					}
@@ -76,6 +74,28 @@ class Router {
 		$segments = explode('/', $uri);
 
 		return (file_exists($path = APP_PATH.'routes/'.$segments[0].EXT)) ? require $path : array();
+	}
+
+	/**
+	 * Translate route URI wildcards into actual regular expressions.
+	 *
+	 * @param  string  $key
+	 * @return string
+	 */
+	private static function translate_wildcards($key)
+	{
+		$replacements = 0;
+
+		// For optional parameters, first translate the wildcards to their regex equivalent, sans the ")?" ending.
+		$key = str_replace(array('/(:num?)', '/(:any?)'), array('(?:/([0-9]+)', '(?:/([a-zA-Z0-9\-_]+)'), $key, $replacements);
+		
+		// Now, to properly close the regular expression, we need to append a ")?" for each optional segment in the route.
+		if ($replacements > 0)
+		{
+			$key .= implode('', array_fill(0, $replacements, ')?'));
+		}
+
+		return str_replace(array(':num', ':any'), array('[0-9]+', '[a-zA-Z0-9\-_]+'), $key);
 	}
 
 	/**
