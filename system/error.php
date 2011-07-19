@@ -38,8 +38,6 @@ class Error {
 
 		$severity = (array_key_exists($e->getCode(), static::$levels)) ? static::$levels[$e->getCode()] : $e->getCode();
 
-		$file = static::file($e);
-
 		$message = rtrim($e->getMessage(), '.');
 
 		if (Config::get('error.log'))
@@ -47,25 +45,9 @@ class Error {
 			call_user_func(Config::get('error.logger'), $severity, $message.' in '.$e->getFile().' on line '.$e->getLine());
 		}
 
-		static::show($e, $severity, $message, $file);
+		static::show($e, $severity, $message);
 
 		exit(1);
-	}
-
-	/**
-	 * Get the path to the file in which an exception occured.
-	 *
-	 * @param  Exception  $e
-	 * @return string
-	 */
-	private static function file($e)
-	{
-		if (strpos($e->getFile(), 'view.php') !== false and strpos($e->getFile(), "eval()'d code") !== false)
-		{
-			return APP_PATH.'views/'.View::$last.EXT;
-		}
-
-		return $e->getFile();
 	}
 
 	/**
@@ -74,20 +56,19 @@ class Error {
 	 * @param  Exception  $e
 	 * @param  string     $severity
 	 * @param  string     $message
-	 * @param  string     $file
 	 * @return void
 	 */
-	private static function show($e, $severity, $message, $file)
+	private static function show($e, $severity, $message)
 	{
 		if (Config::get('error.detail'))
 		{
 			$view = View::make('exception')
                                    ->bind('severity', $severity)
                                    ->bind('message', $message)
-                                   ->bind('file', $file)
+                                   ->bind('file', $e->getFile())
                                    ->bind('line', $e->getLine())
                                    ->bind('trace', $e->getTraceAsString())
-                                   ->bind('contexts', static::context($file, $e->getLine()));
+                                   ->bind('contexts', static::context($e->getFile(), $e->getLine()));
 			
 			Response::make($view, 500)->send();
 		}

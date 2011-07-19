@@ -42,7 +42,9 @@ class Finder {
 			return static::$names[$name];
 		}
 
-		$recursiveIterator = new \RecursiveIteratorIterator($arrayIterator = new \RecursiveArrayIterator(static::$routes));
+		$arrayIterator = new \RecursiveArrayIterator(static::$routes);
+
+		$recursiveIterator = new \RecursiveIteratorIterator($arrayIterator);
 
 		foreach ($recursiveIterator as $iterator)
 		{
@@ -67,12 +69,18 @@ class Finder {
 	{
 		$routes = array();
 
-		foreach (glob(APP_PATH.'routes/*') as $file)
+		// Since route files can be nested deep within the route directory, we need to
+		// recursively spin through the directory to find every file.
+		$directoryIterator = new \RecursiveDirectoryIterator(APP_PATH.'routes');
+
+		$recursiveIterator = new \RecursiveIteratorIterator($directoryIterator, \RecursiveIteratorIterator::SELF_FIRST);
+
+		foreach ($recursiveIterator as $file)
 		{
-			if (filetype($file) == 'file')
+			if (filetype($file) === 'file')
 			{
 				$routes = array_merge(require $file, $routes);
-			}			
+			}
 		}
 
 		return $routes;
