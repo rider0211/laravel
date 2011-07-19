@@ -73,17 +73,7 @@ class Router {
 	{
 		$segments = explode('/', $uri);
 
-		// Route files can be nested deep within sub-directories. 
-		// Iterate backwards through the URI looking for the deepest matching file.
-		foreach (array_reverse($segments, true) as $key => $value)
-		{
-			if (file_exists($path = APP_PATH.'routes/'.implode('/', array_slice($segments, 0, $key + 1)).EXT))
-			{
-				return require $path;
-			}
-		}
-
-		return array();
+		return (file_exists($path = APP_PATH.'routes/'.$segments[0].EXT)) ? require $path : array();
 	}
 
 	/**
@@ -102,7 +92,7 @@ class Router {
 		// Now, to properly close the regular expression, we need to append a ")?" for each optional segment in the route.
 		if ($replacements > 0)
 		{
-			$key .= str_repeat(')?', $replacements);
+			$key .= implode('', array_fill(0, $replacements, ')?'));
 		}
 
 		return str_replace(array(':num', ':any'), array('[0-9]+', '[a-zA-Z0-9\-_]+'), $key);
