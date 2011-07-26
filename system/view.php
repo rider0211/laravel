@@ -82,7 +82,7 @@ class View {
 	 *
 	 * @return string
 	 */
-	protected function find()
+	private function find()
 	{
 		if (file_exists($path = APP_PATH.'views/'.$this->view.EXT))
 		{

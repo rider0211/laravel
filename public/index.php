@@ -5,7 +5,8 @@
  * @package  Laravel
  * @version  1.3.0
  * @author   Taylor Otwell
- * @link     http://laravel.com
+ * @license  MIT License
+ * @link     http://laravel.com 
  */
 
 // --------------------------------------------------------------
@@ -14,9 +15,8 @@
 define('BASE_PATH', realpath('../').'/');
 define('APP_PATH', realpath('../application').'/');
 define('SYS_PATH', realpath('../system').'/');
-define('CONFIG_PATH', APP_PATH.'config/');
-define('PACKAGE_PATH', APP_PATH.'packages/');
 define('PUBLIC_PATH', realpath(__DIR__.'/'));
+define('PACKAGE_PATH', APP_PATH.'packages/');
 
 // --------------------------------------------------------------
 // Define the PHP file extension.

@@ -95,24 +95,15 @@ class Config {
 	/**
 	 * Load all of the configuration items from a file.
 	 *
-	 * If it exists, the configuration file in the application/config directory will be loaded first.
-	 * Any environment specific configuration files will be merged with the root file.
-	 *
 	 * @param  string  $file
 	 * @return void
 	 */
 	public static function load($file)
 	{
-		if (array_key_exists($file, static::$items)) return;
-
-		$config = (file_exists($path = CONFIG_PATH.$file.EXT)) ? require $path : array();
-
-		if (isset($_SERVER['LARAVEL_ENV']) and file_exists($path = CONFIG_PATH.$_SERVER['LARAVEL_ENV'].'/'.$file.EXT))
+		if ( ! array_key_exists($file, static::$items) and file_exists($path = APP_PATH.'config/'.$file.EXT))
 		{
-			$config = array_merge($config, require $path);
+			static::$items[$file] = require $path;
 		}
-
-		return static::$items[$file] = $config;
 	}
 
 }

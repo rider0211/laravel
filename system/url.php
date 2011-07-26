@@ -5,8 +5,6 @@ class URL {
 	/**
 	 * Generate an application URL.
 	 *
-	 * If the given URL is already well-formed, it will be returned unchanged.
-	 *
 	 * @param  string  $url
 	 * @param  bool    $https
 	 * @param  bool    $asset
@@ -14,18 +12,26 @@ class URL {
 	 */
 	public static function to($url = '', $https = false, $asset = false)
 	{
-		if (filter_var($url, FILTER_VALIDATE_URL) !== false)
+		if (strpos($url, '://') !== false)
 		{
 			return $url;
 		}
 
-		$base = Config::get('application.url').'/'.Config::get('application.index');
+		$base = Config::get('application.url');
 
-		$base = ($asset) ? str_replace('/'.Config::get('application.index'), '', $base) : $base;
+		// If the URL is being generated for a public asset such as an
+		// image, we do not want to include "index.php" in the path.
+		if ( ! $asset)
+		{
+			$base .= '/'.Config::get('application.index');
+		}
 
-		$base = ($https and strpos($base, 'http://') === 0) ? 'https://'.substr($base, 7) : $base;
+		if (strpos($base, 'http://') === 0 and $https)
+		{
+			$base = 'https://'.substr($base, 7);
+		}
 
-		return $base.'/'.ltrim($url, '/');
+		return rtrim($base, '/').'/'.trim($url, '/');
 	}
 
 	/**
@@ -46,9 +52,9 @@ class URL {
 	 * @param  string  $url
 	 * @return string
 	 */
-	public static function to_asset($url)
+	public static function to_asset($url = '')
 	{
-		return static::to($url, Request::is_secure(), true);
+		return static::to($url, false, true);
 	}
 
 	/**
