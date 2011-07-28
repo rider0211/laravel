@@ -9,28 +9,45 @@
  */
 
 // --------------------------------------------------------------
-// Define the core framework paths.
+// The path to the application directory.
 // --------------------------------------------------------------
 define('APP_PATH', realpath('../application').'/');
-define('SYS_PATH', realpath('../system').'/');
-define('PUBLIC_PATH', realpath(__DIR__.'/'));
-define('BASE_PATH', realpath('../').'/');
+
+// --------------------------------------------------------------
+// The path to the system directory.
+// --------------------------------------------------------------
+define('SYS_PATH', realpath($system = '../system').'/');
+
+// --------------------------------------------------------------
+// The path to the directory containing the system directory.
+// --------------------------------------------------------------
+define('BASE_PATH', realpath(str_replace('system', '', $system)).'/');
 
 // --------------------------------------------------------------
 // Define various other framework paths.
 // --------------------------------------------------------------
-define('CACHE_PATH', APP_PATH.'storage/cache/');
-define('CONFIG_PATH', APP_PATH.'config/');
-define('DATABASE_PATH', APP_PATH.'storage/db/');
-define('LANG_PATH', APP_PATH.'lang/');
-define('LIBRARY_PATH', APP_PATH.'libraries/');
-define('MODEL_PATH', APP_PATH.'models/');
-define('PACKAGE_PATH', APP_PATH.'packages/');
-define('ROUTE_PATH', APP_PATH.'routes/');
-define('SESSION_PATH', APP_PATH.'storage/sessions/');
-define('STORAGE_PATH', APP_PATH.'storage/');
-define('SYS_VIEW_PATH', SYS_PATH.'views/');
-define('VIEW_PATH', APP_PATH.'views/');
+$constants = array(
+	'CACHE_PATH'    => APP_PATH.'storage/cache/',
+	'CONFIG_PATH'   => APP_PATH.'config/',
+	'DATABASE_PATH' => APP_PATH.'storage/db/',
+	'LANG_PATH'     => APP_PATH.'lang/',
+	'LIBRARY_PATH'  => APP_PATH.'libraries/',
+	'MODEL_PATH'    => APP_PATH.'models/',
+	'PACKAGE_PATH'  => APP_PATH.'packages/',
+	'PUBLIC_PATH'   => realpath(__DIR__).'/',
+	'ROUTE_PATH'    => APP_PATH.'routes/',
+	'SESSION_PATH'  => APP_PATH.'storage/sessions/',
+	'STORAGE_PATH'  => APP_PATH.'storage/',
+	'SYS_VIEW_PATH' => SYS_PATH.'views/',
+	'VIEW_PATH'     => APP_PATH.'views/',
+);
+
+foreach ($constants as $key => $value)
+{
+	define($key, $value);
+}
+
+unset($constants, $system);
 
 // --------------------------------------------------------------
 // Define the PHP file extension.
