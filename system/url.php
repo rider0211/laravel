@@ -5,8 +5,6 @@ class URL {
 	/**
 	 * Generate an application URL.
 	 *
-	 * If the given URL is already well-formed, it will be returned unchanged.
-	 *
 	 * @param  string  $url
 	 * @param  bool    $https
 	 * @param  bool    $asset
@@ -14,24 +12,26 @@ class URL {
 	 */
 	public static function to($url = '', $https = false, $asset = false)
 	{
-		if (filter_var($url, FILTER_VALIDATE_URL) !== false)
+		if (strpos($url, '://') !== false)
 		{
 			return $url;
 		}
 
-		$base = Config::get('application.url').'/'.Config::get('application.index');
+		$base = Config::get('application.url');
 
-		if ($asset and Config::get('application.index') !== '')
+		// If the URL is being generated for a public asset such as an
+		// image, we do not want to include "index.php" in the path.
+		if ( ! $asset)
 		{
-			$base = str_replace('/'.Config::get('application.index'), '', $base);
+			$base .= '/'.Config::get('application.index');
 		}
 
-		if ($https and strpos($base, 'http://') === 0)
+		if (strpos($base, 'http://') === 0 and $https)
 		{
 			$base = 'https://'.substr($base, 7);
 		}
 
-		return rtrim($base, '/').'/'.ltrim($url, '/');
+		return rtrim($base, '/').'/'.trim($url, '/');
 	}
 
 	/**
@@ -52,9 +52,9 @@ class URL {
 	 * @param  string  $url
 	 * @return string
 	 */
-	public static function to_asset($url)
+	public static function to_asset($url = '')
 	{
-		return static::to($url, Request::is_secure(), true);
+		return static::to($url, false, true);
 	}
 
 	/**
@@ -109,8 +109,6 @@ class URL {
 	 */
 	public static function slug($title, $separator = '-')
 	{
-		$title = html_entity_decode(Str::ascii($title), ENT_QUOTES, Config::get('application.encoding'));
-
 		// Remove all characters that are not the separator, letters, numbers, or whitespace.
 		$title = preg_replace('![^'.preg_quote($separator).'\pL\pN\s]+!u', '', Str::lower($title));
 

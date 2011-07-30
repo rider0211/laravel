@@ -1,8 +1,8 @@
-<?php namespace System\Cache;
+<?php namespace System\Cache\Driver;
 
 use System\Config;
 
-class Memcached implements Driver {
+class APC implements \System\Cache\Driver {
 
 	/**
 	 * Determine if an item exists in the cache.
@@ -23,7 +23,7 @@ class Memcached implements Driver {
 	 */
 	public function get($key)
 	{
-		return (($cache = \System\Memcached::instance()->get(Config::get('cache.key').$key)) !== false) ? $cache : null;
+		return ( ! is_null($cache = apc_fetch(Config::get('cache.key').$key))) ? $cache : null;
 	}
 
 	/**
@@ -36,7 +36,7 @@ class Memcached implements Driver {
 	 */
 	public function put($key, $value, $minutes)
 	{
-		\System\Memcached::instance()->set(Config::get('cache.key').$key, $value, 0, $minutes * 60);
+		apc_store(Config::get('cache.key').$key, $value, $minutes * 60);
 	}
 
 	/**
@@ -47,7 +47,7 @@ class Memcached implements Driver {
 	 */
 	public function forget($key)
 	{
-		\System\Memcached::instance()->delete(Config::get('cache.key').$key);
+		apc_delete(Config::get('cache.key').$key);
 	}
 
 }

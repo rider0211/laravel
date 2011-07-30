@@ -28,19 +28,19 @@ class Session {
 			switch (Config::get('session.driver'))
 			{
 				case 'file':
-					static::$driver = new Session\File;
+					static::$driver = new Session\Driver\File;
 					break;
 
 				case 'db':
-					static::$driver = new Session\DB;
+					static::$driver = new Session\Driver\DB;
 					break;
 
 				case 'memcached':
-					static::$driver = new Session\Memcached;
+					static::$driver = new Session\Driver\Memcached;
 					break;
 
 				case 'apc':
-					static::$driver = new Session\APC;
+					static::$driver = new Session\Driver\APC;
 					break;
 
 				default:

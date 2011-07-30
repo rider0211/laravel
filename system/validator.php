@@ -94,7 +94,7 @@ class Validator {
 	 */
 	public function valid()
 	{
-		$this->errors = new Messages;
+		$this->errors = new Validation\Errors;
 
 		foreach ($this->rules as $attribute => $rules)
 		{

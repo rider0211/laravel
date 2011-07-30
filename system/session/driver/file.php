@@ -1,6 +1,6 @@
-<?php namespace System\Session;
+<?php namespace System\Session\Driver;
 
-class File implements Driver {
+class File implements \System\Session\Driver {
 
 	/**
 	 * Load a session by ID.
@@ -10,7 +10,7 @@ class File implements Driver {
 	 */
 	public function load($id)
 	{
-		if (file_exists($path = SESSION_PATH.$id))
+		if (file_exists($path = APP_PATH.'storage/sessions/'.$id))
 		{
 			return unserialize(file_get_contents($path));
 		}
@@ -24,7 +24,7 @@ class File implements Driver {
 	 */
 	public function save($session)
 	{
-		file_put_contents(SESSION_PATH.$session['id'], serialize($session), LOCK_EX);
+		file_put_contents(APP_PATH.'storage/sessions/'.$session['id'], serialize($session), LOCK_EX);
 	}
 
 	/**
@@ -35,7 +35,7 @@ class File implements Driver {
 	 */
 	public function delete($id)
 	{
-		@unlink(SESSION_PATH.$id);
+		@unlink(APP_PATH.'storage/sessions/'.$id);
 	}
 
 	/**
@@ -46,7 +46,7 @@ class File implements Driver {
 	 */
 	public function sweep($expiration)
 	{
-		foreach (glob(SESSION_PATH.'*') as $file)
+		foreach (glob(APP_PATH.'storage/sessions/*') as $file)
 		{
 			if (filetype($file) == 'file' and filemtime($file) < $expiration)
 			{

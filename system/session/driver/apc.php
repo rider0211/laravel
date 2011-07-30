@@ -1,9 +1,6 @@
-<?php namespace System\Session;
+<?php namespace System\Session\Driver;
 
-use System\Cache;
-use System\Config;
-
-class Memcached implements Driver {
+class APC implements \System\Session\Driver {
 
 	/**
 	 * Load a session by ID.
@@ -13,7 +10,7 @@ class Memcached implements Driver {
 	 */
 	public function load($id)
 	{
-		return Cache::driver('memcached')->get($id);
+		return \System\Cache::driver('apc')->get($id);
 	}
 
 	/**
@@ -24,7 +21,7 @@ class Memcached implements Driver {
 	 */
 	public function save($session)
 	{
-		Cache::driver('memcached')->put($session['id'], $session, Config::get('session.lifetime'));
+		\System\Cache::driver('apc')->put($session['id'], $session, \System\Config::get('session.lifetime'));
 	}
 
 	/**
@@ -35,7 +32,7 @@ class Memcached implements Driver {
 	 */
 	public function delete($id)
 	{
-		Cache::driver('memcached')->forget($id);
+		\System\Cache::driver('apc')->forget($id);
 	}
 
 	/**
@@ -46,7 +43,7 @@ class Memcached implements Driver {
 	 */
 	public function sweep($expiration)
 	{
-		// Memcached sessions will expire automatically.
+		// APC sessions will expire automatically.
 	}
 
 }

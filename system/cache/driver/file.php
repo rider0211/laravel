@@ -1,6 +1,6 @@
-<?php namespace System\Cache;
+<?php namespace System\Cache\Driver;
 
-class File implements Driver {
+class File implements \System\Cache\Driver {
 
 	/**
 	 * Determine if an item exists in the cache.
@@ -22,12 +22,12 @@ class File implements Driver {
 	 */	
 	public function get($key)
 	{
-		if ( ! file_exists(CACHE_PATH.$key))
+		if ( ! file_exists(APP_PATH.'storage/cache/'.$key))
 		{
 			return null;
 		}
 
-		$cache = file_get_contents(CACHE_PATH.$key);
+		$cache = file_get_contents(APP_PATH.'storage/cache/'.$key);
 
 		if (time() >= substr($cache, 0, 10))
 		{
@@ -49,7 +49,7 @@ class File implements Driver {
 	 */
 	public function put($key, $value, $minutes)
 	{
-		file_put_contents(CACHE_PATH.$key, (time() + ($minutes * 60)).serialize($value), LOCK_EX);
+		file_put_contents(APP_PATH.'storage/cache/'.$key, (time() + ($minutes * 60)).serialize($value), LOCK_EX);
 	}
 
 	/**
@@ -60,7 +60,7 @@ class File implements Driver {
 	 */
 	public function forget($key)
 	{
-		@unlink(CACHE_PATH.$key);
+		@unlink(APP_PATH.'storage/cache/'.$key);
 	}
 
 }

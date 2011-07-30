@@ -9,21 +9,21 @@ class Lang {
 	 *
 	 * @var array
 	 */
-	public static $lines = array();
+	private static $lines = array();
 
 	/**
 	 * The key of the line that is being requested.
 	 *
 	 * @var string
 	 */
-	public $key;
+	private $key;
 
 	/**
 	 * The place-holder replacements.
 	 *
 	 * @var array
 	 */
-	public $replacements = array();
+	private $replacements = array();
 
 	/**
 	 * Create a new Lang instance.
@@ -117,9 +117,7 @@ class Lang {
 	 */
 	private function load($file, $language)
 	{
-		if (array_key_exists($language.$file, static::$lines)) return;
-
-		if (file_exists($path = LANG_PATH.$language.'/'.$file.EXT))
+		if ( ! array_key_exists($language.$file, static::$lines) and file_exists($path = APP_PATH.'lang/'.$language.'/'.$file.EXT))
 		{
 			static::$lines[$language.$file] = require $path;
 		}

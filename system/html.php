@@ -17,41 +17,22 @@ class HTML {
 	 * Generate a JavaScript reference.
 	 *
 	 * @param  string  $url
-	 * @param  array   $attributes
 	 * @return string
 	 */
-	public static function script($url, $attributes = array())
+	public static function script($url)
 	{
-		return '<script type="text/javascript" src="'.static::entities(URL::to_asset($url)).'"'.static::attributes($attributes).'></script>'.PHP_EOL;
+		return '<script type="text/javascript" src="'.static::entities(URL::to_asset($url)).'"></script>'.PHP_EOL;
 	}
 
 	/**
 	 * Generate a CSS reference.
 	 *
 	 * @param  string  $url
-	 * @param  array   $attributes
 	 * @return string
 	 */
-	public static function style($url, $attributes = array())
+	public static function style($url, $media = 'all')
 	{
-		if ( ! array_key_exists('media', $attributes))
-		{
-			$attributes['media'] = 'all';
-		}
-
-		return '<link href="'.static::entities(URL::to_asset($url)).'" rel="stylesheet" type="text/css"'.static::attributes($attributes).'>'.PHP_EOL;
-	}
-
-	/**
-	 * Generate a HTML span.
-	 *
-	 * @param  string  $value
-	 * @param  array   $attributes
-	 * @return string
-	 */
-	public static function span($value, $attributes = array())
-	{
-		return '<span'.static::attributes($attributes).'>'.static::entities($value).'</span>';
+		return '<link href="'.static::entities(URL::to_asset($url)).'" rel="stylesheet" type="text/css" media="'.$media.'">'.PHP_EOL;
 	}
 
 	/**

@@ -8,8 +8,7 @@ return array(
 	|--------------------------------------------------------------------------
 	|
 	| This method is called by the Auth::user() method when attempting to
-	| retrieve a user by their user ID, such as when retrieving a user by the
-	| user ID stored in the session.
+	| retrieve a user by their user ID.
 	|
 	| You are free to change this method for your application however you wish.
 	|
@@ -26,19 +25,18 @@ return array(
 	|--------------------------------------------------------------------------
 	|
 	| This method is called by the Auth::check() method when attempting to
-	| retrieve a user by their username, such as when checking credentials
-	| received from a login form.
+	| retrieve a user by their username. 
 	|
 	| You are free to change this method for your application however you wish.
 	|
-	| Note: This method must return an object that has "id" and "password"
-	|       properties. The type of object returned does not matter.
+	| Note: This method must return an object that has an "id" and a "password"
+	|       property. The type of object returned doesn't matter.
 	|
 	*/
 
 	'by_username' => function($username)
 	{
-		return User::where_email($username)->first();
+		return User::where('email', '=', $username)->first();
 	},
 
 );

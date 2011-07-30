@@ -77,7 +77,7 @@ class Finder {
 
 		foreach ($recursiveIterator as $file)
 		{
-			if (filetype($file) === 'file' and strpos($file, EXT) !== false)
+			if (filetype($file) === 'file')
 			{
 				$routes = array_merge(require $file, $routes);
 			}

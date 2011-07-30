@@ -10,15 +10,12 @@ return array(
 	| Here, you can specify any class aliases that you would like registered
 	| when Laravel loads. Aliases are lazy-loaded, so add as many as you want.
 	|
-	| Aliases make it more convenient to use namespaced classes. Instead of
-	| referring to the class using its full namespace, you may simply use
-	| the alias defined here.
-	|
-	| We have already aliased common Laravel classes to make your life easier.
+	| We have already setup a few to make your life easier.
 	|
 	*/
 
 	'Auth' => 'System\\Auth',
+	'Asset' => 'System\\Asset',
 	'Benchmark' => 'System\\Benchmark',
 	'Cache' => 'System\\Cache',
 	'Config' => 'System\\Config',

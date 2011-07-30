@@ -1,8 +1,6 @@
-<?php namespace System\Session;
+<?php namespace System\Session\Driver;
 
-use System\Config;
-
-class DB implements Driver {
+class DB implements \System\Session\Driver {
 
 	/**
 	 * Load a session by ID.
@@ -62,7 +60,7 @@ class DB implements Driver {
 	 */
 	private function table()
 	{
-		return \System\DB::table(Config::get('session.table'));		
+		return \System\DB::table(\System\Config::get('session.table'));		
 	}
 	
 }
