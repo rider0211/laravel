@@ -1,4 +1,4 @@
-<?php namespace System\Route;
+<?php namespace System\Routing;
 
 class Finder {
 
