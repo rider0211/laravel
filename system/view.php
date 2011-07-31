@@ -41,13 +41,7 @@ class View {
 	{
 		$this->view = $view;
 		$this->data = $data;
-
-		if ( ! file_exists($path = VIEW_PATH.$view.EXT))
-		{
-			throw new \Exception("View [$view] does not exist.");
-		}
-
-		$this->path = $path;
+		$this->path = $this->find();
 	}
 
 	/**
@@ -110,6 +104,28 @@ class View {
 		try { include $this->path; } catch (\Exception $e) { Error::handle($e); }
 
 		return ob_get_clean();
+	}
+
+	/**
+	 * Get the full path to the view.
+	 *
+	 * Views are cascaded, so the application directory views will take
+	 * precedence over system directory views of the same name.
+	 *
+	 * @return string
+	 */
+	protected function find()
+	{
+		if (file_exists($path = VIEW_PATH.$this->view.EXT))
+		{
+			return $path;
+		}
+		elseif (file_exists($path = SYS_VIEW_PATH.$this->view.EXT))
+		{
+			return $path;
+		}
+
+		throw new \Exception("View [".$this->view."] doesn't exist.");
 	}
 
 	/**

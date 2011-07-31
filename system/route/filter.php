@@ -1,4 +1,4 @@
-<?php namespace System\Routing;
+<?php namespace System\Route;
 
 class Filter {
 

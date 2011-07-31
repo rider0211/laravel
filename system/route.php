@@ -1,6 +1,4 @@
-<?php namespace System\Routing;
-
-use System\Response;
+<?php namespace System;
 
 class Route {
 
@@ -57,7 +55,7 @@ class Route {
 		}
 		elseif (is_array($this->callback))
 		{
-			$response = isset($this->callback['before']) ? Filter::call($this->callback['before'], array(), true) : null;
+			$response = isset($this->callback['before']) ? Route\Filter::call($this->callback['before'], array(), true) : null;
 
 			if (is_null($response) and isset($this->callback['do']))
 			{
@@ -69,7 +67,7 @@ class Route {
 
 		if (is_array($this->callback) and isset($this->callback['after']))
 		{
-			Filter::call($this->callback['after'], array($response));
+			Route\Filter::call($this->callback['after'], array($response));
 		}
 
 		return $response;
