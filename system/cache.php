@@ -10,6 +10,13 @@ class Cache {
 	public static $drivers = array();
 
 	/**
+	 * All of the items retrieved by the cache drivers.
+	 *
+	 * @var array
+	 */
+	public static $items = array();
+
+	/**
 	 * Get a cache driver instance. If no driver name is specified, the default
 	 * cache driver will be returned as defined in the cache configuration file.
 	 *
@@ -59,9 +66,9 @@ class Cache {
 	 */	
 	public static function get($key, $default = null, $driver = null)
 	{
-		if (is_null($driver))
+		if (isset(static::$items[$driver][$key]))
 		{
-			$driver = Config::get('cache.driver');
+			return static::$items[$driver][$key];
 		}
 
 		if (is_null($item = static::driver($driver)->get($key)))
@@ -69,7 +76,7 @@ class Cache {
 			return is_callable($default) ? call_user_func($default) : $default;
 		}
 
-		return $item;
+		return static::$items[$driver][$key] = $item;
 	}
 
 	/**
@@ -84,7 +91,7 @@ class Cache {
 	 */
 	public static function remember($key, $default, $minutes, $driver = null)
 	{
-		if ( ! is_null($item = static::get($key, null, $driver)))
+		if ( ! is_null($item = static::get($key)))
 		{
 			return $item;
 		}
