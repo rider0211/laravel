@@ -100,7 +100,7 @@ abstract class Model {
 	 * Set the attributes of the model using an array.
 	 *
 	 * @param  array  $attributes
-	 * @return Model
+	 * @return void
 	 */
 	public function fill($attributes)
 	{
@@ -108,8 +108,6 @@ abstract class Model {
 		{
 			$this->$key = $value;
 		}
-
-		return $this;
 	}
 
 	/**
