@@ -72,14 +72,14 @@ class Auth {
 	/**
 	 * Attempt to login a user.
 	 *
-	 * If the user credentials are valid. The user ID will be stored in the session
-	 * and will be considered "logged in" on subsequent requests to the application.
+	 * If the user credentials are valid. The user's ID will be stored in the session and the
+	 * user will be considered "logged in" on subsequent requests to the application.
 	 *
 	 * The password passed to the method should be plain text, as it will be hashed
 	 * by the Hash class when authenticating.
 	 *
 	 * <code>
-	 * if (Auth::login('test@gmail.com', 'secret'))
+	 * if (Auth::attempt('test@gmail.com', 'secret'))
 	 * {
 	 *		// The credentials are valid...
 	 * }
@@ -90,21 +90,37 @@ class Auth {
 	 * @return bool
 	 * @see    Hash::check()
 	 */
-	public static function login($username, $password)
+	public static function attempt($username, $password)
 	{
 		if ( ! is_null($user = call_user_func(Config::get('auth.by_username'), $username)))
 		{
 			if (Hash::check($password, $user->password))
 			{
-				static::$user = $user;
-
-				Session::put(static::$key, $user->id);
+				static::login($user);
 
 				return true;
 			}
 		}
 
 		return false;
+	}
+
+	/**
+	 * Login a given user into the application.
+	 *
+	 * The user's ID will be stored in the session and the user will be considered
+	 * "logged in" on subsequent requests to the application.
+	 *
+	 * Note: The user given to this method should be an object having a "id" property.
+	 *
+	 * @param  object  $user
+	 * @return void
+	 */
+	public static function login($user)
+	{
+		static::$user = $user;
+
+		Session::put(static::$key, $user->id);
 	}
 
 	/**
@@ -117,9 +133,9 @@ class Auth {
 	 */
 	public static function logout()
 	{
-		Session::forget(static::$key);
-
 		static::$user = null;
+
+		Session::forget(static::$key);
 	}
 
 }
