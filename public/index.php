@@ -3,47 +3,40 @@
  * Laravel - A clean and classy framework for PHP web development.
  *
  * @package  Laravel
- * @version  2.0.0
+ * @version  1.5.3
  * @author   Taylor Otwell
  * @link     http://laravel.com
  */
 
 // --------------------------------------------------------------
-// The active modules for this Laravel installation.
+// The path to the application directory.
 // --------------------------------------------------------------
-$active = array(
-	'application' => 'application',
-);
+$application = '../application';
 
 // --------------------------------------------------------------
-// The path to the Laravel directory.
+// The path to the system directory.
 // --------------------------------------------------------------
-$system   = '../laravel';
-
-// --------------------------------------------------------------
-// The path to the configuration directory.
-// --------------------------------------------------------------
-$config   = '../config';
+$system      = '../system';
 
 // --------------------------------------------------------------
 // The path to the packages directory.
 // --------------------------------------------------------------
-$packages = '../packages';
+$packages    = '../packages';
 
 // --------------------------------------------------------------
 // The path to the modules directory.
 // --------------------------------------------------------------
-$modules  = '../modules';
+$modules     = '../modules';
 
 // --------------------------------------------------------------
 // The path to the storage directory.
 // --------------------------------------------------------------
-$storage  = '../storage';
+$storage     = '../storage';
 
 // --------------------------------------------------------------
 // The path to the public directory.
 // --------------------------------------------------------------
-$public   = __DIR__;
+$public      = __DIR__;
 
 // --------------------------------------------------------------
 // Launch Laravel.
