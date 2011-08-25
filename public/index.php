@@ -3,42 +3,37 @@
  * Laravel - A clean and classy framework for PHP web development.
  *
  * @package  Laravel
- * @version  1.5.5
- * @author   Taylor Otwell
+ * @version  2.0.0
+ * @author   Taylor Otwell <taylorotwell@gmail.com>
  * @link     http://laravel.com
  */
 
-// --------------------------------------------------------------
-// The path to the application directory.
-// --------------------------------------------------------------
+/*
+|--------------------------------------------------------------------------
+| Installation Paths
+|--------------------------------------------------------------------------
+|
+| Here you may specify the location of the various Laravel framework
+| directories for your installation. 
+|
+| Of course, these are already set to the proper default values, so you do
+| not need to change them if you have not modified the directory structure.
+|
+*/
+
 $application = '../application';
 
-// --------------------------------------------------------------
-// The path to the system directory.
-// --------------------------------------------------------------
-$system      = '../system';
+$laravel     = '../laravel';
 
-// --------------------------------------------------------------
-// The path to the packages directory.
-// --------------------------------------------------------------
 $packages    = '../packages';
 
-// --------------------------------------------------------------
-// The path to the modules directory.
-// --------------------------------------------------------------
-$modules     = '../modules';
-
-// --------------------------------------------------------------
-// The path to the storage directory.
-// --------------------------------------------------------------
 $storage     = '../storage';
 
-// --------------------------------------------------------------
-// The path to the public directory.
-// --------------------------------------------------------------
 $public      = __DIR__;
 
-// --------------------------------------------------------------
-// Launch Laravel.
-// --------------------------------------------------------------
-require $system.'/laravel.php';
+/*
+|--------------------------------------------------------------------------
+| 3... 2... 1... Lift-off!
+|--------------------------------------------------------------------------
+*/
+require $laravel.'/laravel.php';
