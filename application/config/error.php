@@ -52,9 +52,7 @@ return array(
 
 	'logger' => function($severity, $message, $trace)
 	{
-		$file = IoC::resolve('laravel.file');
-
-		$file->append(STORAGE_PATH.'log.txt', date('Y-m-d H:i:s').' '.$severity.' - '.$message.PHP_EOL);
+		File::append(STORAGE_PATH.'log.txt', date('Y-m-d H:i:s').' '.$severity.' - '.$message.PHP_EOL);
 	},
 
 );

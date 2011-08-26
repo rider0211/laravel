@@ -42,13 +42,13 @@ return array(
 	|
 	*/
 
-	'before' => function(Laravel\Request $request)
+	'before' => function($method, $uri)
 	{
 		// Do stuff before every request to your application.
 	},
 
 
-	'after' => function(Laravel\Request $request, Laravel\Response $response)
+	'after' => function($response, $method, $uri)
 	{
 		// Do stuff after every request to your application.
 	},
@@ -56,13 +56,13 @@ return array(
 
 	'auth' => function()
 	{
-		return ( ! Auth::make()->check()) ? Redirect::to_login() : null;
+		return ( ! Auth::check()) ? Redirect::to_login() : null;
 	},
 
 
 	'csrf' => function()
 	{
-		return (Input::get('csrf_token') !== Form::raw_token()) ? new Error('500') : null;
+		return (Input::get('csrf_token') !== Form::raw_token()) ? Response::error('500') : null;
 	},
 
 );
