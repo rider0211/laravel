@@ -4,7 +4,36 @@ return array(
 
 	/*
 	|--------------------------------------------------------------------------
-	| Error Handler
+	| Error Detail
+	|--------------------------------------------------------------------------
+	|
+	| Detailed error messages contain information about the file in which
+	| an error occurs, a stack trace, and a snapshot of the source code
+	| in which the error occured.
+	|
+	| If your application is in production, consider turning off error details
+	| for enhanced security and user experience.
+	|
+	*/
+
+	'detail' => true,
+
+	/*
+	|--------------------------------------------------------------------------
+	| Error Logging
+	|--------------------------------------------------------------------------
+	|
+	| Error Logging will use the "logger" function defined below to log error
+	| messages, which gives you complete freedom to determine how error
+	| messages are logged. Enjoy the flexibility.
+	|
+	*/
+
+	'log' => false,
+
+	/*
+	|--------------------------------------------------------------------------
+	| Error Logger
 	|--------------------------------------------------------------------------
 	|
 	| Because of the various ways of managing error logging, you get complete
@@ -21,11 +50,9 @@ return array(
 	|
 	*/
 
-	'handler' => function($exception)
+	'logger' => function($severity, $message, $trace)
 	{
-		var_dump($exception);
-
-		exit(1);
+		File::append(STORAGE_PATH.'log.txt', date('Y-m-d H:i:s').' '.$severity.' - '.$message.PHP_EOL);
 	},
 
 );
