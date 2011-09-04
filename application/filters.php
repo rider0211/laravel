@@ -1,5 +1,8 @@
 <?php
 
+use Laravel\Application;
+use Laravel\Response;
+
 return array(
 
 	/*
@@ -42,13 +45,13 @@ return array(
 	|
 	*/
 
-	'before' => function($method, $uri)
+	'before' => function(Application $application)
 	{
 		// Do stuff before every request to your application.
 	},
 
 
-	'after' => function($response, $method, $uri)
+	'after' => function(Application $application, Response $response)
 	{
 		// Do stuff after every request to your application.
 	},
@@ -56,13 +59,13 @@ return array(
 
 	'auth' => function()
 	{
-		return ( ! Auth::check()) ? Redirect::to_login() : null;
+		return ( ! Auth::make()->check()) ? Redirect::to_login() : null;
 	},
 
 
 	'csrf' => function()
 	{
-		return (Input::get('csrf_token') !== Form::raw_token()) ? Response::error('500') : null;
+		return (Input::get('csrf_token') !== Form::raw_token()) ? new Error('500') : null;
 	},
 
 );
