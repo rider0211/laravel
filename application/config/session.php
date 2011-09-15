@@ -12,7 +12,7 @@ return array(
 	| Since HTTP is stateless, sessions are used to maintain "state" across
 	| multiple requests from the same user of your application.
 	|
-	| Supported Drivers: 'cookie', 'file', 'database', 'memcached', 'apc'.
+	| Supported Drivers: 'cookie', 'file', 'db', 'memcached', 'apc'.
 	|
 	*/
 
@@ -25,7 +25,7 @@ return array(
 	|
 	| The database table on which the session should be stored. 
 	|
-	| This option is only relevant when using the "database" session driver.
+	| This option is only relevant when using the "db" session driver.
 	|
 	*/
 
@@ -74,5 +74,31 @@ return array(
 	*/
 
 	'domain' => null,
+
+	/*
+	|--------------------------------------------------------------------------
+	| Session Cookie HTTPS
+	|--------------------------------------------------------------------------
+	|
+	| Determines if the session cookie should only be transported over HTTPS.
+	|
+	*/
+
+	'https' => false,
+
+	/*
+	|--------------------------------------------------------------------------
+	| HTTP Only Session Cookie
+	|--------------------------------------------------------------------------
+	|
+	| Determines if the session cookie should only be accessible over HTTP.
+	|
+	| Note: The intention of the "HTTP Only" option is to keep cookies from
+	|       being accessed by client-side scripting languages. However, this
+	|       setting should not be viewed as providing total XSS protection.
+	|
+	*/
+
+	'http_only' => false,
 
 );
