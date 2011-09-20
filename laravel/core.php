@@ -25,6 +25,7 @@ define('CONFIG_PATH',     APP_PATH.'config/');
 define('CONTROLLER_PATH', APP_PATH.'controllers/');
 define('DATABASE_PATH',   STORAGE_PATH.'database/');
 define('LANG_PATH',       APP_PATH.'language/');
+define('ROUTE_PATH',      APP_PATH.'routes/');
 define('SESSION_PATH',    STORAGE_PATH.'sessions/');
 define('SYS_CONFIG_PATH', SYS_PATH.'config/');
 define('SYS_LANG_PATH',   SYS_PATH.'language/');
