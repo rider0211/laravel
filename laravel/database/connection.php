@@ -54,15 +54,15 @@ class Connection {
 	 *		$sum = DB::connection()->scalar('select sum(amount) from payments')
 	 * </code>
 	 *
-	 * @param  string     $sql
-	 * @param  array      $bindings
-	 * @return int|float
+	 * @param  string  $sql
+	 * @param  array   $bindings
+	 * @return float
 	 */
 	public function scalar($sql, $bindings = array())
 	{
 		$result = (array) $this->first($sql, $bindings);
 
-		return (strpos(strtolower(trim($sql)), 'select count') === 0) ? (int) reset($result) : (float) reset($result);
+		return (float) reset($result);
 	}
 
 	/**
