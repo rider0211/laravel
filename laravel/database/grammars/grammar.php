@@ -89,7 +89,7 @@ class Grammar {
 
 		foreach ($query->joins as $join)
 		{
-			extract($join, EXTR_SKIP);
+			extract($join);
 
 			list($column1, $column2) = array($this->wrap($column1), $this->wrap($column2));
 
