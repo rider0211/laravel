@@ -20,7 +20,7 @@ return array(
 
 	'Arr'        => 'Laravel\\Arr',
 	'Asset'      => 'Laravel\\Asset',
-	'Auth'       => 'Laravel\\Security\\Auth',
+	'Auth'       => 'Laravel\\Auth',
 	'Benchmark'  => 'Laravel\\Benchmark',
 	'Cache'      => 'Laravel\\Cache',
 	'Config'     => 'Laravel\\Config',
@@ -31,7 +31,7 @@ return array(
 	'Eloquent'   => 'Laravel\\Database\\Eloquent\\Model',
 	'File'       => 'Laravel\\File',
 	'Form'       => 'Laravel\\Form',
-	'Hasher'     => 'Laravel\\Security\\Hasher',
+	'Hasher'     => 'Laravel\\Facades\\Hasher',
 	'HTML'       => 'Laravel\\HTML',
 	'Inflector'  => 'Laravel\\Inflector',
 	'Input'      => 'Laravel\\Input',
