@@ -20,7 +20,7 @@ return array(
 
 	'Arr'        => 'Laravel\\Arr',
 	'Asset'      => 'Laravel\\Asset',
-	'Auth'       => 'Laravel\\Security\\Auth',
+	'Auth'       => 'Laravel\\Auth',
 	'Benchmark'  => 'Laravel\\Benchmark',
 	'Cache'      => 'Laravel\\Cache',
 	'Config'     => 'Laravel\\Config',
