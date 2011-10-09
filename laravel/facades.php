@@ -32,4 +32,6 @@ abstract class Facade {
 
 }
 
+class Crypter extends Facade { public static $resolve = 'laravel.crypter'; }
+class Hasher  extends Facade { public static $resolve = 'laravel.hasher'; }
 class Session extends Facade { public static $resolve = 'laravel.session'; }
