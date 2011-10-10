@@ -18,7 +18,12 @@ class Str {
 	 */
 	public static function lower($value)
 	{
-		return (fe('mb_strtolower')) ? mb_strtolower($value, Config::get('application.encoding')) : strtolower($value);
+		if (function_exists('mb_strtolower'))
+		{
+			return mb_strtolower($value, Config::get('application.encoding'));
+		}
+
+		return strtolower($value);
 	}
 
 	/**
@@ -37,7 +42,12 @@ class Str {
 	 */
 	public static function upper($value)
 	{
-		return (fe('mb_strtoupper')) ? mb_strtoupper($value, Config::get('application.encoding')) : strtoupper($value);
+		if (function_exists('mb_strtoupper'))
+		{
+			return mb_strtoupper($value, Config::get('application.encoding'));
+		}
+
+		return strtoupper($value);
 	}
 
 	/**
@@ -56,7 +66,12 @@ class Str {
 	 */
 	public static function title($value)
 	{
-		return (fe('mb_convert_case')) ? mb_convert_case($value, MB_CASE_TITLE, Config::get('application.encoding')) : ucwords(strtolower($value));
+		if (function_exists('mb_convert_case'))
+		{
+			return mb_convert_case($value, MB_CASE_TITLE, Config::get('application.encoding'));
+		}
+
+		return ucwords(strtolower($value));
 	}
 
 	/**
@@ -75,7 +90,61 @@ class Str {
 	 */
 	public static function length($value)
 	{
-		return (fe('mb_strlen')) ? mb_strlen($value, Config::get('application.encoding')) : strlen($value);
+		if (function_exists('mb_strlen'))
+		{
+			return mb_strlen($value, Config::get('application.encoding'));
+		}
+
+		return strlen($value);
+	}
+
+	/**
+	 * Limit the number of chars in a string
+	 *
+	 * <code>
+	 *		// Limit the characters
+	 *		echo Str::limit_chars('taylor otwell', 3);
+	 * 		results in 'tay...'
+	 * </code>
+	 *
+	 * @param  string  $value
+	 * @param  int     $length
+	 * @param  string  $end
+	 * @return string
+	 */
+	public static function limit($value, $length = 100, $end = '...')
+	{
+		if (static::length($value) <= $length) return $value;
+
+		if (function_exists('mb_substr'))
+		{
+			return mb_substr($value, 0, $length).$end;
+		}
+
+		return substr($value, 0, $length).$end;
+	}
+
+	/**
+	 * Limit the number of words in a string
+	 *
+	 * <code>
+	 *		// Limit the words
+	 *		echo Str::limit_chars('This is a sentence.', 3);
+	 * 		results in 'This is a...'
+	 * </code>
+	 *
+	 * @param  string  $value
+	 * @param  int     $length
+	 * @param  string  $end
+	 * @return string
+	 */
+	public static function limit_words($value, $length = 100, $end = '...')
+	{
+		$count = str_word_count($value,1);
+
+		if ($count <= $length) return $value;
+
+		return implode(' ',array_slice($count,0,$length)).$end;
 	}
 
 	/**
@@ -91,7 +160,9 @@ class Str {
 	 */
 	public static function ascii($value)
 	{
-		$value = preg_replace(array_keys($foreign = Config::get('ascii')), array_values($foreign), $value);
+		$foreign = Config::get('ascii');
+
+		$value = preg_replace(array_keys($foreign), array_values($foreign), $value);
 
 		return preg_replace('/[^\x09\x0A\x0D\x20-\x7E]/', '', $value);
 	}
