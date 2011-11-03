@@ -13,10 +13,10 @@ return array(
 	|
 	|		'home.index' => array('name' => 'home')
 	|
-	| Now, you can create an instance of that view using the expressive View::of
-	| dynamic method. Take a look at this example:
+	| Now, you can create an instance of that view using the very expressive
+	| View::of dynamic method. Take a look at this example:
 	|
-	|		return View::of_layout();
+	|		return View::of_home();
 	|
 	| View composers provide a convenient way to add common elements to a view
 	| each time it is created. For example, you may wish to bind a header and
@@ -41,7 +41,7 @@ return array(
 
 	'home.index' => array('name' => 'home', function($view)
 	{
-		//
+		// This composer is called for the "home.index" view.
 	}),
 
 );

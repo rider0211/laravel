@@ -12,7 +12,7 @@ return array(
 	| Caching can be used to increase the performance of your application
 	| by storing commonly accessed data in memory or in a file.
 	|
-	| Supported Drivers: 'file', 'memcached', 'apc'.
+	| Supported Drivers: 'file', 'memcached', 'apc', 'redis'.
 	|
 	*/
 
@@ -45,8 +45,10 @@ return array(
 	|
 	*/
 
-	'servers' => array(
+	'memcached' => array(
+
 		array('host' => '127.0.0.1', 'port' => 11211, 'weight' => 100),
+
 	),	
 
 );

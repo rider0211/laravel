@@ -3,10 +3,12 @@
  * Laravel - A clean and classy framework for PHP web development.
  *
  * @package  Laravel
- * @version  1.5.9
- * @author   Taylor Otwell
+ * @version  2.0.0
+ * @author   Taylor Otwell <taylorotwell@gmail.com>
  * @link     http://laravel.com
  */
+
+define('LARAVEL_START', microtime(true));
 
 // --------------------------------------------------------------
 // The path to the application directory.
@@ -14,31 +16,18 @@
 $application = '../application';
 
 // --------------------------------------------------------------
-// The path to the system directory.
+// The path to the Laravel directory.
 // --------------------------------------------------------------
-$system      = '../system';
-
-// --------------------------------------------------------------
-// The path to the packages directory.
-// --------------------------------------------------------------
-$packages    = '../packages';
-
-// --------------------------------------------------------------
-// The path to the modules directory.
-// --------------------------------------------------------------
-$modules     = '../modules';
-
-// --------------------------------------------------------------
-// The path to the storage directory.
-// --------------------------------------------------------------
-$storage     = '../storage';
+$laravel = '../laravel';
 
 // --------------------------------------------------------------
 // The path to the public directory.
 // --------------------------------------------------------------
-$public      = __DIR__;
+$public = __DIR__;
 
 // --------------------------------------------------------------
 // Launch Laravel.
 // --------------------------------------------------------------
-require $system.'/laravel.php';
+require $laravel.'/laravel.php';
+
+echo (microtime(true) - LARAVEL_START) * 1000;

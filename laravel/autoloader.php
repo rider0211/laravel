@@ -1,0 +1,91 @@
+<?php namespace Laravel;
+
+class Autoloader {
+
+	/**
+	 * The PSR-0 compliant libraries registered with the auto-loader.
+	 *
+	 * @var array
+	 */
+	protected static $libraries = array();
+
+	/**
+	 * The paths to be searched by the auto-loader.
+	 *
+	 * @var array
+	 */
+	protected static $paths = array(BASE_PATH, MODEL_PATH, LIBRARY_PATH);
+
+	/**
+	 * Load the file corresponding to a given class.
+	 *
+	 * Laravel loads classes out of three directories: the core "laravel" directory,
+	 * and the application "models" and "libraries" directories. All of the file
+	 * names are lower cased and the directory structure corresponds with the
+	 * class namespaces.
+	 *
+	 * The application "libraries" directory also supports the inclusion of PSR-0
+	 * compliant libraries. These libraries will be detected automatically and
+	 * will be loaded according to the PSR-0 naming conventions.
+	 *
+	 * @param  string  $class
+	 * @return void
+	 */
+	public static function load($class)
+	{
+		if (array_key_exists($class, Config::$items['application']['aliases']))
+		{
+			return class_alias(Config::$items['application']['aliases'][$class], $class);
+		}
+
+		if ( ! is_null($path = static::find($class)))
+		{
+			require $path;
+		}
+	}
+
+	/**
+	 * Determine the file path associated with a given class name.
+	 *
+	 * @param  string  $class
+	 * @return string
+	 */
+	protected static function find($class)
+	{
+		$file = str_replace('\\', '/', $class);
+
+		$namespace = substr($class, 0, strpos($class, '\\'));
+
+		// If the namespace has been registered as a PSR-0 compliant library, we will
+		// load the library according to the PSR-0 naming standards, which state that
+		// namespaces and underscores indicate the directory hierarchy of the class.
+		// The PSR-0 standard is exactly like the typical Laravel standard, the only
+		// difference being that Laravel files are all lowercase, while PSR-0 states
+		// that the file name should match the class name.
+		if (isset(static::$libraries[$namespace]))
+		{
+			return str_replace('_', '/', $file).EXT;
+		}
+
+		foreach (static::$paths as $path)
+		{
+			if (file_exists($path = $path.strtolower($file).EXT))
+			{
+				return $path;
+			}
+		}
+
+		// If we could not find the class file in any of the auto-loaded locations
+		// according to the Laravel naming standard, we will search the libraries
+		// directory for the class according to the PSR-0 naming standard. If the
+		// file exists, we will add the class namespace to the array of registered
+		// libraries that are loaded following the PSR-0 standard.
+		if (file_exists($path = LIBRARY_PATH.str_replace('_', '/', $file).EXT))
+		{
+			static::$libraries[] = $namespace;
+
+			return $path;
+		}
+	}
+
+}

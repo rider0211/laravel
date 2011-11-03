@@ -1,79 +1,54 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-<head>
-	<meta charset="utf-8"> 
-	<title>Welcome To Laravel!</title> 
- 
-	<link href="http://fonts.googleapis.com/css?family=Quattrocento&amp;v1" rel="stylesheet" type="text/css" media="all" />
-	<link href="http://fonts.googleapis.com/css?family=Ubuntu&amp;v1" rel="stylesheet" type="text/css" media="all" />
-	<link href='http://fonts.googleapis.com/css?family=Lobster+Two' rel='stylesheet' type='text/css'>
+	<head>
+		<meta charset="utf-8">
 
-	<style type="text/css">
-		body {
-			background-color: #eee;
-			color: #6d6d6d;
-			font-family: 'Ubuntu';
-			font-size: 15px;
-		}
+		<title>Laravel - A Framework For Web Artisans</title>
 
-		a {
-			color: #7089b3;
-			font-weight: bold;
-			text-decoration: none;
-		}
+		<style>
+			<?php echo file_get_contents(PUBLIC_PATH.'css/laravel.css'); ?>
+		</style>
+	</head>
+	<body>
+		<div id="main">
+			<img src="http://laravel.com/img/splash/check.png" class="marker">
 
-		h1.laravel {
-			font-family: 'Lobster Two', Helvetica, serif;				
-			font-size: 60px;
-			margin: 0 0 15px -10px;
-			padding: 0;
-			text-shadow: -1px 1px 1px #fff;
-		}
+			<h1>Welcome To Laravel</h1>
 
-		h2 {
-			font-family: 'Quattrocento', serif;
-			font-size: 30px;
-			margin: 30px 0 0 0;
-			padding: 0;
-			text-shadow: -1px 1px 1px #fff;
-		}
+			<h2>A Framework For Web Artisans</h2>
 
-		p {
-			margin: 10px 0 0 0;
-			line-height: 25px;
-		}
+			<p>
+				You have successfully installed the Laravel framework. Laravel is a simple framework
+				that helps web artisans create beautiful, creative applications using elegant, expressive
+				syntax. You'll love using it.
+			</p>
 
-		#header {
-			margin: 0 auto;
-			margin-bottom: 15px;
-			margin-top: 20px;
-			width: 80%;
-		}
+			<h3>Learn the terrain.</h3>
 
-		.wrapper {
-			background-color: #fff;
-			border-radius: 10px;
-			margin: 0 auto;
-			padding: 10px;
-			width: 80%;
-		}
+			<p>
+				You've landed yourself on our default home page. The route that
+				is generating this page lives at:
+			</p>
 
-		.wrapper h2:first-of-type {
-			margin-top: 0;
-		}
-	</style>
-</head> 
-<body>
-	<div id="header">
-		<h1 class="laravel">Laravel</h1>
-	</div>
+			<pre><code>APP_PATH/routes.php</code></pre>
 
-	<div class="wrapper">
-		<h2>Installation Complete!</h2>
+			<p>And the view sitting before you can be found at:</p>
 
-		<p>Ready to dig in? Start building your application in the <strong>application/routes.php</strong> file.</p>
+			<pre><code>APP_PATH/views/home/index.php</code></pre>
 
-		<p>Need to learn more? Peruse our <a href="http://laravel.com">wonderful documentation</a>.</p>
-	</div>
-</body> 
+			<h3>Create something beautiful.</h3>
+
+			<p>
+				Now that you're up and running, it's time to start creating!
+				Here are some links to help you get started:
+			</p>
+
+			<ul>
+				<li><a href="http://laravel.com">Official Website</a></li>
+				<li><a href="http://forums.laravel.com">Laravel Forums</a></li>
+				<li><a href="http://github.com/laravel/laravel">GitHub Repository</a></li>
+			</ul>
+
+		</div>
+	</body>
 </html>
