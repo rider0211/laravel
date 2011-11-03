@@ -12,7 +12,7 @@ return array(
 	| Since HTTP is stateless, sessions are used to maintain "state" across
 	| multiple requests from the same user of your application.
 	|
-	| Supported Drivers: 'cookie', 'file', 'database', 'memcached', 'apc', 'redis'.
+	| Supported Drivers: 'cookie', 'file', 'db', 'memcached', 'apc'.
 	|
 	*/
 
@@ -25,27 +25,11 @@ return array(
 	|
 	| The database table on which the session should be stored. 
 	|
-	| This option is only relevant when using the "database" session driver.
+	| This option is only relevant when using the "db" session driver.
 	|
 	*/
 
 	'table' => 'sessions',
-
-	/*
-	|--------------------------------------------------------------------------
-	| Session Garbage Collection Probability
-	|--------------------------------------------------------------------------
-	|
-	| Some session drivers require the manual clean-up of expired sessions.
-	| This option specifies the probability of session garbage collection
-	| occuring for any given request. 
-	|
-	| For example, the default value states that garbage collection has about
-	| a 2% (2 / 100) chance of occuring for any given request.
-	|
-	*/
-
-	'sweepage' => array(2, 100),
 
 	/*
 	|--------------------------------------------------------------------------
@@ -71,17 +55,6 @@ return array(
 
 	/*
 	|--------------------------------------------------------------------------
-	| Session Cookie Name
-	|--------------------------------------------------------------------------
-	|
-	| The name that should be given to the session cookie.
-	|
-	*/
-
-	'cookie' => 'laravel_session',
-
-	/*
-	|--------------------------------------------------------------------------
 	| Session Cookie Path
 	|--------------------------------------------------------------------------
 	|
@@ -104,13 +77,28 @@ return array(
 
 	/*
 	|--------------------------------------------------------------------------
-	| HTTPS Only Session Cookie
+	| Session Cookie HTTPS
 	|--------------------------------------------------------------------------
 	|
-	| Determines if the cookie should only be sent over HTTPS.
+	| Determines if the session cookie should only be transported over HTTPS.
 	|
 	*/
 
-	'secure' => false,
+	'https' => false,
+
+	/*
+	|--------------------------------------------------------------------------
+	| HTTP Only Session Cookie
+	|--------------------------------------------------------------------------
+	|
+	| Determines if the session cookie should only be accessible over HTTP.
+	|
+	| Note: The intention of the "HTTP Only" option is to keep cookies from
+	|       being accessed by client-side scripting languages. However, this
+	|       setting should not be viewed as providing total XSS protection.
+	|
+	*/
+
+	'http_only' => false,
 
 );

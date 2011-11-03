@@ -4,81 +4,41 @@ return array(
 
 	/*
 	|--------------------------------------------------------------------------
-	| Authentication Username
+	| Retrieve Users By ID
 	|--------------------------------------------------------------------------
 	|
-	} This option should be set to the "username" property of your users.
-	| Typically, this will be set to "email" or "username".
+	| This method is called by the Auth::user() method when attempting to
+	| retrieve a user by their user ID, such as when retrieving a user by the
+	| user ID stored in the session.
 	|
-	| The value of this property will be used by the "attempt" closure when
-	| searching for users by their username. It will also be used when the
-	| user is set to be "remembered", as the username is embedded into the
-	| encrypted cookie and is used to verify the user's identity.
+	| You are free to change this method for your application however you wish.
 	|
 	*/
 
-	'username' => 'email',
-
-	/*
-	|--------------------------------------------------------------------------
-	| Retrieve The Current User
-	|--------------------------------------------------------------------------
-	|
-	| This closure is called by the Auth::user() method when attempting to
-	| retrieve a user by their ID stored in the session.
-	|
-	| Simply return an object representing the user with the given ID. Or, if
-	| no user with the given ID is registered to use your application, you do
-	| not need to return anything.
-	|
-	| Of course, a simple, elegant authentication solution is already provided
-	| for you using Eloquent and the default Laravel hashing engine.
-	|
-	*/
-
-	'user' => function($id)
+	'by_id' => function($id)
 	{
-		if ( ! is_null($id) and filter_var($id, FILTER_VALIDATE_INT) !== false)
-		{
-			return User::find($id);
-		} 
+		return User::find($id);
 	},
 
 	/*
 	|--------------------------------------------------------------------------
-	| Authenticate User Credentials
+	| Retrieve Users By Username
 	|--------------------------------------------------------------------------
 	|
-	| This closure is called by the Auth::attempt() method when attempting to
-	| authenticate a user that is logging into your application.
+	| This method is called by the Auth::check() method when attempting to
+	| retrieve a user by their username, such as when checking credentials
+	| received from a login form.
 	|
-	| If the provided credentials are correct, simply return an object that
-	| represents the user being authenticated. If the credentials are not
-	| valid, don't return anything.
+	| You are free to change this method for your application however you wish.
 	|
-	| Note: If a user object is returned, it must have an "id" property.
+	| Note: This method must return an object that has "id" and "password"
+	|       properties. The type of object returned does not matter.
 	|
 	*/
 
-	'attempt' => function($username, $password, $config)
+	'by_username' => function($username)
 	{
-		if ( ! is_null($user = User::where($config['username'], '=', $username)->first()))
-		{
-			if (Hasher::check($password, $user->password)) return $user;
-		}
+		return User::where_email($username)->first();
 	},
-
-	/*
-	|--------------------------------------------------------------------------
-	| Logout
-	|--------------------------------------------------------------------------
-	|
-	| Here you may do anything that needs to be done when a user logs out of
-	| your application, such as call the logout method on a third-party API
-	| you are using for authentication, or anything else you desire.
-	|
-	*/
-
-	'logout' => function($user) {}
 
 );

@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<meta charset="utf-8"> 
-	<title>Welcome To Laravel!</title> 
+	<meta charset="utf-8">
+	<title>Laravel - <?php echo $severity; ?></title>
  
 	<link href="http://fonts.googleapis.com/css?family=Quattrocento&amp;v1" rel="stylesheet" type="text/css" media="all" />
 	<link href="http://fonts.googleapis.com/css?family=Ubuntu&amp;v1" rel="stylesheet" type="text/css" media="all" />
@@ -14,12 +14,6 @@
 			color: #6d6d6d;
 			font-family: 'Ubuntu';
 			font-size: 15px;
-		}
-
-		a {
-			color: #7089b3;
-			font-weight: bold;
-			text-decoration: none;
 		}
 
 		h1.laravel {
@@ -43,6 +37,19 @@
 			line-height: 25px;
 		}
 
+		pre {
+			font-size: 12px;
+		}
+
+		pre.context {
+			margin: 0; padding: 0;
+		}
+
+		pre.highlight {
+			font-weight: bold;
+			color: #990000;
+		}
+
 		#header {
 			margin: 0 auto;
 			margin-bottom: 15px;
@@ -50,7 +57,7 @@
 			width: 80%;
 		}
 
-		.wrapper {
+		#wrapper {
 			background-color: #fff;
 			border-radius: 10px;
 			margin: 0 auto;
@@ -58,22 +65,38 @@
 			width: 80%;
 		}
 
-		.wrapper h2:first-of-type {
+		#wrapper h2:first-of-type {
 			margin-top: 0;
 		}
 	</style>
 </head> 
 <body>
 	<div id="header">
-		<h1 class="laravel">Laravel</h1>
+		<h1 class="laravel"><?php echo $severity; ?></h1>
 	</div>
 
-	<div class="wrapper">
-		<h2>Installation Complete!</h2>
+	<div id="wrapper"> 
+		<h2>Message:</h2>
 
-		<p>Ready to dig in? Start building your application in the <strong>application/routes.php</strong> file.</p>
+		<p><?php echo $message; ?></p>
 
-		<p>Need to learn more? Peruse our <a href="http://laravel.com">wonderful documentation</a>.</p>
-	</div>
+		<h2>Stack Trace:</h2>
+
+		<pre><?php echo $trace; ?></pre>
+
+		<h2>Snapshot:</h2>
+
+		<p>
+		<?php if (count($contexts) > 0): ?>
+
+			<?php foreach($contexts as $num => $context): ?>
+				<pre class="context <?php echo ($line == $num) ? 'highlight' : ''; ?>"><?php echo htmlentities($num.': '.$context); ?></pre>
+			<?php endforeach; ?>
+
+		<?php else: ?>
+			Snapshot Unavailable.
+		<?php endif; ?>
+		</p>
+	</div> 
 </body> 
 </html>

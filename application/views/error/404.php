@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<meta charset="utf-8"> 
-	<title>Welcome To Laravel!</title> 
- 
+	<meta charset="utf-8">
+	<title>404 - Not Found</title>
+
 	<link href="http://fonts.googleapis.com/css?family=Quattrocento&amp;v1" rel="stylesheet" type="text/css" media="all" />
 	<link href="http://fonts.googleapis.com/css?family=Ubuntu&amp;v1" rel="stylesheet" type="text/css" media="all" />
 	<link href='http://fonts.googleapis.com/css?family=Lobster+Two' rel='stylesheet' type='text/css'>
@@ -13,7 +13,7 @@
 			background-color: #eee;
 			color: #6d6d6d;
 			font-family: 'Ubuntu';
-			font-size: 15px;
+			font-size: 16px;
 		}
 
 		a {
@@ -50,7 +50,7 @@
 			width: 80%;
 		}
 
-		.wrapper {
+		#wrapper {
 			background-color: #fff;
 			border-radius: 10px;
 			margin: 0 auto;
@@ -58,22 +58,30 @@
 			width: 80%;
 		}
 
-		.wrapper h2:first-of-type {
+		#wrapper h2:first-of-type {
 			margin-top: 0;
 		}
 	</style>
-</head> 
+</head>
 <body>
 	<div id="header">
-		<h1 class="laravel">Laravel</h1>
+		<?php
+			$messages = array("We're lost.", "This doesn't look familiar.", "We need a map.");
+			$message = $messages[mt_rand(0, 2)];
+		?>
+
+		<h1 class="laravel"><?php echo $message; ?></h1>
 	</div>
 
-	<div class="wrapper">
-		<h2>Installation Complete!</h2>
+	<div id="wrapper">
+		<?php
+			$apologies = array("This is embarrassing.", "Don't give up on us.", "We're really sorry.");
+			$apology = $apologies[mt_rand(0, 2)];
+		?>
 
-		<p>Ready to dig in? Start building your application in the <strong>application/routes.php</strong> file.</p>
+		<h2><?php echo $apology; ?></h2>
 
-		<p>Need to learn more? Peruse our <a href="http://laravel.com">wonderful documentation</a>.</p>
+		<p>We couldn't find the resource you requested. Would you like go to our <a href="<?php echo System\Config::get('application.url'); ?>">home page</a> instead?</p>
 	</div>
-</body> 
+</body>
 </html>

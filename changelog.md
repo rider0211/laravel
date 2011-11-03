@@ -1,13 +1,5 @@
 # Laravel Change Log
 
-## Version 1.5.9
-
-- Fixed bug in Eloquent relationship loading.
-
-### Upgrading from 1.5.8
-
-- Replace **system** directory.
-
 ## Version 1.5.8
 
 - Fixed bug in form class that prevent name attributes from being set properly.

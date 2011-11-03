@@ -42,27 +42,27 @@ return array(
 	|
 	*/
 
-	'before' => function()
+	'before' => function($method, $uri)
 	{
 		// Do stuff before every request to your application.
 	},
 
 
-	'after' => function($response)
+	'after' => function($response, $method, $uri)
 	{
-		Input::flash();
+		// Do stuff after every request to your application.
 	},
 
 
 	'auth' => function()
 	{
-		if (Auth::guest()) return Redirect::to_login();
+		return ( ! Auth::check()) ? Redirect::to_login() : null;
 	},
 
 
 	'csrf' => function()
 	{
-		if (Request::forged()) return Response::error('500');
+		return (Input::get('csrf_token') !== Form::raw_token()) ? Response::error('500') : null;
 	},
 
 );

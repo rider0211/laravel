@@ -29,18 +29,15 @@ return array(
 
 	/*
 	|--------------------------------------------------------------------------
-	| Application Key
+	| Application Language
 	|--------------------------------------------------------------------------
 	|
-	| The application key should be a random, 32 character string.
-	|
-	| This key is used by the encryption and cookie classes to generate secure
-	| encrypted strings and hashes. It is extremely important that this key
-	| remain secret and should not be shared with anyone.
+	| The default language of your application. This language will be used by
+	| Lang library as the default language when doing string localization.
 	|
 	*/
 
-	'key' => '',
+	'language' => 'en',
 
 	/*
 	|--------------------------------------------------------------------------
@@ -56,35 +53,6 @@ return array(
 
 	/*
 	|--------------------------------------------------------------------------
-	| Application Language
-	|--------------------------------------------------------------------------
-	|
-	| The default language of your application. This language will be used by
-	| Lang library as the default language when doing string localization.
-	|
-	*/
-
-	'language' => 'en',
-
-	/*
-	|--------------------------------------------------------------------------
-	| SSL Link Generation
-	|--------------------------------------------------------------------------
-	|
-	| Many sites use SSL to protect their users data. However, you may not
-	| always be able to use SSL on your development machine, meaning all HTTPS
-	| will be broken during development.
-	|
-	| For this reason, you may wish to disable the generation of HTTPS links
-	| throughout your application. This option does just that. All attempts to
-	| generate HTTPS links will generate regular HTTP links instead.
-	|
-	*/
-
-	'ssl' => true,
-
-	/*
-	|--------------------------------------------------------------------------
 	| Application Timezone
 	|--------------------------------------------------------------------------
 	|
@@ -97,48 +65,51 @@ return array(
 
 	/*
 	|--------------------------------------------------------------------------
-	| Class Aliases
+	| Auto-Loaded Packages
 	|--------------------------------------------------------------------------
 	|
-	| Here, you can specify any class aliases that you would like registered
-	| when Laravel loads. Aliases are lazy-loaded, so add as many as you want.
+	| The packages that should be auto-loaded each time Laravel handles
+	| a request. These should generally be packages that you use on almost
+	| every request to your application.
 	|
-	| Aliases make it more convenient to use namespaced classes. Instead of
-	| referring to the class using its full namespace, you may simply use
-	| the alias defined here.
+	| Each package specified here will be bootstrapped and can be conveniently
+	| used by your application's routes, models, and libraries.
 	|
-	| We have already aliased common Laravel classes to make your life easier.
+	| Note: The package names in this array should correspond to a package
+	|       directory in application/packages.
 	|
 	*/
 
-	'aliases' => array(
-		'Asset'      => 'Laravel\\Asset',
-		'Auth'       => 'Laravel\\Security\\Auth',
-		'Benchmark'  => 'Laravel\\Benchmark',
-		'Cache'      => 'Laravel\\Cache\\Manager',
-		'Config'     => 'Laravel\\Config',
-		'Controller' => 'Laravel\\Routing\\Controller',
-		'Cookie'     => 'Laravel\\Cookie',
-		'Crypter'    => 'Laravel\\Security\\Crypter',
-		'DB'         => 'Laravel\\Database\\Manager',
-		'Eloquent'   => 'Laravel\\Database\\Eloquent\\Model',
-		'File'       => 'Laravel\\File',
-		'Form'       => 'Laravel\\Form',
-		'Hasher'     => 'Laravel\\Security\\Hasher',
-		'HTML'       => 'Laravel\\HTML',
-		'Inflector'  => 'Laravel\\Inflector',
-		'Input'      => 'Laravel\\Input',
-		'IoC'        => 'Laravel\\IoC',
-		'Lang'       => 'Laravel\\Lang',
-		'URL'        => 'Laravel\\URL',
-		'Redirect'   => 'Laravel\\Redirect',
-		'Redis'      => 'Laravel\\Redis',
-		'Request'    => 'Laravel\\Request',
-		'Response'   => 'Laravel\\Response',
-		'Session'    => 'Laravel\\Session',
-		'Str'        => 'Laravel\\Str',
-		'Validator'  => 'Laravel\\Validation\\Validator',
-		'View'       => 'Laravel\\View',
-	),
+	'packages' => array(),
+
+	/*
+	|--------------------------------------------------------------------------
+	| Active Modules
+	|--------------------------------------------------------------------------
+	|
+	| Modules are a convenient way to organize your application into logical
+	| components. Each module may have its own libraries, models, routes,
+	| views, language files, and configuration.
+	|
+	| Here you may specify which modules are "active" for your application.
+	| This simply gives Laravel an easy way to know which directories to
+	| check when auto-loading your classes, routes, and views.
+	|
+	*/
+
+	'modules' => array(),
+
+	/*
+	|--------------------------------------------------------------------------
+	| Application Key
+	|--------------------------------------------------------------------------
+	|
+	| Your application key should be a 32 character string that is totally
+	| random and secret. This key is used by the encryption class to generate
+	| secure, encrypted strings.
+	|
+	*/
+
+	'key' => '',
 
 );
