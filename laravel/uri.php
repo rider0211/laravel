@@ -86,7 +86,6 @@ class URI {
 		{
 			return substr($uri, strlen($value));
 		}
-		return $uri;
 	}
 
 	/**
