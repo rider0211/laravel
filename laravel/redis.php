@@ -258,10 +258,7 @@ class Redis {
 	 */
 	public function __destruct()
 	{
-		if ($this->connection)
-		{
-			fclose($this->connection);
-		}
+		fclose($this->connection);
 	}
 
 }
