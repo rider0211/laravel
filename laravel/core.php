@@ -7,7 +7,7 @@
  * basic application, laravel, and public paths.
  */
 define('EXT', '.php');
-define('CRLF', "\r\n");
+define('CRLF', chr(13).chr(10));
 define('BLADE_EXT', '.blade.php');
 define('APP_PATH', realpath($application).'/');
 define('PUBLIC_PATH', realpath($public).'/');
