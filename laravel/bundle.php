@@ -159,7 +159,7 @@ class Bundle {
 	 */
 	public static function assets($bundle)
 	{
-		return ($bundle != DEFAULT_BUNDLE) ? URL::base()."/bundles/{$bundle}/" : URL::base().'/';
+		return ($bundle != DEFAULT_BUNDLE) ? PUBLIC_PATH."bundles/{$bundle}/" : PUBLIC_PATH;
 	}
 
 	/**
@@ -271,10 +271,6 @@ class Bundle {
 	/**
 	 * Detect all of the existing bundles in the application.
 	 *
-	 * The names of the bundles are cached so this operation will be only be
-	 * performed once and then the same array will be returned on each later
-	 * request for the bundle names.
-	 *
 	 * @return array
 	 */
 	public static function all()
@@ -283,9 +279,17 @@ class Bundle {
 
 		$bundles = array();
 
-		foreach (array_filter(glob(BUNDLE_PATH.'*'), 'is_dir') as $bundle)
+		$files = glob(BUNDLE_PATH.'*');
+
+		// When open_basedir is enabled the glob function returns false on
+		// an empty array. We'll check for this and return an empty array
+		// if the bundle directory doesn't have any bundles.
+		if ($files !== false)
 		{
-			$bundles[] = basename($bundle);
+			foreach (array_filter($files, 'is_dir') as $bundle)
+			{
+				$bundles[] = basename($bundle);
+			}			
 		}
 
 		return static::$bundles = $bundles;
