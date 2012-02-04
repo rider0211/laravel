@@ -142,7 +142,7 @@ class Route {
 	 *
 	 * If the route belongs to a bundle, the bundle's global filters are returned too.
 	 *
-	 * @param  string  $event
+	 * @param  string  $filter
 	 * @return array
 	 */
 	protected function filters($event)

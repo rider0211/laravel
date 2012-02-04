@@ -93,7 +93,7 @@ class File {
 	/**
 	 * Get the file size of a given file.
 	 *
-	 * @param  string  $path
+	 * @param  string  $file
 	 * @return int
 	 */
 	public static function size($path)
@@ -149,7 +149,7 @@ class File {
 	 *		$image = File::is(array('jpg', 'png', 'gif'), 'path/to/file');
 	 * </code>
 	 *
-	 * @param  array|string  $extensions
+	 * @param  array|string  $extension
 	 * @param  string        $path
 	 * @return bool
 	 */

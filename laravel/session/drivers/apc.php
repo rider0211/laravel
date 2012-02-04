@@ -5,14 +5,14 @@ class APC implements Driver {
 	/**
 	 * The APC cache driver instance.
 	 *
-	 * @var Laravel\Cache\Drivers\APC
+	 * @var Cache\Drivers\APC
 	 */
 	private $apc;
 
 	/**
 	 * Create a new APC session driver instance.
 	 *
-	 * @param  Laravel\Cache\Drivers\APC  $apc
+	 * @param  Cache\Drivers\APC  $apc
 	 * @return void
 	 */
 	public function __construct(\Laravel\Cache\Drivers\APC $apc)

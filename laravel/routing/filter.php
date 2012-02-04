@@ -155,7 +155,6 @@ class Filter_Collection {
 	 *
 	 * @param  string|array  $filters
 	 * @param  mixed         $parameters
-	 * @return void
 	 */
 	public function __construct($filters, $parameters = null)
 	{

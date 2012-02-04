@@ -625,7 +625,7 @@ class Query {
 	/**
 	 * Get an aggregate value.
 	 *
-	 * @param  string  $aggregator
+	 * @param  string  $aggregate
 	 * @param  string  $column
 	 * @return mixed
 	 */

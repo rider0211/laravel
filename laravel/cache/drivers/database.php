@@ -101,7 +101,7 @@ class Database extends Driver {
 	/**
 	 * Get a query builder for the database table.
 	 *
-	 * @return Laravel\Database\Query
+	 * @return Query
 	 */
 	protected function table()
 	{

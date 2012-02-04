@@ -6,7 +6,7 @@ class Console {
 	 * Parse the command line arguments and return the results.
 	 *
 	 * @param  array  $argv
-	 * @return array
+	 * @param  array
 	 */
 	public static function options($argv)
 	{

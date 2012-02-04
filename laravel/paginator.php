@@ -71,10 +71,10 @@ class Paginator {
 	 * Create a new Paginator instance.
 	 *
 	 * @param  array  $results
+	 * @param  int    $last
 	 * @param  int    $page
 	 * @param  int    $total
 	 * @param  int    $per_page
-	 * @param  int    $last
 	 * @return void
 	 */
 	protected function __construct($results, $page, $total, $per_page, $last)
@@ -246,7 +246,6 @@ class Paginator {
 	 *		echo $paginator->previous('Go Back');
 	 * </code>
 	 *
-	 * @param  string  $text
 	 * @return string
 	 */
 	public function previous($text = null)
@@ -267,7 +266,6 @@ class Paginator {
 	 *		echo $paginator->next('Skip Forwards');
 	 * </code>
 	 *
-	 * @param  string  $text
 	 * @return string
 	 */
 	public function next($text = null)
@@ -366,7 +364,7 @@ class Paginator {
 	 *
 	 * @param  int     $page
 	 * @param  string  $text
-	 * @param  string  $class
+	 * @param  string  $attributes
 	 * @return string
 	 */
 	protected function link($page, $text, $class)

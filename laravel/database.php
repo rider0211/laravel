@@ -26,7 +26,7 @@ class Database {
 	 * </code>
 	 *
 	 * @param  string      $connection
-	 * @return Database\Connection
+	 * @return Connection
 	 */
 	public static function connection($connection = null)
 	{
@@ -62,7 +62,7 @@ class Database {
 	 * Create a new database connector instance.
 	 *
 	 * @param  string     $driver
-	 * @return Database\Connectors\Connector
+	 * @return Connector
 	 */
 	protected static function connector($driver)
 	{
@@ -90,7 +90,7 @@ class Database {
 	 *
 	 * @param  string          $table
 	 * @param  string          $connection
-	 * @return Database\Query
+	 * @return Queries\Query
 	 */
 	public static function table($table, $connection = null)
 	{

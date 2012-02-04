@@ -12,7 +12,6 @@ class Messages {
 	/**
 	 * Create a new Messages instance.
 	 *
-	 * @param  array  $messages
 	 * @return void
 	 */
 	public function __construct($messages = array())

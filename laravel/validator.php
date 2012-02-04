@@ -946,7 +946,7 @@ class Validator {
 	/**
 	 * Get the database connection for the Validator.
 	 *
-	 * @return Database\Connection
+	 * @return Connection
 	 */
 	protected function db()
 	{

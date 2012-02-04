@@ -5,7 +5,7 @@ class Memcached {
 	/**
 	 * The Memcached connection instance.
 	 *
-	 * @var Memcached
+	 * @var Memcache
 	 */
 	protected static $connection;
 
@@ -20,7 +20,7 @@ class Memcached {
 	 *		Memcached::connection()->set('name', 'Taylor');
 	 * </code>
 	 *
-	 * @return Memcached
+	 * @return Memcache
 	 */
 	public static function connection()
 	{
@@ -36,7 +36,7 @@ class Memcached {
 	 * Create a new Memcached connection instance.
 	 *
 	 * @param  array     $servers
-	 * @return Memcached
+	 * @return Memcache
 	 */
 	protected static function connect($servers)
 	{

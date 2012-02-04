@@ -113,7 +113,7 @@ class Cookie {
 	 * @param  string  $path
 	 * @param  string  $domain
 	 * @param  bool    $secure
-	 * @return void
+	 * @return bool
 	 */
 	public static function put($name, $value, $minutes = 0, $path = '/', $domain = null, $secure = false)
 	{

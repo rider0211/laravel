@@ -154,7 +154,6 @@ class Str {
 	 * </code>
 	 *
 	 * @param  string  $value
-	 * @param  int     $count
 	 * @return string
 	 */
 	public static function plural($value, $count = 2)
@@ -178,7 +177,7 @@ class Str {
 	 * </code>
 	 *
 	 * @param  string  $value
-	 * @param  int     $words
+	 * @param  int     $length
 	 * @param  string  $end
 	 * @return string
 	 */

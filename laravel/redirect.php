@@ -28,7 +28,7 @@ class Redirect extends Response {
 	 *
 	 * @param  string    $url
 	 * @param  int       $status
-	 * @return Redirect
+	 * @return Response
 	 */
 	public static function to_secure($url, $status = 302)
 	{
@@ -82,7 +82,7 @@ class Redirect extends Response {
 	 *
 	 * @param  string          $key
 	 * @param  mixed           $value
-	 * @return Redirect
+	 * @return Response
 	 */
 	public function with($key, $value)
 	{

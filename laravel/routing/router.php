@@ -254,8 +254,8 @@ class Router {
 	/**
 	 * Locate the URI segment matching a controller name.
 	 *
-	 * @param  array   $segments
 	 * @param  string  $directory
+	 * @param  array   $segments
 	 * @return int
 	 */
 	protected static function locate($segments, $directory)
