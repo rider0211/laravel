@@ -1,5 +1,6 @@
 <?php namespace Laravel; defined('DS') or die('No direct script access.');
 
+use Laravel\Routing\Router;
 use FilesystemIterator as fIterator;
 
 class Bundle {
@@ -114,7 +115,7 @@ class Bundle {
 		// By setting the bundle property on the router the router knows what
 		// value to replace the (:bundle) place-holder with when the bundle
 		// routes are added, keeping the routes flexible.
-		Routing\Router::$bundle = static::option($bundle, 'handles');
+		Router::$bundle = static::option($bundle, 'handles');
 
 		if ( ! static::routed($bundle) and file_exists($path))
 		{
@@ -167,19 +168,6 @@ class Bundle {
 	public static function exists($bundle)
 	{
 		return $bundle == DEFAULT_BUNDLE or in_array(strtolower($bundle), static::names());
-	}
-
-	/**
-	 * Get the full path location of a given bundle.
-	*
-	* @param  string  $bundle
-	* @return string
-	 */
-	public static function location($bundle)
-	{
-		$location = array_get(static::$bundles, $bundle.'.location');
-
-		return path('bundle').str_finish($location, DS);
 	}
 
 	/**
@@ -242,9 +230,14 @@ class Bundle {
 	 */
 	public static function path($bundle)
 	{
-		if (is_null($bundle)) return static::path(DEFAULT_BUNDLE);
-
-		return ($bundle == DEFAULT_BUNDLE) ? path('app') : static::location($bundle);
+		if (is_null($bundle) or $bundle === DEFAULT_BUNDLE)
+		{
+			return path('app');
+		}
+		else if ($location = array_get(static::$bundles, $bundle.'.location'))
+		{
+			return str_finish(path('bundle').$location, DS);
+		}
 	}
 
 	/**
