@@ -1,4 +1,4 @@
-<?php namespace Laravel; defined('DS') or die('No direct script access.');
+<?php namespace Laravel;
 
 class Blade {
 
@@ -49,6 +49,10 @@ class Blade {
 	/**
 	 * Rewrites Blade echo statements into PHP echo statements.
 	 *
+	 * Blade echo statements are simply PHP statement enclosed within double curly
+	 * braces. For example, {{$content}} will simply echo out the content variable
+	 * to the output buffer.
+	 *
 	 * @param  string  $value
 	 * @return string
 	 */
@@ -59,6 +63,10 @@ class Blade {
 
 	/**
 	 * Rewrites Blade structure openings into PHP structure openings.
+	 *
+	 * By "structures", we mean the if, elseif, foreach, for, and while statements.
+	 * All of these structures essentially have the same format, and can be lumped
+	 * into a single regular expression.
 	 *
 	 * @param  string  $value
 	 * @return string

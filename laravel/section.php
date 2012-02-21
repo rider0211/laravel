@@ -19,21 +19,31 @@ class Section {
 	/**
 	 * Start injecting content into a section.
 	 *
+	 * After calling this method, the "stop" method may be used to stop injecting
+	 * content. A raw string may also be passed as the second argument, and will
+	 * cause the given string to be injected into the section directly without
+	 * using output buffering.
+	 *
 	 * <code>
 	 *		// Start injecting into the "header" section
 	 *		Section::start('header');
 	 *
-	 *		// Inject a raw string into the "header" section without buffering
+	 *		// Inject a raw string into the "header" section
 	 *		Section::start('header', '<title>Laravel</title>');
 	 * </code>
 	 *
-	 * @param  string          $section
-	 * @param  string|Closure  $content
+	 * @param  string  $section
+	 * @param  string  $content
 	 * @return void
 	 */
 	public static function start($section, $content = '')
 	{
-		if ($content === '') ob_start() and static::$last[] = $section;
+		if ($content == '')
+		{
+			ob_start();
+
+			static::$last[] = $section;
+		}
 
 		static::append($section, $content);
 	}

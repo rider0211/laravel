@@ -12,7 +12,8 @@ class Messages {
 	/**
 	 * Create a new Messages instance.
 	 *
-	 * @param  array  $messages
+	 * The Messages class provides a convenient wrapper around an array of strings.
+	 *
 	 * @return void
 	 */
 	public function __construct($messages = array())
@@ -61,14 +62,14 @@ class Messages {
 	}
 
 	/**
-	 * Get the first message from the container for a given key.
+	 * Get the first message for a given key.
 	 *
 	 * <code>
-	 *		// Echo the first message for the e-mail attribute
-	 *		echo $messages->first('email');
+	 *		// Get the first message for the e-mail attribute
+	 *		$email = $messages->first('email');
 	 *
 	 *		// Format the first message for the e-mail attribute
-	 *		echo $messages->first('email', '<p>:message</p>');
+	 *		$email = $messages->first('email', '<p>:message</p>');
 	 * </code>
 	 *
 	 * @param  string  $key
@@ -81,14 +82,14 @@ class Messages {
 	}
 
 	/**
-	 * Get all of the messages from the container for a given key.
+	 * Get all of the messages for a key.
 	 *
 	 * <code>
-	 *		// Echo all of the messages for the e-mail attribute
-	 *		echo $messages->get('email');
+	 *		// Get all of the messages for the e-mail attribute
+	 *		$email = $messages->get('email');
 	 *
 	 *		// Format all of the messages for the e-mail attribute
-	 *		echo $messages->get('email', '<p>:message</p>');
+	 *		$email = $messages->get('email', '<p>:message</p>');
 	 * </code>
 	 *
 	 * @param  string  $key
@@ -106,7 +107,7 @@ class Messages {
 	}
 
 	/**
-	 * Get all of the messages for every key in the container.
+	 * Get all of the messages for every key.
 	 *
 	 * <code>
 	 *		// Get all of the messages in the collector

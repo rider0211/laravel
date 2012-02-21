@@ -1,4 +1,4 @@
-<?php namespace Laravel; defined('DS') or die('No direct script access.');
+<?php namespace Laravel;
 
 class Asset {
 
@@ -7,7 +7,7 @@ class Asset {
 	 *
 	 * @var array
 	 */
-	public static $containers = array();
+	protected static $containers = array();
 
 	/**
 	 * Get an asset container instance.
@@ -34,7 +34,7 @@ class Asset {
 	}
 
 	/**
-	 * Magic Method for calling methods on the default container.
+	 * Magic Method for calling methods on the default Asset container.
 	 *
 	 * <code>
 	 *		// Call the "styles" method on the default container
@@ -61,13 +61,6 @@ class Asset_Container {
 	public $name;
 
 	/**
-	 * The bundle that the assets belong to.
-	 *
-	 * @var string
-	 */
-	public $bundle = DEFAULT_BUNDLE;
-
-	/**
 	 * All of the registered assets.
 	 *
 	 * @var array
@@ -78,6 +71,7 @@ class Asset_Container {
 	 * Create a new asset container instance.
 	 *
 	 * @param  string  $name
+	 * @param  HTML    $html
 	 * @return void
 	 */
 	public function __construct($name)
@@ -89,8 +83,8 @@ class Asset_Container {
 	 * Add an asset to the container.
 	 *
 	 * The extension of the asset source will be used to determine the type of
-	 * asset being registered (CSS or JavaScript). When using a non-standard
-	 * extension, the style/script methods may be used to register assets.
+	 * asset being registered (CSS or JavaScript). If you are using a non-standard
+	 * extension, you may use the style or script methods to register assets.
 	 *
 	 * <code>
 	 *		// Add an asset to the container
@@ -113,7 +107,7 @@ class Asset_Container {
 	{
 		$type = (pathinfo($source, PATHINFO_EXTENSION) == 'css') ? 'style' : 'script';
 
-		return $this->$type($name, $source, $dependencies, $attributes);
+		return call_user_func(array($this, $type), $name, $source, $dependencies, $attributes);
 	}
 
 	/**
@@ -150,29 +144,6 @@ class Asset_Container {
 	{
 		$this->register('script', $name, $source, $dependencies, $attributes);
 
-		return $this;
-	}
-
-	/**
-	 * Returns the full-path for an asset.
-	 *
-	 * @param  string  $source
-	 * @return string
-	 */
-	public function path($source)
-	{
-		return Bundle::assets($this->bundle).$source;
-	}
-
-	/**
-	 * Set the bundle that the container's assets belong to.
-	 *
-	 * @param  string           $bundle
-	 * @return Asset_Container
-	 */
-	public function bundle($bundle)
-	{
-		$this->bundle = $bundle;
 		return $this;
 	}
 
@@ -248,14 +219,6 @@ class Asset_Container {
 
 		$asset = $this->assets[$group][$name];
 
-		// If the bundle source is not a complete URL, we will go ahead and prepend
-		// the bundle's asset path to the source provided with the asset. This will
-		// ensure that we attach the correct path to the asset.
-		if (filter_var($asset['source'], FILTER_VALIDATE_URL) === false)
-		{
-			$asset['source'] = $this->path($asset['source']);
-		}
-
 		return HTML::$group($asset['source'], $asset['attributes']);
 	}
 
@@ -294,7 +257,7 @@ class Asset_Container {
 	{
 		// If the asset has no more dependencies, we can add it to the sorted list
 		// and remove it from the array of assets. Otherwise, we will not verify
-		// the asset's dependencies and determine if they've been sorted.
+		// the asset's dependencies and determine if they have already been sorted.
 		if (count($assets[$asset]['dependencies']) == 0)
 		{
 			$sorted[$asset] = $value;
@@ -326,8 +289,7 @@ class Asset_Container {
 	 * Verify that an asset's dependency is valid.
 	 *
 	 * A dependency is considered valid if it exists, is not a circular reference, and is
-	 * not a reference to the owning asset itself. If the dependency doesn't exist, no
-	 * error or warning will be given. For the other cases, an exception is thrown.
+	 * not a reference to the owning asset itself.
 	 *
 	 * @param  string  $asset
 	 * @param  string  $dependency
@@ -337,20 +299,16 @@ class Asset_Container {
 	 */
 	protected function dependency_is_valid($asset, $dependency, $original, $assets)
 	{
-		if ( ! isset($original[$dependency]))
+		if ( ! isset($original[$dependency])) return false;
+
+		if ($dependency === $asset)
 		{
-			return false;
-		}
-		elseif ($dependency === $asset)
-		{
-			throw new \Exception("Asset [$asset] is dependent on itself.");
+			throw new \LogicException("Asset [$asset] is dependent on itself.");
 		}
 		elseif (isset($assets[$dependency]) and in_array($asset, $assets[$dependency]['dependencies']))
 		{
-			throw new \Exception("Assets [$asset] and [$dependency] have a circular dependency.");
+			throw new \LogicException("Assets [$asset] and [$dependency] have a circular dependency.");
 		}
-
-		return true;
 	}
 
 }

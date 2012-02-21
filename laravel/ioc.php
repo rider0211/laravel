@@ -1,4 +1,4 @@
-<?php namespace Laravel; use Closure;
+<?php namespace Laravel;
 
 class IoC {
 
@@ -7,26 +7,49 @@ class IoC {
 	 *
 	 * @var array
 	 */
-	public static $registry = array();
+	protected static $registry = array();
 
 	/**
 	 * The resolved singleton instances.
 	 *
 	 * @var array
 	 */
-	public static $singletons = array();
+	protected static $singletons = array();
+
+	/**
+	 * Bootstrap the application IoC container.
+	 *
+	 * This method is called automatically the first time the class is loaded.
+	 *
+	 * @param  array  $registry
+	 * @return void
+	 */
+	public static function bootstrap($registry = array())
+	{
+		if (Config::load('container'))
+		{
+			static::$registry = Config::$items['container'];
+		}
+	}
 
 	/**
 	 * Register an object and its resolver.
 	 *
+	 * The IoC container instance is always passed to the resolver, allowing the
+	 * nested resolution of other objects from the container.
+	 *
+	 * <code>
+	 *		// Register an object and its resolver
+	 *		IoC::register('mailer', function($c) {return new Mailer;});
+	 * </code>
+	 *
 	 * @param  string   $name
 	 * @param  Closure  $resolver
-	 * @param  bool     $singleton
 	 * @return void
 	 */
-	public static function register($name, Closure $resolver, $singleton = false)
+	public static function register($name, $resolver, $singleton = false)
 	{
-		static::$registry[$name] = compact('resolver', 'singleton');
+		static::$registry[$name] = array('resolver' => $resolver, 'singleton' => $singleton);
 	}
 
 	/**
@@ -44,6 +67,7 @@ class IoC {
 	 * Register an object as a singleton.
 	 *
 	 * Singletons will only be instantiated the first time they are resolved.
+	 * The same instance will be returned on subsequent requests.
 	 *
 	 * @param  string   $name
 	 * @param  Closure  $resolver
@@ -55,7 +79,10 @@ class IoC {
 	}
 
 	/**
-	 * Register an existing instance as a singleton.
+	 * Register an instance as a singleton.
+	 *
+	 * This method allows you to register an already existing object instance
+	 * with the container to be managed as a singleton instance.
 	 *
 	 * <code>
 	 *		// Register an instance as a singleton in the container
@@ -72,26 +99,17 @@ class IoC {
 	}
 
 	/**
-	 * Register a controller with the IoC container.
-	 *
-	 * @param  string   $name
-	 * @param  Closure  $resolver
-	 * @return void
-	 */
-	public static function controller($name, $resolver)
-	{
-		static::register("controller: {$name}", $resolver);
-	}
-
-	/**
 	 * Resolve a core Laravel class from the container.
 	 *
 	 * <code>
 	 *		// Resolve the "laravel.router" class from the container
 	 *		$input = IoC::core('router');
 	 *
-	 *		// Equivalent resolution of the router using the "resolve" method
+	 *		// Equivalent resolution using the "resolve" method
 	 *		$input = IoC::resolve('laravel.router');
+	 *
+	 *		// Pass an array of parameters to the resolver
+	 *		$input = IoC::core('router', array('test'));
 	 * </code>
 	 *
 	 * @param  string  $name
@@ -110,7 +128,7 @@ class IoC {
 	 *		// Get an instance of the "mailer" object registered in the container
 	 *		$mailer = IoC::resolve('mailer');
 	 *
-	 *		// Get an instance of the "mailer" object and pass parameters to the resolver
+	 *		// Pass an array of parameters to the resolver
 	 *		$mailer = IoC::resolve('mailer', array('test'));
 	 * </code>
 	 *
@@ -125,12 +143,14 @@ class IoC {
 			return static::$singletons[$name];
 		}
 
+		if ( ! static::registered($name))
+		{
+			throw new \OutOfBoundsException("Error resolving [$name]. No resolver has been registered.");
+		}
+
 		$object = call_user_func(static::$registry[$name]['resolver'], $parameters);
 
-		// If the resolver is registering as a singleton resolver, we will cache
-		// the instance of the object in the container so we can resolve it next
-		// time without having to instantiate a brand new instance.
-		if (isset(static::$registry[$name]['singleton']))
+		if (isset(static::$registry[$name]['singleton']) and static::$registry[$name]['singleton'])
 		{
 			return static::$singletons[$name] = $object;
 		}
@@ -139,3 +159,10 @@ class IoC {
 	}
 
 }
+
+/**
+ * We only bootstrap the IoC container once the class has been
+ * loaded since there isn't any reason to load the container
+ * configuration until the class is first requested.
+ */
+IoC::bootstrap();

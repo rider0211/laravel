@@ -5,14 +5,14 @@ class Memcached implements Driver {
 	/**
 	 * The Memcache cache driver instance.
 	 *
-	 * @var Laravel\Cache\Drivers\Memcached
+	 * @var Cache\Drivers\Memcached
 	 */
 	private $memcached;
 
 	/**
 	 * Create a new Memcached session driver instance.
 	 *
-	 * @param  Laravel\Cache\Drivers\Memcached  $memcached
+	 * @param  Memcached  $memcached
 	 * @return void
 	 */
 	public function __construct(\Laravel\Cache\Drivers\Memcached $memcached)

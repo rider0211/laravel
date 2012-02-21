@@ -1,4 +1,4 @@
-<?php namespace Laravel; defined('DS') or die('No direct script access.');
+<?php namespace Laravel;
 
 class Autoloader {
 
@@ -10,204 +10,176 @@ class Autoloader {
 	public static $mappings = array();
 
 	/**
-	 * The directories that use the PSR-0 naming convention.
+	 * The PSR-0 compliant libraries registered with the loader.
 	 *
 	 * @var array
 	 */
-	public static $directories = array();
+	public static $libraries = array();
 
 	/**
-	 * The mappings for namespaces to directories.
+	 * The paths to be searched by the loader.
 	 *
 	 * @var array
 	 */
-	public static $namespaces = array();
-
-	/**
-	 * All of the class aliases registered with the auto-loader.
-	 *
-	 * @var array
-	 */
-	public static $aliases = array();
+	protected static $paths = array(MODEL_PATH, LIBRARY_PATH);
 
 	/**
 	 * Load the file corresponding to a given class.
 	 *
-	 * This method is registerd in the bootstrap file as an SPL auto-loader.
+	 * This method is registerd in the core bootstrap file as an SPL Autoloader.
 	 *
 	 * @param  string  $class
 	 * @return void
 	 */
 	public static function load($class)
 	{
-		// First, we will check to see if the class has been aliased. If it has,
-		// we will register the alias, which may cause the auto-loader to be
-		// called again for the "real" class name to load its file.
-		if (isset(static::$aliases[$class]))
+		if (isset(Config::$items['application']['aliases'][$class]))
 		{
-			class_alias(static::$aliases[$class], $class);
+			return class_alias(Config::$items['application']['aliases'][$class], $class);
 		}
 
-		// All classes in Laravel are staticly mapped. There is no crazy search
-		// routine that digs through directories. It's just a simple array of
-		// class to file path maps for ultra-fast file loading.
-		elseif (isset(static::$mappings[$class]))
+		if ( ! is_null($path = static::find($class)))
 		{
-			require static::$mappings[$class];
-		}
-
-		// If the class namespace is mapped to a directory, we will load the
-		// class using the PSR-0 standards from that directory accounting
-		// for the root of the namespace by trimming it.
-		if ( ! is_null($info = static::namespaced($class)))
-		{
-			$class = substr($class, strlen($info['namespace']));
-
-			return static::load_psr($class, $info['directory']);
-		}
-
-		static::load_psr($class);
-	}
-
-	/**
-	 * Attempt to resolve a class using the PSR-0 standard.
-	 *
-	 * @param  string  $class
-	 * @param  string  $directory
-	 * @return void
-	 */
-	protected static function load_psr($class, $directory = null)
-	{
-		// The PSR-0 standard indicates that class namespaces and underscores
-		// shoould be used to indcate the directory tree in which the class
-		// resides, so we'll convert them to slashes.
-		$file = str_replace(array('\\', '_'), '/', $class);
-
-		$directories = $directory ?: static::$directories;
-
-		$lower = strtolower($file);
-
-		// Once we have formatted the class name, we'll simply spin through
-		// the registered PSR-0 directories and attempt to locate and load
-		// the class file into the script.
-		foreach ((array) $directories as $directory)
-		{
-			if (file_exists($path = $directory.$lower.EXT))
-			{
-				return require $path;
-			}
-			elseif (file_exists($path = $directory.$file.EXT))
-			{
-				return require $path;
-			}
+			require $path;
 		}
 	}
 
 	/**
-	 * Get the directory for a given namespaced class.
+	 * Determine the file path associated with a given class name.
 	 *
 	 * @param  string  $class
 	 * @return string
 	 */
-	protected static function namespaced($class)
+	protected static function find($class)
 	{
-		foreach (static::$namespaces as $namespace => $directory)
+		// First we will look for the class in the hard-coded class mappings, since
+		// this is the fastest way to resolve a class name to its associated file.
+		// This saves us from having to search through the file system manually.
+		if (isset(static::$mappings[$class]))
 		{
-			if (starts_with($class, $namespace))
+			return static::$mappings[$class];
+		}
+
+		// If the library has been registered as a PSR-0 compliant library, we will
+		// load the library according to the PSR-0 naming standards, which state that
+		// namespaces and underscores indicate the directory hierarchy of the class.
+		if (in_array(static::library($class), static::$libraries))
+		{
+			return LIBRARY_PATH.str_replace(array('\\', '_'), '/', $class).EXT;
+		}
+
+		// Next we will search through the common Laravel paths for the class file.
+		// The Laravel libraries and models directories will be searched according
+		// to the Laravel class naming standards.
+		$file = strtolower(str_replace('\\', '/', $class));
+
+		foreach (static::$paths as $path)
+		{
+			if (file_exists($path = $path.$file.EXT))
 			{
-				return compact('namespace', 'directory');
+				return $path;
 			}
 		}
+
+		// Since not all controllers will be resolved by the controller resolver,
+		// we will do a quick check in the controller directory for the class.
+		// For instance, since base controllers would not be resolved by the
+		// controller class, we will need to resolve them here.
+		if (file_exists($path = static::controller($class)))
+		{
+			return $path;
+		}
+	}
+
+	/**
+	 * Extract the "library" name from the given class.
+	 *
+	 * The library name is essentially the namespace, or the string that preceeds
+	 * the first PSR-0 separator. PSR-0 states that namespaces or undescores may
+	 * be used to indicate the directory structure in which the file resides.
+	 *
+	 * @param  string  $class
+	 * @return string
+	 */
+	protected static function library($class)
+	{
+		if (($separator = strpos($class, '\\')) !== false)
+		{
+			return substr($class, 0, $separator);
+		}
+		elseif (($separator = strpos($class, '_')) !== false)
+		{
+			return substr($class, 0, $separator);
+		}
+	}
+
+	/**
+	 * Translate a given controller class name into the corresponding file name.
+	 *
+	 * The controller suffix will be removed, and the underscores will be translated
+	 * into directory slashes. Of course, the entire class name will be converted to
+	 * lower case as well.
+	 *
+	 * <code>
+	 *		// Returns "user/profile"...
+	 *		$file = static::controller('User_Profile_Controller');
+	 * </code>
+	 *
+	 * @param  string  $class
+	 * @return string
+	 */
+	protected static function controller($class)
+	{
+		$controller = str_replace(array('_Controller', '_'), array('', '/'), $class);
+
+		return CONTROLLER_PATH.strtolower($controller).EXT;
 	}
 
 	/**
 	 * Register an array of class to path mappings.
 	 *
-	 * @param  array  $mappings
-	 * @return void
-	 */
-	public static function map($mappings)
-	{
-		static::$mappings = array_merge(static::$mappings, $mappings);
-	}
-
-	/**
-	 * Register a class alias with the auto-loader.
+	 * The mappings will be used to resolve file paths from class names when
+	 * a class is lazy loaded through the Autoloader, providing a faster way
+	 * of resolving file paths than the typical file_exists method.
 	 *
-	 * @param  string  $class
-	 * @param  string  $alias
-	 * @return void
-	 */
-	public static function alias($class, $alias)
-	{
-		static::$aliases[$alias] = $class;
-	}
-
-	/**
-	 * Register directories to be searched as a PSR-0 library.
-	 *
-	 * @param  string|array  $directory
-	 * @return void
-	 */
-	public static function directories($directory)
-	{
-		$directories = static::format($directory);
-
-		static::$directories = array_unique(array_merge(static::$directories, $directories));
-	}
-
-	/**
-	 * Register underscored "namespaces" to directory mappings.
+	 * <code>
+	 *		// Register a class mapping with the Autoloader
+	 *		Autoloader::maps(array('User' => MODEL_PATH.'user'.EXT));
+	 * </code>
 	 *
 	 * @param  array  $mappings
 	 * @return void
 	 */
-	public static function underscored($mappings)
+	public static function maps($mappings)
 	{
-		static::namespaces($mappings, '_');
-	}
-
-	/**
-	 * Map namespaces to directories.
-	 *
-	 * @param  array   $mappings
-	 * @param  string  $append
-	 * @return void
-	 */
-	public static function namespaces($mappings, $append = '\\')
-	{
-		foreach ($mappings as $namespace => $directory)
+		foreach ($mappings as $class => $path)
 		{
-			// When adding new namespaces to the mappings, we will unset the previously
-			// mapped value if it existed. This allows previously registered spaces to
-			// be mapped to new directories on the fly.
-			$namespace = trim($namespace, $append).$append;
-
-			unset(static::$namespaces[$namespace]);
-
-			$namespaces[$namespace] = head(static::format($directory));
+			static::$mappings[$class] = $path;
 		}
-
-		// We'll array_merge the new mappings onto the front of the array so
-		// derivative namespaces are not always shadowed by their parents.
-		// For instance, when mappings Laravel\Docs, we don't want the
-		// main Laravel namespace to always override it.
-		static::$namespaces = array_merge($namespaces, static::$namespaces);
 	}
 
 	/**
-	 * Format an array of directories with the proper trailing slashes.
+	 * Register PSR-0 libraries with the Autoloader.
 	 *
-	 * @param  array  $directories
-	 * @return array
+	 * The library names given to this method should match directories within
+	 * the application libraries directory. This method provides an easy way
+	 * to indicate that some libraries should be loaded using the PSR-0
+	 * naming conventions instead of the Laravel conventions.
+	 *
+	 * <code>
+	 *		// Register the "Assetic" library with the Autoloader
+	 *		Autoloader::libraries('Assetic');
+	 *
+	 *		// Register several libraries with the Autoloader
+	 *		Autoloader::libraries(array('Assetic', 'Twig'));
+	 * </code>
+	 *
+	 * @param  array  $libraries
+	 * @return void
 	 */
-	protected static function format($directories)
+	public static function libraries($libraries)
 	{
-		return array_map(function($directory)
-		{
-			return rtrim($directory, DS).DS;
-		
-		}, (array) $directories);
+		static::$libraries = array_merge(static::$libraries, (array) $libraries);
 	}
 
 }

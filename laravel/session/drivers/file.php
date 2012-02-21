@@ -71,11 +71,7 @@ class File implements Driver, Sweeper {
 	 */
 	public function sweep($expiration)
 	{
-		$files = glob($this->path.'*');
-
-		if ($files === false) return;
-
-		foreach ($files as $file)
+		foreach (glob($this->path.'*') as $file)
 		{
 			if (filetype($file) == 'file' and filemtime($file) < $expiration)
 			{

@@ -1,105 +1,134 @@
 <?php namespace Laravel;
 
 /**
- * Bootstrap the core framework components like the IoC container and
- * the configuration class, and the class auto-loader. Once this file
+ * Bootstrap the core framework components like the IoC container,
+ * configuration class, and the class auto-loader. Once this file
  * has run, the framework is essentially ready for use.
  */
 require 'core.php';
+
+/**
+ * Create the exception logging function. All of the error logging
+ * is routed through here to avoid duplicate code. This Closure
+ * will determine if the actual logging Closure should be called.
+ */
+$logger = function($exception)
+{
+	if (Config::$items['error']['log'])
+	{
+		call_user_func(Config::$items['error']['logger'], $exception);
+	}
+};
+
+/**
+ * Create the exception handler function. All of the error handlers
+ * registered by the framework call this closure to avoid duplicate
+ * code. This Closure will pass the exception to the developer
+ * defined handler in the configuration file.
+ */
+$handler = function($exception) use ($logger)
+{
+	$logger($exception);
+
+	if (Config::$items['error']['detail'])
+	{
+		echo "<html><h2>Unhandled Exception</h2>
+			  <h3>Message:</h3>
+			  <pre>".$exception->getMessage()."</pre>
+			  <h3>Location:</h3>
+			  <pre>".$exception->getFile()." on line ".$exception->getLine()."</pre>
+			  <h3>Stack Trace:</h3>
+			  <pre>".$exception->getTraceAsString()."</pre></html>";
+	}
+	else
+	{
+		Response::error('500')->send();
+	}
+
+	exit(1);
+};
 
 /**
  * Register the PHP exception handler. The framework throws exceptions
  * on every error that cannot be handled. All of those exceptions will
  * be sent through this closure for processing.
  */
-set_exception_handler(function($e)
+set_exception_handler(function($exception) use ($handler)
 {
-	Error::exception($e);
+	$handler($exception);
 });
 
 /**
  * Register the PHP error handler. All PHP errors will fall into this
- * handler which will convert the error into an ErrorException object
- * and pass the exception into the exception handler.
+ * handler, which will convert the error into an ErrorException object
+ * and pass the exception into the common exception handler. Suppressed
+ * errors are ignored and errors in the developer configured whitelist
+ * are silently logged.
  */
-set_error_handler(function($code, $error, $file, $line)
+set_error_handler(function($code, $error, $file, $line) use ($logger)
 {
-	Error::native($code, $error, $file, $line);
+	if (error_reporting() === 0) return;
+
+	$exception = new \ErrorException($error, $code, 0, $file, $line);
+
+	if (in_array($code, Config::$items['error']['ignore']))
+	{
+		return $logger($exception);
+	}
+
+	throw $exception;
 });
 
 /**
- * Register the shutdown handler. This function will be called at the
- * end of the PHP script or on a fatal PHP error. If a PHP error has
- * occured, we will convert it to an ErrorException and pass it
+ * Register the PHP shutdown handler. This function will be called
+ * at the end of the PHP script or on a fatal PHP error. If an error
+ * has occured, we will convert it to an ErrorException and pass it
  * to the common exception handler for the framework.
  */
-register_shutdown_function(function()
+register_shutdown_function(function() use ($handler)
 {
-	Error::shutdown();
+	if ( ! is_null($error = error_get_last()))
+	{
+		extract($error, EXTR_SKIP);
+
+		$handler(new \ErrorException($message, $type, 0, $file, $line));
+	}	
 });
 
 /**
  * Setting the PHP error reporting level to -1 essentially forces
- * PHP to report every error, and it is guranteed to show every
- * error on future versions of PHP.
+ * PHP to report every error, and is guranteed to show every error
+ * on future versions of PHP.
  *
  * If error detail is turned off, we will turn off all PHP error
- * reporting and display since the framework will be displaying
- * a generic message and we do not want any sensitive details
- * about the exception leaking into the views.
+ * reporting and display since the framework will be displaying a
+ * generic message and we don't want any sensitive details about
+ * the exception leaking into the views.
  */
 error_reporting(-1);
 
-ini_set('display_errors', Config::get('error.display'));
+ini_set('display_errors', 'Off');
 
 /**
- * Determine if we need to set the application key to a very random
- * string so we can provide a zero configuration installation but
- * still ensure that the key is set to something random. It is
- * possible to disable this feature.
+ * Load the session and session manager instance. The session
+ * payload will be registered in the IoC container as an instance
+ * so it can be retrieved easily throughout the application.
  */
-$auto_key = Config::get('application.auto_key');
-
-if ($auto_key and Config::get('application.key') == '')
+if (Config::$items['session']['driver'] !== '')
 {
-	ob_start() and with(new CLI\Tasks\Key)->generate();
+	$driver = Session\Drivers\Factory::make(Config::$items['session']['driver']);
 
-	ob_end_clean();
+	$session = new Session\Payload($driver);
+
+	$session->load(Cookie::get(Config::$items['session']['cookie']));
+
+	IoC::instance('laravel.session', $session);
 }
 
 /**
- * Even though "Magic Quotes" are deprecated in PHP 5.3, they may
- * still be enabled on the server. To account for this, we will
- * strip slashes on all input arrays if magic quotes are turned
- * on for the server environment.
- */
-if (magic_quotes())
-{
-	$magics = array(&$_GET, &$_POST, &$_COOKIE, &$_REQUEST);
-
-	foreach ($magics as &$magic)
-	{
-		$magic = array_strip_slashes($magic);
-	}
-}
-
-/**
- * Load the session using the session manager. The payload will
- * be set on a static property of the Session class for easy
- * access throughout the framework and application.
- */
-if (Config::get('session.driver') !== '')
-{
-	Session::start(Config::get('session.driver'));
-
-	Session::load(Cookie::get(Config::get('session.cookie')));
-}
-
-/**
- * Gather the input to the application based on the global input
- * variables for the current request. The input will be gathered
- * based on the current request method and will be set on the
- * Input manager class' static $input property.
+ * Gather the input to the application based on the current request.
+ * The input will be gathered based on the current request method and
+ * will be set on the Input manager.
  */
 $input = array();
 
@@ -122,70 +151,43 @@ switch (Request::method())
 		else
 		{
 			parse_str(file_get_contents('php://input'), $input);
-
-			if (magic_quotes()) $input = array_strip_slashes($input);
 		}
 }
 
 /**
  * The spoofed request method is removed from the input so it is not
  * unexpectedly included in Input::all() or Input::get(). Leaving it
- * in the input array could cause unexpected results if an Eloquent
- * model is filled with the input.
+ * in the input array could cause unexpected results if the developer
+ * fills an Eloquent model with the input.
  */
 unset($input[Request::spoofer]);
 
 Input::$input = $input;
 
 /**
- * Load the "application" bundle. Though the application folder is
- * not typically considered a bundle, it is started like one and
- * essentially serves as the "default" bundle.
- */
-Bundle::start(DEFAULT_BUNDLE);
-
-/**
- * Auto-start any bundles configured to start on every request.
- * This is especially useful for debug bundles or bundles that
- * are used throughout the application.
- */
-foreach (Bundle::$bundles as $bundle => $config)
-{
-	if ($config['auto']) Bundle::start($bundle);
-}
-
-/**
- * Register the "catch-all" route that handles 404 responses for
- * routes that can not be matched to any other route within the
- * application. We'll just raise the 404 event.
- */
-Routing\Router::register('*', '(:all)', function()
-{
-	return Event::first('404');
-});
-
-/**
- * If the requset URI has too many segments, we will bomb out of
- * the request. This is too avoid potential DDoS attacks against
- * the framework by overloading the controller lookup method
- * with thousands of segments.
- */
-$uri = URI::current();
-
-if (count(URI::$segments) > 15)
-{
-	throw new \Exception("Invalid request. Too many URI segments.");
-}
-
-/**
  * Route the request to the proper route in the application. If a
- * route is found, the route will be called via the request class
- * static property. If no route is found, the 404 response will
- * be returned to the browser.
+ * route is found, the route will be called with the current request
+ * instance. If no route is found, the 404 response will be returned
+ * to the browser.
  */
-Request::$route = Routing\Router::route(Request::method(), $uri);
+Routing\Filter::register(require APP_PATH.'filters'.EXT);
 
-$response = Request::$route->call();
+$loader = new Routing\Loader(APP_PATH, ROUTE_PATH);
+
+$router = new Routing\Router($loader, CONTROLLER_PATH);
+
+IoC::instance('laravel.routing.router', $router);
+
+Request::$route = $router->route(Request::method(), URI::current());
+
+if ( ! is_null(Request::$route))
+{
+	$response = Request::$route->call();
+}
+else
+{
+	$response = Response::error('404');
+}
 
 /**
  * Close the session and write the active payload to persistent
@@ -193,24 +195,9 @@ $response = Request::$route->call();
  * driver is a sweeper, session garbage collection might be
  * performed depending on the "sweepage" probability.
  */
-if (Config::get('session.driver') !== '')
+if (Config::$items['session']['driver'] !== '')
 {
-	Session::save();
+	IoC::core('session')->save();
 }
 
-/**
- * Send all of the cookies to the browser. The cookies are
- * stored in a "jar" until the end of a request, primarily
- * to make testing the cookie functionality of the site
- * much easier since the jar can be inspected.
- */
-Cookie::send();	
-
-/**
- * Send the final response to the browser and fire the
- * final event indicating that the processing for the
- * current request is completed.
- */
 $response->send();
-
-Event::fire('laravel.done');

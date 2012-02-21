@@ -1,39 +1,31 @@
 <?php namespace Laravel\Routing;
 
 use Closure;
-use Laravel\Bundle;
-use Laravel\Request;
+use Laravel\Arr;
 use Laravel\Response;
 
 class Route {
 
 	/**
-	 * The URI the route response to.
+	 * The route key, including request method and URI.
 	 *
 	 * @var string
 	 */
-	public $uri;
+	public $key;
 
 	/**
-	 * The request method the route responds to.
+	 * The URIs the route responds to.
 	 *
-	 * @var string
+	 * @var array
 	 */
-	public $method;
+	public $uris;
 
 	/**
-	 * The bundle in which the route was registered.
-	 *
-	 * @var string
-	 */
-	public $bundle;
-
-	/**
-	 * The action that is assigned to the route.
+	 * The route callback or array.
 	 *
 	 * @var mixed
 	 */
-	public $action;
+	public $callback;
 
 	/**
 	 * The parameters that will passed to the route callback.
@@ -45,52 +37,63 @@ class Route {
 	/**
 	 * Create a new Route instance.
 	 *
-	 * @param  string   $method
-	 * @param  string   $uri
-	 * @param  array    $action
+	 * @param  string   $key
+	 * @param  mixed    $callback
 	 * @param  array    $parameters
 	 * @return void
 	 */
-	public function __construct($method, $uri, $action, $parameters = array())
+	public function __construct($key, $callback, $parameters = array())
 	{
-		$this->uri = $uri;
-		$this->method = $method;
-		$this->action = $action;
+		$this->key = $key;
+		$this->callback = $callback;
+		$this->parameters = $parameters;
 
-		// Determine the bundle in which the route was registered. We will know
-		// the bundle by using the bundle::handles method, which will return
-		// the bundle assigned to that URI.
-		$this->bundle = Bundle::handles($uri);
+		// Extract each URI from the route key. Since the route key has the
+		// request method, we will extract that from the string. If the URI
+		// points to the root of the application, a single forward slash
+		// will be returned since that is used for the root route.
+		if (strpos($key, ', ') === false)
+		{
+			$this->uris = array($this->extract($this->key));
+		}
+		else
+		{
+			$this->uris = array_map(array($this, 'extract'), explode(', ', $key));
+		}
 
-		// We'll set the parameters based on the number of parameters passed
-		// compared to the parameters that were needed. If more parameters
-		// are needed, we'll merge in defaults.
-		$this->parameters($uri, $action, $parameters);
+		if ( ! $this->callable($callback))
+		{
+			throw new \InvalidArgumentException('Invalid route defined for URI ['.$this->key.']');
+		}
 	}
 
 	/**
-	 * Set the parameters array to the correct value.
+	 * Determine if the given route callback is callable.
 	 *
-	 * @param  string  $uri
-	 * @param  array   $action
-	 * @param  array   $parameters
-	 * @return void
+	 * Route callbacks must be either a Closure, array, or string.
+	 *
+	 * @param  mixed  $callback
+	 * @return bool
 	 */
-	protected function parameters($uri, $action, $parameters)
+	protected function callable($callback)
 	{
-		$defaults = (array) array_get($action, 'defaults');
+		return $callback instanceof Closure or is_array($callback) or is_string($callback);
+	}
 
-		// If there are less parameters than wildcards, we will figure out how
-		// many parameters we need to inject from the array of defaults and
-		// merge them in into the main array for the route.
-		if (count($defaults) > count($parameters))
-		{
-			$defaults = array_slice($defaults, count($parameters));
+	/**
+	 * Retrieve the URI from a given route destination.
+	 *
+	 * If the request is to the root of the application, a single slash
+	 * will be returned, otherwise the leading slash will be removed.
+	 *
+	 * @param  string  $segment
+	 * @return string
+	 */
+	protected function extract($segment)
+	{
+		$segment = substr($segment, strpos($segment, ' ') + 1);
 
-			$parameters = array_merge($parameters, $defaults);
-		}
-
-		$this->parameters = $parameters;
+		return ($segment !== '/') ? trim($segment, '/') : $segment;
 	}
 
 	/**
@@ -100,253 +103,140 @@ class Route {
 	 */
 	public function call()
 	{
+		// Since "before" filters can halt the request cycle, we will return
+		// any response from the before filters. Allowing filters to halt the
+		// request cycle makes tasks like authorization convenient.
+		//
 		// The route is responsible for running the global filters, and any
-		// filters defined on the route itself, since all incoming requests
-		// come through a route (either defined or ad-hoc).
-		$response = Filter::run($this->filters('before'), array(), true);
+		// filters defined on the route itself. Since all incoming requests
+		// come through a route (either defined or ad-hoc), it makes sense
+		// to let the route handle the global filters. If the route uses
+		// a controller, the controller will only call its own filters.
+		$before = array_merge(array('before'), $this->filters('before'));
 
-		if (is_null($response))
+		$response = Filter::run($before, array(), true);
+
+		if (is_null($response) and ! is_null($response = $this->response()))
 		{
-			$response = $this->response();
+			if ($response instanceof Delegate)
+			{
+				$response = Controller::call($response->destination, $this->parameters);
+			}
 		}
 
-		// We always return a Response instance from the route calls, so
-		// we'll use the prepare method on the Response class to make
-		// sure we have a valid Response isntance.
-		$response = Response::prepare($response);
+		if ( ! $response instanceof Response)
+		{
+			$response = new Response($response);
+		}
 
-		Filter::run($this->filters('after'), array($response));
+		// Stringify the response. We need to force the response to be
+		// stringed before closing the session, since the developer may
+		// be using the session within their views, so we cannot age
+		// the session data until the view is rendered.
+		$response->content = $response->render();
+
+		$filters = array_merge($this->filters('after'), array('after'));
+
+		Filter::run($filters, array($response));
 
 		return $response;
 	}
 
 	/**
-	 * Execute the route action and return the response.
+	 * Call the closure defined for the route, or get the route delegator.
 	 *
-	 * Unlike the "call" method, none of the attached filters will be run.
+	 * Note that this method differs from the "call" method in that it does
+	 * not resolve the controller or prepare the response. Delegating to
+	 * controller's is handled by the "call" method.
 	 *
 	 * @return mixed
 	 */
-	public function response()
+	protected function response()
 	{
-		// If the action is a string, it is pointing the route to a controller
-		// action, and we can just call the action and return its response.
-		// We'll just pass the action off to the Controller class.
-		$delegate = $this->delegate();
-
-		if ( ! is_null($delegate))
+		// If the route callback is an instance of a Closure, we can call the
+		// route function directly. There are no before or after filters to
+		// parse out of the route.
+		if ($this->callback instanceof Closure)
 		{
-			return Controller::call($delegate, $this->parameters);
+			return call_user_func_array($this->callback, $this->parameters);
 		}
-
-		// If the route does not have a delegate, then it must be a Closure
-		// instance or have a Closure in its action array, so we will try
-		// to locate the Closure and call it directly.
-		$handler = $this->handler();
-
-		if ( ! is_null($handler))
+		// If the route is an array, we will return the first value with a
+		// key of "uses", or the first instance of a Closure. If the value
+		// is a string, the route is delegating the responsibility for
+		// for handling the request to a controller.
+		elseif (is_array($this->callback))
 		{
-			return call_user_func_array($handler, $this->parameters);
+			$callback = Arr::first($this->callback, function($key, $value)
+			{
+				return $key == 'uses' or $value instanceof Closure;
+			});
+
+			if ($callback instanceof Closure)
+			{
+				return call_user_func_array($callback, $this->parameters);
+			}
+			else
+			{
+				return new Delegate($callback);
+			}
+		}
+		elseif (is_string($this->callback))
+		{
+			return new Delegate($this->callback);
 		}
 	}
 
 	/**
-	 * Get the filters that are attached to the route for a given event.
+	 * Get an array of filter names defined for the route.
 	 *
-	 * @param  string  $event
+	 * @param  string  $name
 	 * @return array
 	 */
-	protected function filters($event)
+	public function filters($name)
 	{
-		$global = Bundle::prefix($this->bundle).$event;
-
-		$filters = array_unique(array($event, $global));
-
-		// Next we will check to see if there are any filters attached to
-		// the route for the given event. If there are, we'll merge them
-		// in with the global filters for the event.
-		if (isset($this->action[$event]))
+		if (is_array($this->callback) and isset($this->callback[$name]))
 		{
-			$assigned = Filter::parse($this->action[$event]);
+			$filters = $this->callback[$name];
 
-			$filters = array_merge($filters, $assigned);
+			return (is_string($filters)) ? explode('|', $filters) : (array) $filters;
 		}
 
-		return array(new Filter_Collection($filters));
-	}
-
-	/**
-	 * Get the controller action delegate assigned to the route.
-	 *
-	 * If no delegate is assigned, null will be returned by the method.
-	 *
-	 * @return string
-	 */
-	protected function delegate()
-	{
-		return array_get($this->action, 'uses');
-	}
-
-	/**
-	 * Get the anonymous function assigned to handle the route.
-	 *
-	 * @return Closure
-	 */
-	protected function handler()
-	{
-		return array_first($this->action, function($key, $value)
-		{
-			return $value instanceof Closure;
-		});
+		return array();
 	}
 
 	/**
 	 * Determine if the route has a given name.
-	 *
-	 * <code>
-	 *		// Determine if the route is the "login" route
-	 *		$login = Request::route()->is('login');
-	 * </code>
 	 *
 	 * @param  string  $name
 	 * @return bool
 	 */
 	public function is($name)
 	{
-		return array_get($this->action, 'as') === $name;
+		return is_array($this->callback) and Arr::get($this->callback, 'name') === $name;
 	}
 
 	/**
-	 * Register a controller with the router.
+	 * Determine if the route handles a given URI.
 	 *
-	 * @param  string|array  $controller
-	 * @param  string|array  $defaults
-	 * @return void
+	 * @param  string  $uri
+	 * @return bool
 	 */
-	public static function controller($controllers, $defaults = 'index')
+	public function handles($uri)
 	{
-		Router::controller($controllers, $defaults);
+		return in_array($uri, $this->uris);
 	}
 
 	/**
-	 * Register a secure controller with the router.
-	 *
-	 * @param  string|array  $controllers
-	 * @param  string|array  $defaults
-	 * @return void
+	 * Magic Method to handle dynamic method calls to determine the name of the route.
 	 */
-	public static function secure_controller($controllers, $defaults = 'index')
+	public function __call($method, $parameters)
 	{
-		Router::controller($controllers, $defaults, true);
-	}
+		if (strpos($method, 'is_') === 0)
+		{
+			return $this->is(substr($method, 3));
+		}
 
-	/**
-	 * Register a GET route with the router.
-	 *
-	 * @param  string|array  $route
-	 * @param  mixed         $action
-	 * @return void
-	 */
-	public static function get($route, $action)
-	{
-		Router::register('GET', $route, $action);
-	}
-
-	/**
-	 * Register a POST route with the router.
-	 *
-	 * @param  string|array  $route
-	 * @param  mixed         $action
-	 * @return void
-	 */
-	public static function post($route, $action)
-	{
-		Router::register('POST', $route, $action);
-	}
-
-	/**
-	 * Register a PUT route with the router.
-	 *
-	 * @param  string|array  $route
-	 * @param  mixed         $action
-	 * @return void
-	 */
-	public static function put($route, $action)
-	{
-		Router::register('PUT', $route, $action);
-	}
-
-	/**
-	 * Register a DELETE route with the router.
-	 *
-	 * @param  string|array  $route
-	 * @param  mixed         $action
-	 * @return void
-	 */
-	public static function delete($route, $action)
-	{
-		Router::register('DELETE', $route, $action);
-	}
-
-	/**
-	 * Register a route that handles any request method.
-	 *
-	 * @param  string|array  $route
-	 * @param  mixed         $action
-	 * @return void
-	 */
-	public static function any($route, $action)
-	{
-		Router::register('*', $route, $action);
-	}
-
-	/**
-	 * Register a group of routes that share attributes.
-	 *
-	 * @param  array    $attributes
-	 * @param  Closure  $callback
-	 * @return void
-	 */
-	public static function group($attributes, Closure $callback)
-	{
-		Router::group($attributes, $callback);
-	}
-
-	/**
-	 * Register many request URIs to a single action.
-	 *
-	 * @param  array  $routes
-	 * @param  mixed  $action
-	 * @return void
-	 */
-	public static function share($routes, $action)
-	{
-		Router::share($routes, $action);
-	}
-
-	/**
-	 * Register a HTTPS route with the router.
-	 *
-	 * @param  string        $method
-	 * @param  string|array  $route
-	 * @param  mixed         $action
-	 * @return void
-	 */
-	public static function secure($method, $route, $action)
-	{
-		Router::secure($method, $route, $action);
-	}
-
-	/**
-	 * Register a route filter.
-	 *
-	 * @param  string   $name
-	 * @param  Closure  $callback
-	 * @return void
-	 */
-	public static function filter($name, Closure $callback)
-	{
-		Filter::register($name, $callback);
+		throw new \BadMethodCallException("Call to undefined method [$method] on Route class.");
 	}
 
 }

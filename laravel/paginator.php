@@ -71,10 +71,10 @@ class Paginator {
 	 * Create a new Paginator instance.
 	 *
 	 * @param  array  $results
+	 * @param  int    $last
 	 * @param  int    $page
 	 * @param  int    $total
 	 * @param  int    $per_page
-	 * @param  int    $last
 	 * @return void
 	 */
 	protected function __construct($results, $page, $total, $per_page, $last)
@@ -173,8 +173,8 @@ class Paginator {
 		//
 		// If there are not enough pages to make the creation of a slider possible
 		// based on the adjacent pages, we will simply display all of the pages.
-		// Otherwise, we will create a "truncating" slider which displays a 
-		// nice window of pages based on the current page.
+		// Otherwise, we will create a "truncating" slider which displays a nice
+		// window of pages based on the current page.
 		if ($this->last < 7 + ($adjacent * 2))
 		{
 			$links = $this->range(1, $this->last);
@@ -246,7 +246,6 @@ class Paginator {
 	 *		echo $paginator->previous('Go Back');
 	 * </code>
 	 *
-	 * @param  string  $text
 	 * @return string
 	 */
 	public function previous($text = null)
@@ -267,7 +266,6 @@ class Paginator {
 	 *		echo $paginator->next('Skip Forwards');
 	 * </code>
 	 *
-	 * @param  string  $text
 	 * @return string
 	 */
 	public function next($text = null)
@@ -290,10 +288,7 @@ class Paginator {
 	{
 		$class = "{$element}_page";
 
-		if (is_null($text))
-		{
-			$text = Lang::line("pagination.{$element}")->get($this->language);
-		}
+		if (is_null($text)) $text = Lang::line("pagination.{$element}")->get($this->language);
 
 		// Each consumer of this method provides a "disabled" Closure which can
 		// be used to determine if the element should be a span element or an
@@ -366,7 +361,7 @@ class Paginator {
 	 *
 	 * @param  int     $page
 	 * @param  string  $text
-	 * @param  string  $class
+	 * @param  string  $attributes
 	 * @return string
 	 */
 	protected function link($page, $text, $class)
@@ -377,24 +372,23 @@ class Paginator {
 	}
 
 	/**
-	 * Create the "appendage" to be attached to every pagination link.
+	 * Create the "appendage" that should be attached to every pagination link.
+	 *
+	 * The developer may assign an array of values that will be converted to a
+	 * query string and attached to every pagination link. This allows simple
+	 * implementation of sorting or other things the developer may need.
 	 *
 	 * @param  array   $appends
 	 * @return string
 	 */
 	protected function appendage($appends)
 	{
-	 	// The developer may assign an array of values that will be converted to a
-	 	// query string and attached to every pagination link. This allows simple
-	 	// implementation of sorting or other things the developer may need.
-		if ( ! is_null($this->appendage)) return $this->appendage;
-
-		if (count($appends) <= 0)
+		if ( ! is_null($this->appendage))
 		{
-			return $this->appendage = '';
+			return $this->appendage;
 		}
 
-		return $this->appendage = '&'.http_build_query($appends);
+		return $this->appendage = (count($appends) > 0) ? '&'.http_build_query($appends) : '';
 	}
 
 	/**
