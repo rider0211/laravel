@@ -69,6 +69,14 @@
 				padding: 10px;
 			}
 
+			#main div.warning {
+				background-color: #feefb3;
+				border: 1px solid;
+				border-radius: 5px;
+				color: #9f6000;
+				padding: 10px;
+			}
+
 			#main ul {
 				margin: 10px 0;
 				padding: 0 30px;
@@ -116,7 +124,6 @@
 				<li><a href="http://forums.laravel.com">Laravel Forums</a></li>
 				<li><a href="http://github.com/laravel/laravel">GitHub Repository</a></li>
 			</ul>
-
 		</div>
 	</body>
 </html>
