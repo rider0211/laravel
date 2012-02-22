@@ -8,7 +8,7 @@ return array(
 	|--------------------------------------------------------------------------
 	|
 	| The URL used to access your application without a trailing slash. The URL
-	| does nto have to be set. If it isn't we'll try our best to guess the URL
+	| does not have to be set. If it isn't we'll try our best to guess the URL
 	| of your application.
 	|
 	*/
@@ -44,9 +44,7 @@ return array(
 	|
 	*/
 
-	'key' => '',
-
-	'auto_key' => true,
+	'key' => 'YourSecretKeyGoesHere!',
 
 	/*
 	|--------------------------------------------------------------------------
