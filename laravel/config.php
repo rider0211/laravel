@@ -56,14 +56,13 @@ class Config {
 	 * </code>
 	 *
 	 * @param  string  $key
-	 * @param  mixed   $default
 	 * @return array
 	 */
-	public static function get($key, $default = null)
+	public static function get($key)
 	{
 		list($bundle, $file, $item) = static::parse($key);
 
-		if ( ! static::load($bundle, $file)) return value($default);
+		if ( ! static::load($bundle, $file)) return;
 
 		$items = static::$items[$bundle][$file];
 
@@ -76,7 +75,7 @@ class Config {
 		}
 		else
 		{
-			return array_get($items, $item, $default);
+			return array_get($items, $item);
 		}
 	}
 

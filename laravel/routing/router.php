@@ -26,26 +26,14 @@ class Router {
 	 *
 	 * @var array
 	 */
-	public static $routes = array(
-		'GET'    => array(),
-		'POST'   => array(),
-		'PUT'    => array(),
-		'DELETE' => array(),
-		'HEAD'   => array(),
-	);
+	public static $routes = array();
 
 	/**
 	 * All of the "fallback" routes that have been registered.
 	 *
 	 * @var array
 	 */
-	public static $fallback = array(
-		'GET'    => array(),
-		'POST'   => array(),
-		'PUT'    => array(),
-		'DELETE' => array(),
-		'HEAD'   => array(),
-	);
+	public static $fallback = array();
 
 	/**
 	 * The current attributes being shared by routes.
@@ -93,7 +81,7 @@ class Router {
 	 *
 	 * @var array
 	 */
-	public static $methods = array('GET', 'POST', 'PUT', 'DELETE', 'HEAD');
+	public static $methods = array('GET', 'POST', 'PUT', 'DELETE');
 
 	/**
 	 * Register a HTTPS route with the router.
@@ -149,7 +137,7 @@ class Router {
 		call_user_func($callback);
 
 		// Once the routes have been registered, we want to set the group to
-		// null so the attributes will not be given to any of the routes
+		// null so the attributes will not be assigned to any of the routes
 		// that are added after the group is declared.
 		static::$group = null;
 	}
@@ -173,19 +161,6 @@ class Router {
 	public static function register($method, $route, $action)
 	{
 		if (is_string($route)) $route = explode(', ', $route);
-
-		// If the developer is registering multiple request methods to handle
-		// the URI, we'll spin through each method and register the route
-		// for each of them along with each URI and action.
-		if (is_array($method))
-		{
-			foreach ($method as $http)
-			{
-				static::register($http, $route, $action);
-			}
-
-			return;
-		}
 
 		foreach ((array) $route as $uri)
 		{
