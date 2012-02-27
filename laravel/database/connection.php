@@ -142,11 +142,10 @@ class Connection {
 
 		// The result we return depends on the type of query executed against the
 		// database. On SELECT clauses, we will return the result set, for update
-		// and deletes we will return the affected row count. And for all other
-		// queries we'll just return the boolean result.
+		// and deletes we will return the affected row count.
 		if (stripos($sql, 'select') === 0)
 		{
-			return $statement->fetchAll(PDO::FETCH_CLASS, 'stdClass');
+			return $this->fetch($statement, Config::get('database.fetch'));
 		}
 		elseif (stripos($sql, 'update') === 0 or stripos($sql, 'delete') === 0)
 		{
@@ -211,6 +210,28 @@ class Connection {
 		}
 
 		return array($statement, $result);
+	}
+
+	/**
+	 * Fetch all of the rows for a given statement.
+	 *
+	 * @param  PDOStatement  $statement
+	 * @param  int           $style
+	 * @return array
+	 */
+	protected function fetch($statement, $style)
+	{
+		// If the fetch style is "class", we'll hydrate an array of PHP
+		// stdClass objects as generic containers for the query rows,
+		// otherwise we'll just use the fetch styel value.
+		if ($style === PDO::FETCH_CLASS)
+		{
+			return $statement->fetchAll(PDO::FETCH_CLASS, 'stdClass');
+		}
+		else
+		{
+			return $statement->fetchAll($style);
+		}
 	}
 
 	/**
