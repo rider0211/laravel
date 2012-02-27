@@ -83,7 +83,7 @@ class Event {
 		{
 			foreach (static::$events[$event] as $callback)
 			{
-				$responses[] = call_user_func_array($callback, (array) $parameters);
+				$responses[] = call_user_func_array($callback, $parameters);
 			}
 		}
 
