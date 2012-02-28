@@ -14,13 +14,6 @@ class Filter {
 	public static $filters = array();
 
 	/**
-	 * The route filters that are based on pattern.
-	 *
-	 * @var array
-	 */
-	public static $patterns = array();
-
-	/**
 	 * All of the registered filter aliases.
 	 *
 	 * @var array
@@ -46,17 +39,7 @@ class Filter {
 	{
 		if (isset(static::$aliases[$name])) $name = static::$aliases[$name];
 
-		if (starts_with($name, 'pattern: '))
-		{
-			foreach (explode(', ', substr($name, 9)) as $pattern)
-			{
-				static::$patterns[$pattern] = $callback;
-			}
-		}
-		else
-		{
-			static::$filters[$name] = $callback;
-		}
+		static::$filters[$name] = $callback;
 	}
 
 	/**
