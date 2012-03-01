@@ -183,7 +183,7 @@ class File {
 	 */
 	public static function mvdir($source, $destination, $options = fIterator::SKIP_DOTS)
 	{
-		return static::cpdir($source, $destination, true, $options);
+		static::cpdir($source, $destination, true, $options);
 	}
 
 	/**
@@ -197,7 +197,7 @@ class File {
 	 */
 	public static function cpdir($source, $destination, $delete = false, $options = fIterator::SKIP_DOTS)
 	{
-		if ( ! is_dir($source)) return false;
+		if ( ! is_dir($source)) return;
 
 		// First we need to create the destination directory if it doesn't
 		// already exists. This directory hosts all of the assets we copy
@@ -221,7 +221,7 @@ class File {
 			{
 				$path = $item->getRealPath();
 
-				if (! static::cpdir($path, $location, $delete, $options)) return false;
+				static::cpdir($path, $location, $delete, $options);
 
 				if ($delete) @rmdir($item->getRealPath());
 			}
@@ -231,15 +231,13 @@ class File {
 			// files with the same name.
 			else
 			{
-				if(! copy($item->getRealPath(), $location)) return false;
+				copy($item->getRealPath(), $location);
 
 				if ($delete) @unlink($item->getRealPath());
 			}
 		}
 
 		if ($delete) rmdir($source);
-		
-		return true;
 	}
 
 	/**
