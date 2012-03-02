@@ -93,7 +93,7 @@ class Grammar extends \Laravel\Database\Grammar {
 
 		if ($query->distinct and $column !== '*') $column = 'DISTINCT '.$column;
 
-		return 'SELECT '.$query->aggregate['aggregator'].'('.$column.') AS '.$this->wrap('aggregate');
+		return 'SELECT '.$query->aggregate['aggregator'].'('.$column.')';
 	}
 
 	/**

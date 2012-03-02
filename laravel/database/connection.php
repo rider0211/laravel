@@ -142,10 +142,11 @@ class Connection {
 
 		// The result we return depends on the type of query executed against the
 		// database. On SELECT clauses, we will return the result set, for update
-		// and deletes we will return the affected row count.
+		// and deletes we will return the affected row count. And for all other
+		// queries we'll just return the boolean result.
 		if (stripos($sql, 'select') === 0)
 		{
-			return $this->fetch($statement, Config::get('database.fetch'));
+			return $statement->fetchAll(PDO::FETCH_CLASS, 'stdClass');
 		}
 		elseif (stripos($sql, 'update') === 0 or stripos($sql, 'delete') === 0)
 		{
@@ -172,13 +173,11 @@ class Connection {
 
 		// Since expressions are injected into the query as strings, we need to
 		// remove them from the array of bindings. After we have removed them,
-		// we'll reset the array so there are not gaps within the keys.
-		$bindings = array_filter($bindings, function($binding)
+		// we'll reset the array so there aren't gaps in the keys.
+		$bindings = array_values(array_filter($bindings, function($binding)
 		{
 			return ! $binding instanceof Expression;
-		});
-
-		$bindings = array_values($bindings);
+		}));
 
 		$sql = $this->grammar()->shortcut($sql, $bindings);
 
@@ -212,28 +211,6 @@ class Connection {
 		}
 
 		return array($statement, $result);
-	}
-
-	/**
-	 * Fetch all of the rows for a given statement.
-	 *
-	 * @param  PDOStatement  $statement
-	 * @param  int           $style
-	 * @return array
-	 */
-	protected function fetch($statement, $style)
-	{
-		// If the fetch style is "class", we'll hydrate an array of PHP
-		// stdClass objects as generic containers for the query rows,
-		// otherwise we'll just use the fetch styel value.
-		if ($style === PDO::FETCH_CLASS)
-		{
-			return $statement->fetchAll(PDO::FETCH_CLASS, 'stdClass');
-		}
-		else
-		{
-			return $statement->fetchAll($style);
-		}
 	}
 
 	/**

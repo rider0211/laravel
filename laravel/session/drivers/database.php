@@ -3,7 +3,7 @@
 use Laravel\Config;
 use Laravel\Database\Connection;
 
-class Database extends Driver implements Sweeper {
+class Database implements Driver, Sweeper {
 
 	/**
 	 * The database connection.

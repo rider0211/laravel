@@ -41,31 +41,6 @@ class Event {
 	}
 
 	/**
-	 * Override all callbacks for a given event with a new callback.
-	 *
-	 * @param  string  $event
-	 * @param  mixed   $callback
-	 * @return void
-	 */
-	public static function override($event, $callback)
-	{
-		static::clear($event);
-
-		static::listen($event, $callback);
-	}
-
-	/**
-	 * Clear all event listeners for a given event.
-	 *
-	 * @param  string  $event
-	 * @return void
-	 */
-	public static function clear($event)
-	{
-		static::$events[$event] = array();
-	}
-
-	/**
 	 * Fire an event and return the first response.
 	 *
 	 * <code>
@@ -108,7 +83,7 @@ class Event {
 		{
 			foreach (static::$events[$event] as $callback)
 			{
-				$responses[] = call_user_func_array($callback, (array) $parameters);
+				$responses[] = call_user_func_array($callback, $parameters);
 			}
 		}
 
