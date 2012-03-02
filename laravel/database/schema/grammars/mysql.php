@@ -77,7 +77,7 @@ class MySQL extends Grammar {
 			// types to the correct types.
 			$sql = $this->wrap($column).' '.$this->type($column);
 
-			$elements = array('nullable', 'defaults', 'incrementer');
+			$elements = array('unsigned', 'nullable', 'defaults', 'incrementer');
 
 			foreach ($elements as $element)
 			{
@@ -195,6 +195,39 @@ class MySQL extends Grammar {
 		$name = $command->name;
 
 		return 'ALTER TABLE '.$this->wrap($table)." ADD {$type} {$name}({$keys})";
+	}
+
+	/**
+	 * Generate the SQL statement for creating a foreign key.
+	 *
+	 * @param  Table    $table
+	 * @param  Command  $command
+	 * @return string
+	 */
+	public function foreign(Table $table, Fluent $command)
+	{
+		$name = $command->name;
+
+		// We need to wrap both of the table names in quoted identifiers to protect
+		// against any possible keyword collisions, both the table on which the
+		// command is being executed and the referenced table are wrapped.
+		$table = $this->wrap($table);
+
+		$on = $this->wrap($command->on);
+
+		// Next we need to columnize both the command table's columns as well as
+		// the columns referenced by the foreign key. We'll cast the referenced
+		// columns to an array since they aren't by the fluent command.
+		$foreign = $this->columnize($command->columns);
+
+		$referenced = $this->columnize((array) $command->references);
+
+		// Finally we can built the SQL. This should be the same for all database
+		// platforms we support, but we'll just keep it in the grammars since
+		// adding foreign keys using ALTER isn't supported by SQLite.
+		$sql = "ALTER TABLE $table ADD CONSTRAINT $name ";
+
+		die($sql .= "FOREIGN KEY ($foreign) REFERENCES $on ($referenced)");
 	}
 
 	/**
