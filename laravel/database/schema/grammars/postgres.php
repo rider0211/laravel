@@ -146,11 +146,7 @@ class Postgres extends Grammar {
 	 */
 	public function unique(Table $table, Fluent $command)
 	{
-		$table = $this->wrap($table);
-
-		$columns = $this->columnize($command->columns);
-
-		return "ALTER TABLE $table ADD CONSTRAINT ".$command->name." UNIQUE ($columns)";
+		return $this->key($table, $command, true);
 	}
 
 	/**
@@ -254,7 +250,7 @@ class Postgres extends Grammar {
 	 */
 	public function drop_unique(Table $table, Fluent $command)
 	{
-		return $this->drop_constraint($table, $command);
+		return $this->drop_key($table, $command);
 	}
 
 	/**
@@ -291,18 +287,6 @@ class Postgres extends Grammar {
 	protected function drop_key(Table $table, Fluent $command)
 	{
 		return 'DROP INDEX '.$command->name;
-	}
-
-	/**
-	 * Drop a foreign key constraint from the table.
-	 *
-	 * @param  Table   $table
-	 * @param  Fluent  $fluent
-	 * @return string
-	 */
-	public function drop_foreign(Table $table, Fluent $command)
-	{
-		return $this->drop_constraint($table, $command);		
 	}
 
 	/**

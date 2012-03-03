@@ -17,19 +17,7 @@ class Session {
 	const csrf_token = 'csrf_token';
 
 	/**
-	 * Create the session payload and the load the session.
-	 *
-	 * @return void
-	 */
-	public static function load()
-	{
-		static::start(Config::get('session.driver'));
-
-		static::$instance->load(Cookie::get(Config::get('session.cookie')));
-	}
-
-	/**
-	 * Create the session payload instance for the request.
+	 * Create the session payload instance and load the session for the request.
 	 *
 	 * @param  string  $driver
 	 * @return void
