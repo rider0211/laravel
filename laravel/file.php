@@ -285,7 +285,8 @@ class File {
 
 		// To get the latest created file, we'll simply spin through the
 		// directory, setting the latest file if we encounter a file
-		// with a UNIX timestamp greater than the latest one.
+		// with a UNIX timestamp greater than the latest one we
+		// have encountered thus far in the loop.
 		foreach ($items as $item)
 		{
 			if ($item->getMTime() > $time) $latest = $item;
