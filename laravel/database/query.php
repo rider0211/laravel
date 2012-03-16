@@ -393,7 +393,7 @@ class Query {
 	 * @param  string   $connector
 	 * @return Query
 	 */
-	public function where_nested($callback, $connector = 'AND')
+	protected function where_nested($callback, $connector)
 	{
 		$type = 'where_nested';
 

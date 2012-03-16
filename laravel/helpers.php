@@ -410,15 +410,3 @@ function has_php($version)
 {
 	return version_compare(PHP_VERSION, $version) >= 0;
 }
-
-/**
- * Render the given view.
- *
- * @param  string  $view
- * @param  array   $data
- * @return string
- */
-function render($view, $data = array())
-{
-	return Laravel\View::make($view, $data)->render();
-}

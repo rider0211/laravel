@@ -33,7 +33,7 @@
 |
 */
 
-Route::get('/', function()
+Route::get('/, home', function()
 {
 	return View::make('home.index');
 });

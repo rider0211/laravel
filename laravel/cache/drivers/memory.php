@@ -53,18 +53,6 @@ class Memory extends Driver {
 	}
 
 	/**
-	 * Write an item to the cache that lasts forever.
-	 *
-	 * @param  string  $key
-	 * @param  mixed   $value
-	 * @return void
-	 */
-	public function forever($key, $value)
-	{
-		$this->put($key, $value, 0);
-	}
-
-	/**
 	 * Delete an item from the cache.
 	 *
 	 * @param  string  $key
@@ -73,16 +61,6 @@ class Memory extends Driver {
 	public function forget($key)
 	{
 		unset($this->storage[$key]);
-	}
-
-	/**
-	 * Flush the entire cache.
-	 *
-	 * @return void
-	 */
-	public function flush()
-	{
-		$this->storage = array();
 	}
 
 }
