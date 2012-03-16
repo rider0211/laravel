@@ -377,6 +377,21 @@ function root_namespace($class, $separator = '\\')
 }
 
 /**
+ * Get the "class basename" of a class or object.
+ *
+ * The basename is considered the name of the class minus all namespaces.
+ *
+ * @param  object|string  $class
+ * @return string
+ */
+function class_basename($class)
+{
+	if (is_object($class)) $class = get_class($class);
+
+	return basename($class);
+}
+
+/**
  * Return the value of the given item.
  *
  * If the given item is a Closure the result of the Closure will be returned.
@@ -409,4 +424,16 @@ function with($object)
 function has_php($version)
 {
 	return version_compare(PHP_VERSION, $version) >= 0;
+}
+
+/**
+ * Render the given view.
+ *
+ * @param  string  $view
+ * @param  array   $data
+ * @return string
+ */
+function render($view, $data = array())
+{
+	return Laravel\View::make($view, $data)->render();
 }
