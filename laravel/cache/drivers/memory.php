@@ -1,24 +1,13 @@
 <?php namespace Laravel\Cache\Drivers;
 
-class APC extends Driver {
+class Memory extends Driver {
 
 	/**
-	 * The cache key from the cache configuration file.
+	 * The in-memory array of cached items.
 	 *
 	 * @var string
 	 */
-	protected $key;
-
-	/**
-	 * Create a new APC cache driver instance.
-	 *
-	 * @param  string  $key
-	 * @return void
-	 */
-	public function __construct($key)
-	{
-		$this->key = $key;
-	}
+	protected $storage = array();
 
 	/**
 	 * Determine if an item exists in the cache.
@@ -39,9 +28,9 @@ class APC extends Driver {
 	 */
 	protected function retrieve($key)
 	{
-		if (($cache = apc_fetch($this->key.$key)) !== false)
+		if (array_key_exists($key, $this->storage))
 		{
-			return $cache;
+			return $this->storage[$key];
 		}
 	}
 
@@ -60,7 +49,7 @@ class APC extends Driver {
 	 */
 	public function put($key, $value, $minutes)
 	{
-		apc_store($this->key.$key, $value, $minutes * 60);
+		$this->storage[$key] = $value;
 	}
 
 	/**
@@ -72,7 +61,7 @@ class APC extends Driver {
 	 */
 	public function forever($key, $value)
 	{
-		return $this->put($key, $value, 0);
+		$this->put($key, $value, 0);
 	}
 
 	/**
@@ -83,7 +72,17 @@ class APC extends Driver {
 	 */
 	public function forget($key)
 	{
-		apc_delete($this->key.$key);
+		unset($this->storage[$key]);
+	}
+
+	/**
+	 * Flush the entire cache.
+	 *
+	 * @return void
+	 */
+	public function flush()
+	{
+		$this->storage = array();
 	}
 
 }
