@@ -23,7 +23,8 @@ class SQLServer extends Grammar {
 
 		// SQL Server does not currently implement an "OFFSET" type keyword, so we
 		// actually have to generate the ANSI standard SQL for doing offset like
-		// functionality. OFFSET is in SQL Server 2012, however.
+		// functionality. In the next version of SQL Server, an OFFSET like
+		// keyword is included for convenience.
 		if ($query->offset > 0)
 		{
 			return $this->ansi_offset($query, $sql);
@@ -31,7 +32,7 @@ class SQLServer extends Grammar {
 
 		// Once all of the clauses have been compiled, we can join them all as
 		// one statement. Any segments that are null or an empty string will
-		// be removed from the array before imploding.
+		// be removed from the array of clauses before they are imploded.
 		return $this->concatenate($sql);
 	}
 
@@ -47,9 +48,13 @@ class SQLServer extends Grammar {
 
 		$select = ($query->distinct) ? 'SELECT DISTINCT ' : 'SELECT ';
 
-		// Instead of using a "LIMIT" keyword, SQL Server uses the TOP keyword
-		// within the SELECT statement. So, if we have a limit, we will add
-		// it to the query here if there is not an OFFSET present.
+		// Instead of using a "LIMIT" keyword, SQL Server uses the "TOP"
+		// keyword within the SELECT statement. So, if we have a limit,
+		// we will add it here.
+		//
+		// We will not add the TOP clause if there is an offset however,
+		// since we will have to handle offsets using the ANSI syntax
+		// and will need to remove the TOP clause in that situation.
 		if ($query->limit > 0 and $query->offset <= 0)
 		{
 			$select .= 'TOP '.$query->limit.' ';
@@ -67,17 +72,18 @@ class SQLServer extends Grammar {
 	 */
 	protected function ansi_offset(Query $query, $components)
 	{
-		// An ORDER BY clause is required to make this offset query work, so if
-		// one doesn't exist, we'll just create a dummy clause to trick the
-		// database and pacify it so it doesn't complain about the query.
+		// An ORDER BY clause is required to make this offset query
+		// work, so if one doesn't exist, we'll just create a dummy
+		// clause to satisfy the database.
 		if ( ! isset($components['orderings']))
 		{
 			$components['orderings'] = 'ORDER BY (SELECT 0)';
 		}
 
-		// We need to add the row number to the query so we can compare it to
-		// the offset and limit values given for the statement. So we'll add
-		// an expression to the select for the row number.
+		// We need to add the row number to the query results so we
+		// can compare it against the offset and limit values given
+		// for the statement. To do that we'll add an expression to
+		// the select statement for the row number.
 		$orderings = $components['orderings'];
 
 		$components['selects'] .= ", ROW_NUMBER() OVER ({$orderings}) AS RowNum";
@@ -86,9 +92,10 @@ class SQLServer extends Grammar {
 
 		$start = $query->offset + 1;
 
-		// Next we need to calculate the constraint that should be placed on
-		// the row number to get the correct offset and limit on the query.
-		// If there is not limit, we'll just handle the offset.
+		// Next we need to calculate the constraint that should be
+		// placed on the row number to get the correct offset and
+		// limit on the query. If a limit has not been set, we'll
+		// only add a constraint to handle offset.
 		if ($query->limit > 0)
 		{
 			$finish = $query->offset + $query->limit;
@@ -100,9 +107,10 @@ class SQLServer extends Grammar {
 			$constraint = ">= {$start}";
 		}
 
-		// We're finally ready to build the final SQL query so we'll create
-		// a common table expression with the query and select all of the
-		// results with row numbers between the limit and offset.
+		// Now, we're finally ready to build the final SQL query.
+		// We'll create a common table expression with the query
+		// and then select all of the results from it where the
+		// row number is between oru given limit and offset.
 		$sql = $this->concatenate($components);
 
 		return "SELECT * FROM ($sql) AS TempTable WHERE RowNum {$constraint}";

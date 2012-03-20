@@ -365,30 +365,14 @@ function str_finish($value, $cap)
  * Get the root namespace of a given class.
  *
  * @param  string  $class
- * @param  string  $separator
  * @return string
  */
-function root_namespace($class, $separator = '\\')
+function root_namespace($class)
 {
-	if (str_contains($class, $separator))
+	if (str_contains($class, '\\'))
 	{
-		return head(explode($separator, $class));
+		return head(explode('\\', $class));
 	}
-}
-
-/**
- * Get the "class basename" of a class or object.
- *
- * The basename is considered the name of the class minus all namespaces.
- *
- * @param  object|string  $class
- * @return string
- */
-function class_basename($class)
-{
-	if (is_object($class)) $class = get_class($class);
-
-	return basename($class);
 }
 
 /**
@@ -424,16 +408,4 @@ function with($object)
 function has_php($version)
 {
 	return version_compare(PHP_VERSION, $version) >= 0;
-}
-
-/**
- * Render the given view.
- *
- * @param  string  $view
- * @param  array   $data
- * @return string
- */
-function render($view, $data = array())
-{
-	return Laravel\View::make($view, $data)->render();
 }
