@@ -7,26 +7,7 @@ class Form {
 	 *
 	 * @var array
 	 */
-	public static $labels = array();
-	
-	/**
-	 * The registered custom macros.
-	 *
-	 * @var array
-	 */
-	public static $macros = array();
-
-    /**
-     * Registers a custom macro.
-     *
-     * @param  string   $name
-     * @param  Closure  $input
-     * @return void
-     */
-	public static function macro($name, $macro)
-	{
-		static::$macros[$name] = $macro;
-	}
+	protected static $labels = array();
 
 	/**
 	 * Open a HTML form.
@@ -71,7 +52,8 @@ class Form {
 
 		// Since PUT and DELETE methods are not actually supported by HTML forms,
 		// we'll create a hidden input element that contains the request method
-		// and set the actual request method variable to POST.
+		// and set the actual request method to POST. Laravel will look for the
+		// hidden element to determine the request method.
 		if ($method == 'PUT' or $method == 'DELETE')
 		{
 			$append = static::hidden(Request::spoofer, $method);
@@ -559,7 +541,8 @@ class Form {
 	{
 		// If an ID has been explicitly specified in the attributes, we will
 		// use that ID. Otherwise, we will look for an ID in the array of
-		// label names so labels and their elements have the same ID.
+		// label names as this makes it convenient to give input elements
+		// the same ID as their corresponding labels.
 		if (array_key_exists('id', $attributes))
 		{
 			return $attributes['id'];
@@ -569,23 +552,6 @@ class Form {
 		{
 			return $name;
 		}
-	}
-
-	/**
-	 * Dynamically handle calls to custom macros.
-	 *
-	 * @param  string  $method
-	 * @param  array   $parameters
-	 * @return mixed
-	 */
-	public static function __callStatic($method, $parameters)
-	{
-	    if (isset(static::$macros[$method]))
-	    {
-	        return call_user_func_array(static::$macros[$method], $parameters);
-	    }
-	    
-	    throw new \Exception("Method [$method] does not exist.");
 	}
 
 }

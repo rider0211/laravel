@@ -42,4 +42,4 @@ require path('sys').'core.php';
 // --------------------------------------------------------------
 // Start the default bundle.
 // --------------------------------------------------------------
-Laravel\Bundle::start(DEFAULT_BUNDLE);
+Bundle::start(DEFAULT_BUNDLE);
