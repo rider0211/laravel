@@ -65,10 +65,7 @@ foreach ($paths as $name => $path)
 {
 	if ($web) $path = "../{$path}";
 
-	if ( ! isset($GLOBALS['laravel_paths'][$name]))
-	{
-		$GLOBALS['laravel_paths'][$name] = realpath($path).DS;
-	}
+	$GLOBALS['laravel_paths'][$name] = realpath($path).DS;
 }
 
 /**

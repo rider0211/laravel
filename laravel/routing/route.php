@@ -1,7 +1,6 @@
 <?php namespace Laravel\Routing;
 
 use Closure;
-use Laravel\URI;
 use Laravel\Bundle;
 use Laravel\Request;
 use Laravel\Response;
@@ -173,38 +172,7 @@ class Route {
 			$filters = array_merge($filters, $assigned);
 		}
 
-		// Next we will attach any pattern type filters to the array of
-		// filters as these are matched to the route by the route's
-		// URI and not explicitly attached to routes.
-		if ($event == 'before')
-		{
-			$filters = array_merge($filters, $this->patterns());
-		}
-
 		return array(new Filter_Collection($filters));
-	}
-
-	/**
-	 * Get the pattern filters for the route.
-	 *
-	 * @return array
-	 */
-	protected function patterns()
-	{
-		$filters = array();
-
-		// We will simply iterate through the registered patterns and
-		// check the URI pattern against the URI for the route and
-		// if they match we'll attach the filter.
-		foreach (Filter::$patterns as $pattern => $filter)
-		{
-			if (URI::is($pattern, $this->uri))
-			{
-				$filters[] = $filter;
-			}
-		}
-
-		return (array) $filters;
 	}
 
 	/**
@@ -372,25 +340,13 @@ class Route {
 	/**
 	 * Register a route filter.
 	 *
-	 * @param  string  $name
-	 * @param  mixed   $callback
+	 * @param  string   $name
+	 * @param  Closure  $callback
 	 * @return void
 	 */
-	public static function filter($name, $callback)
+	public static function filter($name, Closure $callback)
 	{
 		Filter::register($name, $callback);
-	}
-
-	/**
-	 * Calls the specified route and returns its response.
-	 *
-	 * @param  string    $method
-	 * @param  string    $uri
-	 * @return Response
-	 */
-	public static function forward($method, $uri)
-	{
-		return Router::route(strtoupper($method), $uri)->call();
 	}
 
 }

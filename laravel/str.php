@@ -3,13 +3,6 @@
 class Str {
 
 	/**
-	 * The pluralizer instance.
-	 *
-	 * @var Pluralizer
-	 */
-	public static $pluralizer;
-
-	/**
 	 * Get the default string encoding for the application.
 	 *
 	 * This method is simply a short-cut to Config::get('application.encoding').
@@ -161,16 +154,24 @@ class Str {
 	/**
 	 * Get the singular form of the given word.
 	 *
+	 * The word should be defined in the "strings" configuration file.
+	 *
 	 * @param  string  $value
 	 * @return string
 	 */
 	public static function singular($value)
 	{
-		return static::pluralizer()->singular($value);
+		$inflection = Config::get('strings.inflection');
+
+		$singular = array_get(array_flip($inflection), strtolower($value), $value);
+
+		return (ctype_upper($value[0])) ? static::title($singular) : $singular;
 	}
 
 	/**
 	 * Get the plural form of the given word.
+	 *
+	 * The word should be defined in the "strings" configuration file.
 	 *
 	 * <code>
 	 *		// Returns the plural form of "child"
@@ -186,19 +187,11 @@ class Str {
 	 */
 	public static function plural($value, $count = 2)
 	{
-		return static::pluralizer()->plural($value, $count);
-	}
+		if ((int) $count == 1) return $value;
 
-	/**
-	 * Get the pluralizer instance.
-	 *
-	 * @return Pluralizer
-	 */
-	protected static function pluralizer()
-	{
-		$config = Config::get('strings');
+		$plural = array_get(Config::get('strings.inflection'), strtolower($value), $value);
 
-		return static::$pluralizer ?: static::$pluralizer = new Pluralizer($config);
+		return (ctype_upper($value[0])) ? static::title($plural) : $plural;
 	}
 
 	/**

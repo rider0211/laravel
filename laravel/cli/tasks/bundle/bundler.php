@@ -53,11 +53,9 @@ class Bundler extends Task {
 			// hosting party and installing it into the application.
 			$path = path('bundle').$this->path($bundle);
 
-			echo "Fetching [{$bundle['name']}]...";
-
 			$this->download($bundle, $path);
 
-			echo "done! Bundle installed.".PHP_EOL;
+			echo "Bundle [{$bundle['name']}] installed!".PHP_EOL;
 		}
 	}
 
