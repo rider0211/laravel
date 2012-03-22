@@ -120,16 +120,9 @@ class Schema {
 		{
 			foreach (array('primary', 'unique', 'fulltext', 'index') as $key)
 			{
-				if (isset($column->$key))
+				if (isset($column->attributes[$key]))
 				{
-					if ($column->$key === true)
-					{
-						$table->$key($column->name);
-					}
-					else
-					{
-						$table->$key($column->name, $column->$key);
-					}
+					$table->$key($column->name);
 				}
 			}
 		}
