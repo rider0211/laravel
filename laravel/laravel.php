@@ -57,18 +57,77 @@ error_reporting(-1);
 
 /*
 |--------------------------------------------------------------------------
-| Create The HttpFoundation Request
+| Magic Quotes Strip Slashes
 |--------------------------------------------------------------------------
 |
-| Laravel uses the HttpFoundation Symfony component to handle the request
-| and response functionality for the framework. This allows us to not
-| worry about that boilerplate code and focus on what matters.
+| Even though "Magic Quotes" are deprecated in PHP 5.3.x, they may still
+| be enabled on the server. To account for this, we will strip slashes
+| on all input arrays if magic quotes are enabled for the server.
 |
 */
 
-use Symfony\Component\HttpFoundation\Request as FoundationRequest;
+if (magic_quotes())
+{
+	$magics = array(&$_GET, &$_POST, &$_COOKIE, &$_REQUEST);
 
-Request::$foundation = FoundationRequest::createFromGlobals();
+	foreach ($magics as &$magic)
+	{
+		$magic = array_strip_slashes($magic);
+	}
+}
+
+/*
+|--------------------------------------------------------------------------
+| Sniff The Input For The Request
+|--------------------------------------------------------------------------
+|
+| Next we'll gather the input to the application based on the global input
+| variables for the current request. The input will be gathered based on
+| the current request method and will be set on the Input manager class
+| as a simple static $input property which can be easily accessed.
+|
+*/
+
+$input = array();
+
+switch (Request::method())
+{
+	case 'GET':
+		$input = $_GET;
+		break;
+
+	case 'POST':
+		$input = $_POST;
+		break;
+
+	default:
+		if (Request::spoofed())
+		{
+			$input = $_POST;
+		}
+		else
+		{
+			parse_str(file_get_contents('php://input'), $input);
+
+			if (magic_quotes()) $input = array_strip_slashes($input);
+		}
+}
+
+/*
+|--------------------------------------------------------------------------
+| Remove The Spoofer Input
+|--------------------------------------------------------------------------
+|
+| The spoofed request method is removed from the input so it is not in
+| the Input::all() or Input::get() results. Leaving it in the array
+| could cause unexpected results since the developer won't be
+| expecting it to be present.
+|
+*/
+
+unset($input[Request::spoofer]);
+
+Input::$input = $input;
 
 /*
 |--------------------------------------------------------------------------
@@ -148,6 +207,19 @@ if (Config::get('session.driver') !== '')
 {
 	Session::save();
 }
+
+/*
+|--------------------------------------------------------------------------
+| Let's Eat Cookies
+|--------------------------------------------------------------------------
+|
+| All cookies set during the request are actually stored in a cookie jar
+| until the end of the request so they can be expected by unit tests or
+| the developer. Here, we'll push them out to the browser.
+|
+*/
+
+Cookie::send();	
 
 /*
 |--------------------------------------------------------------------------

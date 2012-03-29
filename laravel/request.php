@@ -10,18 +10,11 @@ class Request {
 	public static $route;
 
 	/**
-	 * The Symfony HttpFoundation Request instance.
-	 *
-	 * @var HttpFoundation\Request
-	 */
-	public static $foundation;
-
-	/**
 	 * The request data key that is used to indicate a spoofed request method.
 	 *
 	 * @var string
 	 */
-	const spoofer = '_method';
+	const spoofer = '__spoofer';
 
 	/**
 	 * Get the URI for the current request.
@@ -40,36 +33,12 @@ class Request {
 	 */
 	public static function method()
 	{
-		$method = static::foundation()->getMethod();
+		if ($_SERVER['REQUEST_METHOD'] == 'HEAD')
+		{
+			return 'GET';
+		}
 
-		return ($method == 'HEAD') ? 'GET' : $method;
-	}
-
-	/**
-	 * Get a header from the request.
-	 *
-	 * <code>
-	 *		// Get a header from the request
-	 *		$referer = Request::header('referer');
-	 * </code>
-	 *
-	 * @param  string  $key
-	 * @param  mixed   $default
-	 * @return mixed
-	 */
-	public static function header($key, $default = null)
-	{
-		return array_get(static::foundation()->headers->all(), $key, $default);
-	}
-
-	/**
-	 * Get all of the HTTP request headers.
-	 *
-	 * @return array
-	 */
-	public static function headers()
-	{
-		return static::foundation()->headers->all();
+		return (static::spoofed()) ? $_POST[Request::spoofer] : $_SERVER['REQUEST_METHOD'];
 	}
 
 	/**
@@ -81,7 +50,7 @@ class Request {
 	 */
 	public static function server($key = null, $default = null)
 	{
-		return array_get(static::foundation()->server->all(), $key, $default);
+		return array_get($_SERVER, strtoupper($key), $default);
 	}
 
 	/**
@@ -91,7 +60,7 @@ class Request {
 	 */
 	public static function spoofed()
 	{
-		return ! is_null(static::foundation()->get(Request::spoofer));
+		return is_array($_POST) and array_key_exists(Request::spoofer, $_POST);
 	}
 
 	/**
@@ -102,27 +71,30 @@ class Request {
 	 */
 	public static function ip($default = '0.0.0.0')
 	{
-		return value(static::foundation()->getClientIp(), $default);
+		if (isset($_SERVER['HTTP_X_FORWARDED_FOR']))
+		{
+			return $_SERVER['HTTP_X_FORWARDED_FOR'];
+		}
+		elseif (isset($_SERVER['HTTP_CLIENT_IP']))
+		{
+			return $_SERVER['HTTP_CLIENT_IP'];
+		}
+		elseif (isset($_SERVER['REMOTE_ADDR']))
+		{
+			return $_SERVER['REMOTE_ADDR'];
+		}
+
+		return value($default);
 	}
 
 	/**
-	 * Get the list of acceptable content types for the request.
+	 * Get the HTTP protocol for the request.
 	 *
-	 * @return array
+	 * @return string
 	 */
-	public static function accept()
+	public static function protocol()
 	{
-		return static::foundation()->getAcceptableContentTypes();
-	}
-
-	/**
-	 * Determine if the request accepts a given content type.
-	 *
-	 * @return bool
-	 */
-	public static function accepts($type)
-	{
-		return in_array($type, static::accept());
+		return array_get($_SERVER, 'SERVER_PROTOCOL', 'HTTP/1.1');
 	}
 
 	/**
@@ -132,7 +104,7 @@ class Request {
 	 */
 	public static function secure()
 	{
-		return static::foundation()->isSecure();
+		return isset($_SERVER['HTTPS']) and strtolower($_SERVER['HTTPS']) !== 'off';
 	}
 
 	/**
@@ -154,7 +126,9 @@ class Request {
 	 */
 	public static function ajax()
 	{
-		return static::foundation()->isXmlHttpRequest();
+		if ( ! isset($_SERVER['HTTP_X_REQUESTED_WITH'])) return false;
+
+		return strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
 	}
 
 	/**
@@ -164,7 +138,7 @@ class Request {
 	 */
 	public static function referrer()
 	{
-		return static::foundation()->headers->get('referer');
+		return array_get($_SERVER, 'HTTP_REFERER');
 	}
 
 	/**
@@ -184,7 +158,7 @@ class Request {
 	 */
 	public static function env()
 	{
-		return static::foundation()->server->get('LARAVEL_ENV');
+		if (isset($_SERVER['LARAVEL_ENV'])) return $_SERVER['LARAVEL_ENV'];
 	}
 
 	/**
@@ -206,28 +180,6 @@ class Request {
 	public static function route()
 	{
 		return static::$route;
-	}
-
-	/**
-	 * Get the Symfony HttpFoundation Request instance.
-	 *
-	 * @return HttpFoundation\Request
-	 */
-	public static function foundation()
-	{
-		return static::$foundation;
-	}
-
-	/**
-	 * Pass any other methods to the Symfony request.
-	 *
-	 * @param  string  $method
-	 * @param  array   $parameters
-	 * @return mixed
-	 */
-	public static function __callStatic($method, $parameters)
-	{
-		return call_user_func_array(array(static::foundation(), $method), $parameters);
 	}
 
 }
