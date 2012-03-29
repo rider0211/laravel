@@ -2,10 +2,25 @@
 
 ## Contents
 
+- [Laravel 3.2](#3.2)
+- [Upgrading From 3.1](#upgrade-3.2)
 - [Laravel 3.1.1](#3.1.1)
 - [Upgrading From 3.1](#upgrade-3.1.1)
 - [Laravel 3.1](#3.1)
 - [Upgrading From 3.0](#upgrade-3.1)
+
+<a name="3.2"></a>
+## Laravel 3.2
+
+- Fixed the passing of strings into the Input::except method.
+- Fixed replacement of optional parameters in URL::transpose method.
+- Added "to_array" method to the base Eloquent model.
+- Added "$hidden" static variable to the base Eloquent model.
+
+<a name="upgrade-3.2"></a>
+## Upgrading From 3.1
+
+- Replace the **laravel** folder.
 
 <a name="3.1.1"></a>
 ## Laravel 3.1.1
@@ -74,6 +89,7 @@ If you have created indexes on tables using the Laravel migration system and you
 Add the following to the **aliases** array in your **application/config/application.php** file:
 
 	'Eloquent' => 'Laravel\\Database\\Eloquent\\Model',
+	'Blade' => 'Laravel\\Blade',
 
 ### Update Eloquent many-to-many tables.
 
