@@ -2,24 +2,10 @@
 
 ## Contents
 
-- [Laravel 3.2](#3.2)
-- [Upgrading From 3.1](#upgrade-3.2)
 - [Laravel 3.1.1](#3.1.1)
 - [Upgrading From 3.1](#upgrade-3.1.1)
 - [Laravel 3.1](#3.1)
 - [Upgrading From 3.0](#upgrade-3.1)
-
-<a name="3.2"></a>
-## Laravel 3.2
-
-- Fixed replacement of optional parameters in URL::transpose method.
-- Added "to_array" method to the base Eloquent model.
-- Added "$hidden" static variable to the base Eloquent model.
-
-<a name="upgrade-3.2"></a>
-## Upgrading From 3.1
-
-- Replace the **laravel** folder.
 
 <a name="3.1.1"></a>
 ## Laravel 3.1.1
@@ -104,3 +90,15 @@ English pluralization and singularization is now automatic. Just completely repl
 ### Add the **fetch** option to your database configuration file.
 
 A new **fetch** option allows you to specify in which format you receive your database results. Just copy and paste the option from the new **application/config/database.php** file.
+
+### Add **database** option to your Redis configuration.
+
+If you are using Redis, add the "database" option to your Redis connection configurations. The "database" value can be zero by default.
+
+	'redis' => array(
+		'default' => array(
+			'host' => '127.0.0.1',
+			'port' => 6379,
+			'database' => 0
+		),
+	),
