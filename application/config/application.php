@@ -116,7 +116,6 @@ return array(
 	*/
 
 	'aliases' => array(
-		'Anbu'		 => 'Laravel\\Anbu\\Anbu',
 		'Auth'       => 'Laravel\\Auth',
 		'Asset'      => 'Laravel\\Asset',
 		'Autoloader' => 'Laravel\\Autoloader',
