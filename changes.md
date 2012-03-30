@@ -2,24 +2,20 @@
 
 ## Contents
 
-- [Laravel 3.2](#3.2)
-- [Upgrading From 3.1](#upgrade-3.2)
+- [Laravel 3.1.2](#3.1.2)
+- [Upgrading From 3.1.1](#upgrade-3.1.2)
 - [Laravel 3.1.1](#3.1.1)
 - [Upgrading From 3.1](#upgrade-3.1.1)
 - [Laravel 3.1](#3.1)
 - [Upgrading From 3.0](#upgrade-3.1)
 
-<a name="3.2"></a>
-## Laravel 3.2
+<a name="3.1.2"></a>
+## Laravel 3.1.2
 
-- Fixed the passing of strings into the Input::except method.
-- Fixed replacement of optional parameters in URL::transpose method.
-- Added "to_array" method to the base Eloquent model.
-- Added "$hidden" static variable to the base Eloquent model.
-- Added "sync" method to has_many_and_belongs_to Eloquent relationship.
+- Fixes Eloquent query method constructor conflict.
 
-<a name="upgrade-3.2"></a>
-## Upgrading From 3.1
+<a name="upgrade-3.1.2"></a>
+## Upgrade From 3.1.1
 
 - Replace the **laravel** folder.
 
