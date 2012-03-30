@@ -17,13 +17,23 @@ class URI {
 	public static $segments = array();
 
 	/**
+	 * The server variables to check for the URI.
+	 *
+	 * @var array
+	 */
+	protected static $attempt = array(
+		'PATH_INFO', 'REQUEST_URI',
+		'PHP_SELF', 'REDIRECT_URL'
+	);
+
+	/**
 	 * Get the full URI including the query string.
 	 *
 	 * @return string
 	 */
 	public static function full()
 	{
-		return Request::getUri();
+		return static::current().static::query();
 	}
 
 	/**
@@ -35,14 +45,45 @@ class URI {
 	{
 		if ( ! is_null(static::$uri)) return static::$uri;
 
-		// We'll simply get the path info from the Symfony Request instance and then
-		// format to meet our needs in the router. If the URI is root, we'll give
-		// back a single slash, otherwise we'll strip the slashes.
-		$uri = static::format(Request::getPathInfo());
+		// To get the URI, we'll first call the detect method which will spin
+		// through each of the server variables that we check for the URI in
+		// and use the first one we encounter for the URI.
+		static::$uri = static::detect();
 
-		static::segments($uri);
+		// If you ever encounter this error, please inform the nerdy Laravel
+		// dev team with information about your server. We want to support
+		// Laravel an as many servers as we possibly can!
+		if (is_null(static::$uri))
+		{
+			throw new \Exception("Could not detect request URI.");
+		}
 
-		return static::$uri = $uri;
+		static::segments(static::$uri);
+
+		return static::$uri;
+	}
+
+	/**
+	 * Detect the URI from the server variables.
+	 *
+	 * @return string|null
+	 */
+	protected static function detect()
+	{
+		foreach (static::$attempt as $variable)
+		{
+			// Each variable we search for the URI has its own parser function
+			// which is responsible for doing any formatting before the value
+			// is fed into the main formatting function.
+			$method = "parse_{$variable}";
+
+			if (isset($_SERVER[$variable]))
+			{
+				$uri = static::$method($_SERVER[$variable]);
+
+				return static::format($uri);
+			}
+		}		
 	}
 
 	/**
@@ -53,6 +94,21 @@ class URI {
 	 */
 	protected static function format($uri)
 	{
+		// First we want to remove the application's base URL from the URI if it is
+		// in the string. It is possible for some of the parsed server variables to
+		// include the entire document root in the string.
+		$uri = static::remove_base($uri);
+
+		$index = '/'.Config::get('application.index');
+
+		// Next we'll remove the index file from the URI if it is there and then
+		// finally trim down the URI. If the URI is left with spaces, we'll use
+		// a single slash for the root URI.
+		if ($index !== '/')
+		{
+			$uri = static::remove($uri, $index);
+		}
+
 		return trim($uri, '/') ?: '/';
 	}
 
@@ -80,6 +136,61 @@ class URI {
 		}
 
 		return preg_match('#'.$pattern.'#', $uri);
+	}
+
+	/**
+	 * Parse the PATH_INFO server variable.
+	 *
+	 * @param  string  $value
+	 * @return string
+	 */
+	protected static function parse_path_info($value)
+	{
+		return $value;
+	}
+
+	/**
+	 * Parse the REQUEST_URI server variable.
+	 *
+	 * @param  string  $value
+	 * @return string
+	 */
+	protected static function parse_request_uri($value)
+	{
+		return parse_url($value, PHP_URL_PATH);
+	}
+
+	/**
+	 * Parse the PHP_SELF server variable.
+	 *
+	 * @param  string  $value
+	 * @return string
+	 */
+	protected static function parse_php_self($value)
+	{
+		return $value;
+	}
+
+	/**
+	 * Parse the REDIRECT_URL server variable.
+	 *
+	 * @param  string  $value
+	 * @return string
+	 */
+	protected static function parse_redirect_url($value)
+	{
+		return $value;
+	}
+
+	/**
+	 * Remove the base URL off of the request URI.
+	 *
+	 * @param  string  $uri
+	 * @return string
+	 */
+	protected static function remove_base($uri)
+	{
+		return static::remove($uri, parse_url(URL::base(), PHP_URL_PATH));
 	}
 
 	/**
@@ -115,6 +226,28 @@ class URI {
 		$segments = explode('/', trim($uri, '/'));
 
 		static::$segments = array_diff($segments, array(''));
+	}
+
+	/**
+	 * Remove a given value from the URI.
+	 *
+	 * @param  string  $uri
+	 * @param  string  $value
+	 * @return string
+	 */
+	protected static function remove($uri, $value)
+	{
+		return (strpos($uri, $value) === 0) ? substr($uri, strlen($value)) : $uri;
+	}
+
+	/**
+	 * Get the query string for the current request.
+	 *
+	 * @return string
+	 */
+	protected static function query()
+	{
+		return (count((array) $_GET) > 0) ? '?'.http_build_query($_GET) : '';
 	}
 
 }
