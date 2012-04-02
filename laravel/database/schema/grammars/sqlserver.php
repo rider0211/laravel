@@ -213,18 +213,6 @@ class SQLServer extends Grammar {
 	}
 
 	/**
-	 * Generate the SQL statement for a rename table command.
-	 *
-	 * @param  Table    $table
-	 * @param  Fluent   $command
-	 * @return string
-	 */
-	public function rename(Table $table, Fluent $command)
-	{
-		return 'ALTER TABLE '.$this->wrap($table).' RENAME TO '.$this->wrap($command->name);
-	}
-
-	/**
 	 * Generate the SQL statement for a drop table command.
 	 *
 	 * @param  Table   $table
@@ -332,7 +320,7 @@ class SQLServer extends Grammar {
 	 */
 	public function drop_foreign(Table $table, Fluent $command)
 	{
-		return $this->drop_constraint($table, $command);
+		return $this->drop_constraint($table, $command);		
 	}
 
 	/**
