@@ -33,10 +33,4 @@
 |
 */
 
-return array(
-
-	// route the official docs
-	'docs' => array(
-		'handles' => 'docs'
-	),
-);
+return array();
