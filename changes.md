@@ -24,7 +24,6 @@
 - Added "$hidden" static variable to the base Eloquent model.
 - Added "sync" method to has_many_and_belongs_to Eloquent relationship.
 - Improved View performance by only loading contents from file once.
-- Fix handling of URLs beginning with has in URL::to.
 
 <a name="upgrade-3.2"></a>
 ## Upgrading From 3.1
