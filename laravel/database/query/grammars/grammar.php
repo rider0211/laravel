@@ -397,23 +397,21 @@ class Grammar extends \Laravel\Database\Grammar {
 	 * @param  array   $bindings
 	 * @return string
 	 */
-	public function shortcut($sql, &$bindings)
+	public function shortcut($sql, $bindings)
 	{
 		// Laravel provides an easy short-cut notation for writing raw WHERE IN
 		// statements. If (...) is in the query, it will be replaced with the
-		// correct number of parameters based on the query bindings.
+		// correct number of parameters based on the bindings.
 		if (strpos($sql, '(...)') !== false)
 		{
 			for ($i = 0; $i < count($bindings); $i++)
 			{
-				// If the binding is an array, we can just assume it's used to fill a
-				// where in condition, so we'll just replace the next place-holder
-				// in the query with the constraint and splice the bindings.
+				// If the binding is an array, we can just assume it's used to
+				// fill a "where in" condition, so we will just replace the
+				// next place-holder in the query with the constraint.
 				if (is_array($bindings[$i]))
 				{
 					$parameters = $this->parameterize($bindings[$i]);
-
-					array_splice($bindings, $i, 1, $bindings[$i]);
 
 					$sql = preg_replace('~\(\.\.\.\)~', "({$parameters})", $sql, 1);
 				}

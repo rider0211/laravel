@@ -89,7 +89,7 @@ class Response {
 	{
 		$this->status = $status;
 		$this->content = $content;
-		$this->headers = array_change_key_case($headers);
+		$this->headers = $headers;
 	}
 
 	/**
