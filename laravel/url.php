@@ -68,14 +68,36 @@ class URL {
 		{
 			$base = $url;
 		}
-		else
+		elseif (isset($_SERVER['HTTP_HOST']))
 		{
-			$f = Request::foundation();
-
-			$base = $f->getScheme().'://'.$f->getHttpHost().$f->getBaseUrl();
+			$base = static::guess();
 		}
 
 		return static::$base = $base;
+	}
+
+	/**
+	 * Guess the application URL based on the $_SERVER variables.
+	 *
+	 * @return string
+	 */
+	protected static function guess()
+	{
+		$protocol = (Request::secure()) ? 'https://' : 'http://';
+
+		// Basically, by removing the basename, we are removing everything after
+		// the and including the front controller from the URI. Leaving us with
+		// the installation path for the application.
+		$script = $_SERVER['SCRIPT_NAME'];
+
+		$path = str_replace(basename($script), '', $script);
+
+		// Now that we have the URL, all we need to do is attach the protocol
+		// protocol and HTTP_HOST to build the URL for the application, and
+		// we also trim off trailing slashes for cleanliness.
+		$uri = $protocol.$_SERVER['HTTP_HOST'].$path;
+
+		return rtrim($uri, '/');
 	}
 
 	/**
@@ -95,7 +117,13 @@ class URL {
 	 */
 	public static function to($url = '', $https = false)
 	{
-		if (filter_var($url, FILTER_VALIDATE_URL) !== false) return $url;
+		// If the given URL is already valid or begins with a hash, we'll just return
+		// the URL unchanged since it is already well formed. Otherwise we will add
+		// the base URL of the application and return the full URL.
+		if (static::valid($url) or starts_with($url, '#'))
+		{
+			return $url;
+		}
 
 		$root = static::base().'/'.Config::get('application.index');
 
@@ -286,6 +314,17 @@ class URL {
 		$uri = preg_replace('/\(.+?\)/', '', $uri);
 
 		return trim($uri, '/');
+	}
+
+	/**
+	 * Determine if the given URL is valid.
+	 *
+	 * @param  string  $url
+	 * @return bool
+	 */
+	public static function valid($url)
+	{
+		return filter_var($url, FILTER_VALIDATE_URL) !== false;
 	}
 
 }
