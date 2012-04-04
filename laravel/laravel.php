@@ -78,56 +78,18 @@ if (magic_quotes())
 
 /*
 |--------------------------------------------------------------------------
-| Sniff The Input For The Request
+| Create The HttpFoundation Request
 |--------------------------------------------------------------------------
 |
-| Next we'll gather the input to the application based on the global input
-| variables for the current request. The input will be gathered based on
-| the current request method and will be set on the Input manager class
-| as a simple static $input property which can be easily accessed.
+| Laravel uses the HttpFoundation Symfony component to handle the request
+| and response functionality for the framework. This allows us to not
+| worry about that boilerplate code and focus on what matters.
 |
 */
 
-$input = array();
+use Symfony\Component\HttpFoundation\LaravelRequest as RequestFoundation;
 
-switch (Request::method())
-{
-	case 'GET':
-		$input = $_GET;
-		break;
-
-	case 'POST':
-		$input = $_POST;
-		break;
-
-	default:
-		if (Request::spoofed())
-		{
-			$input = $_POST;
-		}
-		else
-		{
-			parse_str(file_get_contents('php://input'), $input);
-
-			if (magic_quotes()) $input = array_strip_slashes($input);
-		}
-}
-
-/*
-|--------------------------------------------------------------------------
-| Remove The Spoofer Input
-|--------------------------------------------------------------------------
-|
-| The spoofed request method is removed from the input so it is not in
-| the Input::all() or Input::get() results. Leaving it in the array
-| could cause unexpected results since the developer won't be
-| expecting it to be present.
-|
-*/
-
-unset($input[Request::spoofer]);
-
-Input::$input = $input;
+Request::$foundation = RequestFoundation::createFromGlobals();
 
 /*
 |--------------------------------------------------------------------------
@@ -210,19 +172,6 @@ if (Config::get('session.driver') !== '')
 
 /*
 |--------------------------------------------------------------------------
-| Let's Eat Cookies
-|--------------------------------------------------------------------------
-|
-| All cookies set during the request are actually stored in a cookie jar
-| until the end of the request so they can be expected by unit tests or
-| the developer. Here, we'll push them out to the browser.
-|
-*/
-
-Cookie::send();	
-
-/*
-|--------------------------------------------------------------------------
 | Send The Response To The Browser
 |--------------------------------------------------------------------------
 |
@@ -246,4 +195,4 @@ $response->send();
 |
 */
 
-Event::fire('laravel.done');
+Event::fire('laravel.done', array($response));

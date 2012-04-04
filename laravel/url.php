@@ -61,43 +61,21 @@ class URL {
 
 		$base = 'http://localhost';
 
-		// If the application URL configuration is set, we will just use that
+		// If the application's URL configuration is set, we will just use that
 		// instead of trying to guess the URL from the $_SERVER array's host
 		// and script variables as this is more reliable.
 		if (($url = Config::get('application.url')) !== '')
 		{
 			$base = $url;
 		}
-		elseif (isset($_SERVER['HTTP_HOST']))
+		else
 		{
-			$base = static::guess();
+			$f = Request::foundation();
+
+			$base = $f->getScheme().'://'.$f->getHttpHost().$f->getBasePath();
 		}
 
 		return static::$base = $base;
-	}
-
-	/**
-	 * Guess the application URL based on the $_SERVER variables.
-	 *
-	 * @return string
-	 */
-	protected static function guess()
-	{
-		$protocol = (Request::secure()) ? 'https://' : 'http://';
-
-		// Basically, by removing the basename, we are removing everything after
-		// the and including the front controller from the URI. Leaving us with
-		// the installation path for the application.
-		$script = $_SERVER['SCRIPT_NAME'];
-
-		$path = str_replace(basename($script), '', $script);
-
-		// Now that we have the URL, all we need to do is attach the protocol
-		// protocol and HTTP_HOST to build the URL for the application, and
-		// we also trim off trailing slashes for cleanliness.
-		$uri = $protocol.$_SERVER['HTTP_HOST'].$path;
-
-		return rtrim($uri, '/');
 	}
 
 	/**
@@ -117,7 +95,13 @@ class URL {
 	 */
 	public static function to($url = '', $https = false)
 	{
-		if (filter_var($url, FILTER_VALIDATE_URL) !== false) return $url;
+		// If the given URL is already valid or begins with a hash, we'll just return
+		// the URL unchanged since it is already well formed. Otherwise we will add
+		// the base URL of the application and return the full URL.
+		if (static::valid($url) or starts_with($url, '#'))
+		{
+			return $url;
+		}
 
 		$root = static::base().'/'.Config::get('application.index');
 
@@ -304,10 +288,21 @@ class URL {
 
 		// If there are any remaining optional place-holders, we'll just replace
 		// them with empty strings since not every optional parameter has to be
-		// in the array of parameters that were passed.
-		$uri = str_replace(array_keys(Router::$optional), '', $uri);
+		// in the array of parameters that were passed to us.
+		$uri = preg_replace('/\(.+?\)/', '', $uri);
 
 		return trim($uri, '/');
+	}
+
+	/**
+	 * Determine if the given URL is valid.
+	 *
+	 * @param  string  $url
+	 * @return bool
+	 */
+	public static function valid($url)
+	{
+		return filter_var($url, FILTER_VALIDATE_URL) !== false;
 	}
 
 }
