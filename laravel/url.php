@@ -61,43 +61,21 @@ class URL {
 
 		$base = 'http://localhost';
 
-		// If the application URL configuration is set, we will just use that
+		// If the application's URL configuration is set, we will just use that
 		// instead of trying to guess the URL from the $_SERVER array's host
-		// and script variables as this is more reliable.
+		// and script variables as this is a more reliable method.
 		if (($url = Config::get('application.url')) !== '')
 		{
 			$base = $url;
 		}
-		elseif (isset($_SERVER['HTTP_HOST']))
+		else
 		{
-			$base = static::guess();
+			$f = Request::foundation();
+
+			$base = $f->getScheme().'://'.$f->getHttpHost().$f->getBasePath();
 		}
 
 		return static::$base = $base;
-	}
-
-	/**
-	 * Guess the application URL based on the $_SERVER variables.
-	 *
-	 * @return string
-	 */
-	protected static function guess()
-	{
-		$protocol = (Request::secure()) ? 'https://' : 'http://';
-
-		// Basically, by removing the basename, we are removing everything after
-		// the and including the front controller from the URI. Leaving us with
-		// the installation path for the application.
-		$script = $_SERVER['SCRIPT_NAME'];
-
-		$path = str_replace(basename($script), '', $script);
-
-		// Now that we have the URL, all we need to do is attach the protocol
-		// protocol and HTTP_HOST to build the URL for the application, and
-		// we also trim off trailing slashes for cleanliness.
-		$uri = $protocol.$_SERVER['HTTP_HOST'].$path;
-
-		return rtrim($uri, '/');
 	}
 
 	/**
@@ -133,6 +111,10 @@ class URL {
 		if ($https and Config::get('application.ssl'))
 		{
 			$root = preg_replace('~http://~', 'https://', $root, 1);
+		}
+		else
+		{
+			$root = preg_replace('~https://~', 'http://', $root, 1);
 		}
 
 		return rtrim($root, '/').'/'.ltrim($url, '/');
