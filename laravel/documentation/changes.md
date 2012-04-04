@@ -24,11 +24,13 @@
 - [Added `$hidden` static variable to the base Eloquent model](/docs/database/eloquent#to-array).
 - [Added `sync` method to has\_many\_and\_belongs\_to Eloquent relationship](/docs/database/eloquent#sync-method).
 - [Added `save` method to has\_many Eloquent relationship](/docs/database/eloquent#has-many-save).
+- Migrated to the Symfony HttpFoundation component for core request / response handling.
 - Fixed the passing of strings into the Input::except method.
 - Fixed replacement of optional parameters in URL::transpose method.
 - Improved View performance by only loading contents from file once.
 - Fix handling of URLs beginning with has in URL::to.
 - Fix the resolution of unset Eloquent attributes.
+- Allows pivot table timestamps to be disabled.
 
 <a name="upgrade-3.2"></a>
 ## Upgrading From 3.1
