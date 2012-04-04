@@ -246,4 +246,4 @@ $response->send();
 |
 */
 
-Event::fire('laravel.done', array($response));
+Event::fire('laravel.done');

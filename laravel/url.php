@@ -117,13 +117,7 @@ class URL {
 	 */
 	public static function to($url = '', $https = false)
 	{
-		// If the given URL is already valid or begins with a hash, we'll just return
-		// the URL unchanged since it is already well formed. Otherwise we will add
-		// the base URL of the application and return the full URL.
-		if (static::valid($url) or starts_with($url, '#'))
-		{
-			return $url;
-		}
+		if (filter_var($url, FILTER_VALIDATE_URL) !== false) return $url;
 
 		$root = static::base().'/'.Config::get('application.index');
 
@@ -310,21 +304,10 @@ class URL {
 
 		// If there are any remaining optional place-holders, we'll just replace
 		// them with empty strings since not every optional parameter has to be
-		// in the array of parameters that were passed to us.
-		$uri = preg_replace('/\(.+?\)/', '', $uri);
+		// in the array of parameters that were passed.
+		$uri = str_replace(array_keys(Router::$optional), '', $uri);
 
 		return trim($uri, '/');
-	}
-
-	/**
-	 * Determine if the given URL is valid.
-	 *
-	 * @param  string  $url
-	 * @return bool
-	 */
-	public static function valid($url)
-	{
-		return filter_var($url, FILTER_VALIDATE_URL) !== false;
 	}
 
 }
