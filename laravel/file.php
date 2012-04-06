@@ -69,30 +69,6 @@ class File {
 	}
 
 	/**
-	 * Move a file to a new location.
-	 *
-	 * @param  string  $path
-	 * @param  string  $target
-	 * @return void
-	 */
-	public static function move($path, $target)
-	{
-		return rename($path, $target);
-	}
-
-	/**
-	 * Copy a file to a new location.
-	 *
-	 * @param  string  $path
-	 * @param  string  $target
-	 * @return void
-	 */
-	public static function copy($path, $target)
-	{
-		return copy($path, $target);
-	}
-
-	/**
 	 * Extract the file extension from a file path.
 	 * 
 	 * @param  string  $path
@@ -198,18 +174,6 @@ class File {
 	}
 
 	/**
-	 * Create a new directory.
-	 *
-	 * @param  string  $path
-	 * @param  int     $chmod
-	 * @return void
-	 */
-	public static function mkdir($path, $chmod = 0777)
-	{
-		return ( ! is_dir($path)) ? mkdir($path, $chmod, true) : true;
-	}
-
-	/**
 	 * Move a directory from one location to another.
 	 *
 	 * @param  string  $source
@@ -219,7 +183,7 @@ class File {
 	 */
 	public static function mvdir($source, $destination, $options = fIterator::SKIP_DOTS)
 	{
-		return static::cpdir($source, $destination, true, $options);
+		static::cpdir($source, $destination, true, $options);
 	}
 
 	/**
@@ -233,7 +197,7 @@ class File {
 	 */
 	public static function cpdir($source, $destination, $delete = false, $options = fIterator::SKIP_DOTS)
 	{
-		if ( ! is_dir($source)) return false;
+		if ( ! is_dir($source)) return;
 
 		// First we need to create the destination directory if it doesn't
 		// already exists. This directory hosts all of the assets we copy
@@ -257,7 +221,7 @@ class File {
 			{
 				$path = $item->getRealPath();
 
-				if (! static::cpdir($path, $location, $delete, $options)) return false;
+				static::cpdir($path, $location, $delete, $options);
 
 				if ($delete) @rmdir($item->getRealPath());
 			}
@@ -267,25 +231,22 @@ class File {
 			// files with the same name.
 			else
 			{
-				if(! copy($item->getRealPath(), $location)) return false;
+				copy($item->getRealPath(), $location);
 
 				if ($delete) @unlink($item->getRealPath());
 			}
 		}
 
 		if ($delete) rmdir($source);
-		
-		return true;
 	}
 
 	/**
 	 * Recursively delete a directory.
 	 *
 	 * @param  string  $directory
-	 * @param  bool    $preserve
 	 * @return void
 	 */
-	public static function rmdir($directory, $preserve = false)
+	public static function rmdir($directory)
 	{
 		if ( ! is_dir($directory)) return;
 
@@ -306,18 +267,7 @@ class File {
 			}
 		}
 
-		if ( ! $preserve) @rmdir($directory);
-	}
-
-	/**
-	 * Empty the specified directory of all files and folders.
-	 *
-	 * @param  string  $directory
-	 * @return void
-	 */
-	public static function cleandir($directory)
-	{
-		return static::rmdir($directory, true);
+		@rmdir($directory);
 	}
 
 	/**

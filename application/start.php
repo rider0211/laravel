@@ -49,37 +49,6 @@ Laravel\Autoloader::$aliases = $aliases;
 
 /*
 |--------------------------------------------------------------------------
-| Auto-Loader Mappings
-|--------------------------------------------------------------------------
-|
-| Registering a mapping couldn't be easier. Just pass an array of class
-| to path maps into the "map" function of Autoloader. Then, when you
-| want to use that class, just use it. It's simple!
-|
-*/
-
-Autoloader::map(array(
-	'Base_Controller' => path('app').'controllers/base.php',
-));
-
-/*
-|--------------------------------------------------------------------------
-| Auto-Loader Directories
-|--------------------------------------------------------------------------
-|
-| The Laravel auto-loader can search directories for files using the PSR-0
-| naming convention. This convention basically organizes classes by using
-| the class namespace to indicate the directory structure.
-|
-*/
-
-Autoloader::directories(array(
-	path('app').'models',
-	path('app').'libraries',
-));
-
-/*
-|--------------------------------------------------------------------------
 | Laravel View Loader
 |--------------------------------------------------------------------------
 |
@@ -92,7 +61,7 @@ Autoloader::directories(array(
 
 Event::listen(View::loader, function($bundle, $view)
 {
-	return View::file($bundle, $view, Bundle::path($bundle).'views');
+	return View::file($bundle, $view);
 });
 
 /*
@@ -111,35 +80,6 @@ Event::listen(Lang::loader, function($bundle, $language, $file)
 {
 	return Lang::file($bundle, $language, $file);
 });
-
-/*
-|--------------------------------------------------------------------------
-| Attach The Laravel Profiler
-|--------------------------------------------------------------------------
-|
-| If the profiler is enabled, we will attach it to the Laravel events
-| for both queries and logs. This allows the profiler to intercept
-| any of the queries or logs performed by the application.
-|
-*/
-
-if (Config::get('application.profiler'))
-{
-	Profiler::attach();
-}
-
-/*
-|--------------------------------------------------------------------------
-| Enable The Blade View Engine
-|--------------------------------------------------------------------------
-|
-| The Blade view engine provides a clean, beautiful templating language
-| for your application, including syntax for echoing data and all of
-| the typical PHP control structures. We'll simply enable it here.
-|
-*/
-
-Blade::sharpen();
 
 /*
 |--------------------------------------------------------------------------
@@ -171,3 +111,34 @@ if ( ! Request::cli() and Config::get('session.driver') !== '')
 {
 	Session::load();
 }
+
+/*
+|--------------------------------------------------------------------------
+| Auto-Loader Mappings
+|--------------------------------------------------------------------------
+|
+| Registering a mapping couldn't be easier. Just pass an array of class
+| to path maps into the "map" function of Autoloader. Then, when you
+| want to use that class, just use it. It's simple!
+|
+*/
+
+Autoloader::map(array(
+	'Base_Controller' => path('app').'controllers/base.php',
+));
+
+/*
+|--------------------------------------------------------------------------
+| Auto-Loader Directories
+|--------------------------------------------------------------------------
+|
+| The Laravel auto-loader can search directories for files using the PSR-0
+| naming convention. This convention basically organizes classes by using
+| the class namespace to indicate the directory structure.
+|
+*/
+
+Autoloader::directories(array(
+	path('app').'models',
+	path('app').'libraries',
+));

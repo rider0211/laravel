@@ -14,7 +14,7 @@ class Section {
 	 *
 	 * @var array
 	 */
-	public static $last = array();
+	protected static $last = array();
 
 	/**
 	 * Start injecting content into a section.
@@ -33,14 +33,9 @@ class Section {
 	 */
 	public static function start($section, $content = '')
 	{
-		if ($content === '')
-		{
-			ob_start() and static::$last[] = $section;
-		}
-		else
-		{
-			static::append($section, $content);
-		}
+		if ($content === '') ob_start() and static::$last[] = $section;
+
+		static::append($section, $content);
 	}
 
 	/**
@@ -63,25 +58,13 @@ class Section {
 	}
 
 	/**
-	 * Stop injecting content into a section and return its contents.
-	 *
-	 * @return string
-	 */
-	public static function yield_section()
-	{
-		return static::yield(static::stop());
-	}
-
-	/**
 	 * Stop injecting content into a section.
 	 *
-	 * @return string
+	 * @return void
 	 */
 	public static function stop()
 	{
-		static::append($last = array_pop(static::$last), ob_get_clean());
-
-		return $last;
+		static::append(array_pop(static::$last), ob_get_clean());
 	}
 
 	/**
@@ -95,12 +78,10 @@ class Section {
 	{
 		if (isset(static::$sections[$section]))
 		{
-			static::$sections[$section] = str_replace('@parent', $content, static::$sections[$section]);
+			$content = static::$sections[$section].PHP_EOL.$content;
 		}
-		else
-		{
-			static::$sections[$section] = $content;
-		}
+
+		static::$sections[$section] = $content;
 	}
 
 	/**

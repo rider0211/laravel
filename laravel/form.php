@@ -7,26 +7,7 @@ class Form {
 	 *
 	 * @var array
 	 */
-	public static $labels = array();
-	
-	/**
-	 * The registered custom macros.
-	 *
-	 * @var array
-	 */
-	public static $macros = array();
-
-    /**
-     * Registers a custom macro.
-     *
-     * @param  string   $name
-     * @param  Closure  $input
-     * @return void
-     */
-	public static function macro($name, $macro)
-	{
-		static::$macros[$name] = $macro;
-	}
+	protected static $labels = array();
 
 	/**
 	 * Open a HTML form.
@@ -71,13 +52,14 @@ class Form {
 
 		// Since PUT and DELETE methods are not actually supported by HTML forms,
 		// we'll create a hidden input element that contains the request method
-		// and set the actual request method variable to POST.
+		// and set the actual request method to POST. Laravel will look for the
+		// hidden element to determine the request method.
 		if ($method == 'PUT' or $method == 'DELETE')
 		{
 			$append = static::hidden(Request::spoofer, $method);
 		}
 
-		return '<form'.HTML::attributes($attributes).'>'.$append;
+		return '<form'.HTML::attributes($attributes).'>'.$append.PHP_EOL;
 	}
 
 	/**
@@ -190,7 +172,7 @@ class Form {
 
 		$value = HTML::entities($value);
 
-		return '<label for="'.$name.'"'.$attributes.'>'.$value.'</label>';
+		return '<label for="'.$name.'"'.$attributes.'>'.$value.'</label>'.PHP_EOL;
 	}
 
 	/**
@@ -218,7 +200,7 @@ class Form {
 
 		$attributes = array_merge($attributes, compact('type', 'name', 'value', 'id'));
 
-		return '<input'.HTML::attributes($attributes).'>';
+		return '<input'.HTML::attributes($attributes).'>'.PHP_EOL;
 	}
 
 	/**
@@ -367,7 +349,7 @@ class Form {
 
 		if ( ! isset($attributes['cols'])) $attributes['cols'] = 50;
 
-		return '<textarea'.HTML::attributes($attributes).'>'.HTML::entities($value).'</textarea>';
+		return '<textarea'.HTML::attributes($attributes).'>'.HTML::entities($value).'</textarea>'.PHP_EOL;
 	}
 
 	/**
@@ -400,7 +382,7 @@ class Form {
 			$html[] = static::option($value, $display, $selected);
 		}
 
-		return '<select'.HTML::attributes($attributes).'>'.implode('', $html).'</select>';
+		return '<select'.HTML::attributes($attributes).'>'.implode('', $html).'</select>'.PHP_EOL;
 	}
 
 	/**
@@ -545,7 +527,7 @@ class Form {
 	 */
 	public static function button($value, $attributes = array())
 	{
-		return '<button'.HTML::attributes($attributes).'>'.HTML::entities($value).'</button>';
+		return '<button'.HTML::attributes($attributes).'>'.HTML::entities($value).'</button>'.PHP_EOL;
 	}
 
 	/**
@@ -559,7 +541,8 @@ class Form {
 	{
 		// If an ID has been explicitly specified in the attributes, we will
 		// use that ID. Otherwise, we will look for an ID in the array of
-		// label names so labels and their elements have the same ID.
+		// label names as this makes it convenient to give input elements
+		// the same ID as their corresponding labels.
 		if (array_key_exists('id', $attributes))
 		{
 			return $attributes['id'];
@@ -569,23 +552,6 @@ class Form {
 		{
 			return $name;
 		}
-	}
-
-	/**
-	 * Dynamically handle calls to custom macros.
-	 *
-	 * @param  string  $method
-	 * @param  array   $parameters
-	 * @return mixed
-	 */
-	public static function __callStatic($method, $parameters)
-	{
-	    if (isset(static::$macros[$method]))
-	    {
-	        return call_user_func_array(static::$macros[$method], $parameters);
-	    }
-	    
-	    throw new \Exception("Method [$method] does not exist.");
 	}
 
 }
