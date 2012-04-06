@@ -38,18 +38,11 @@ class View implements ArrayAccess {
 	public static $names = array();
 
 	/**
-	 * The extensions a view file can have.
+	 * The cache content of loaded view files.
 	 *
 	 * @var array
 	 */
-	public static $extensions = array(EXT);
-
-	/**
-	 * The path in which a view can live.
-	 *
-	 * @var array
-	 */
-	public static $paths = array(DEFAULT_BUNDLE => array(''));
+	public static $cache = array();
 
 	/**
 	 * The Laravel view loader event name.
@@ -87,7 +80,18 @@ class View implements ArrayAccess {
 	{
 		$this->view = $view;
 		$this->data = $data;
-		$this->path = $this->path($view);
+
+		// In order to allow developers to load views outside of the normal loading
+		// conventions, we'll allow for a raw path to be given in place of the
+		// typical view name, giving total freedom on view loading.
+		if (starts_with($view, 'path: '))
+		{
+			$this->path = substr($view, 6);
+		}
+		else
+		{
+			$this->path = $this->path($view);
+		}
 
 		// If a session driver has been specified, we will bind an instance of the
 		// validation error message container to every view. If an error instance
@@ -117,9 +121,9 @@ class View implements ArrayAccess {
 
 		$view = str_replace('.', '/', $view);
 
-		// We delegate the determination of view paths to the view loader
-		// event so that the developer is free to override and manage
-		// the loading views in any way they see fit.
+		// We delegate the determination of view paths to the view loader event
+		// so that the developer is free to override and manage the loading
+		// of views in any way they see fit for their application.
 		$path = Event::first(static::loader, array($bundle, $view));
 
 		if ( ! is_null($path))
@@ -135,13 +139,21 @@ class View implements ArrayAccess {
 	 *
 	 * @param  string  $bundle
 	 * @param  string  $view
+	 * @param  string  $directory
 	 * @return string
 	 */
-	public static function file($bundle, $view)
+	public static function file($bundle, $view, $directory)
 	{
-		$root = Bundle::path($bundle).'views/';
+		$directory = str_finish($directory, DS);
 
-		if (file_exists($path = $root.$view.EXT))
+		// Views may have either the default PHP file extension of the "Blade"
+		// extension, so we will need to check for both in the view path
+		// and return the first one we find for the given view.
+		if (file_exists($path = $directory.$view.EXT))
+		{
+			return $path;
+		}
+		elseif (file_exists($path = $directory.$view.BLADE_EXT))
 		{
 			return $path;
 		}
@@ -231,28 +243,47 @@ class View implements ArrayAccess {
 	}
 
 	/**
-	 * Register a new root path for a bundle.
+	 * Get the rendered contents of a partial from a loop.
 	 *
-	 * @param  string  $bundle
-	 * @param  string  $path
-	 * @return void
+	 * @param  string  $view
+	 * @param  array   $data
+	 * @param  string  $iterator
+	 * @param  string  $empty
+	 * @return string
 	 */
-	public static function search($bundle, $path)
+	public static function render_each($view, array $data, $iterator, $empty = 'raw|')
 	{
-		static::$paths[$bundle][] = $path;
-	}
+		$result = '';
 
-	/**
-	 * Register a new valid view extension.
-	 *
-	 * @param  string  $extension
-	 * @return void
-	 */
-	public static function extension($extension)
-	{
-		static::$extensions[] = $extension;
+		// If is actually data in the array, we will loop through the data and
+		// append an instance of the partial view to the final result HTML,
+		// passing in the iterated value of the data array.
+		if (count($data) > 0)
+		{
+			foreach ($data as $key => $value)
+			{
+				$with = array('key' => $key, $iterator => $value);
 
-		static::$extensions = array_unique(static::$extensions);
+				$result .= render($view, $with);
+			}
+		}
+
+		// If there is no data in the array, we will render the contents of
+		// the "empty" view. Alternative, the "empty view" can be a raw
+		// string that is prefixed with "raw|" for convenience.
+		else
+		{
+			if (starts_with($empty, 'raw|'))
+			{
+				$result = substr($empty, 4);
+			}
+			else
+			{
+				$result = render($empty);
+			}
+		}
+
+		return $result;
 	}
 
 	/**
@@ -262,12 +293,7 @@ class View implements ArrayAccess {
 	 */
 	public function render()
 	{
-		// To allow bundles or other pieces of the application to modify the
-		// view before it is rendered, we'll fire an event, passing in the
-		// view instance so it can modified.
-		$composer = "laravel.composing: {$this->view}";
-
-		Event::fire($composer, array($this));
+		Event::fire("laravel.composing: {$this->view}", array($this));
 
 		// If there are listeners to the view engine event, we'll pass them
 		// the view so they can render it according to their needs, which
@@ -291,6 +317,11 @@ class View implements ArrayAccess {
 	{
 		$__data = $this->data();
 
+		// The contents of each view file is cached in an array for the
+		// request since partial views may be rendered inside of for
+		// loops which could incur performance penalties.
+		$__contents = $this->load();
+
 		ob_start() and extract($__data, EXTR_SKIP);
 
 		// We'll include the view contents for parsing within a catcher
@@ -298,12 +329,12 @@ class View implements ArrayAccess {
 		// will throw it out to the exception handler.
 		try
 		{
-			include $this->path;
+			eval('?>'.$__contents);
 		}
 
 		// If we caught an exception, we'll silently flush the output
 		// buffer so that no partially rendered views get thrown out
-		// to the client and confuse the user.
+		// to the client and confuse the user with junk.
 		catch (\Exception $e)
 		{
 			ob_get_clean(); throw $e;
@@ -313,9 +344,26 @@ class View implements ArrayAccess {
 	}
 
 	/**
+	 * Get the contents of the view file from disk.
+	 *
+	 * @return string
+	 */
+	protected function load()
+	{
+		if (isset(static::$cache[$this->path]))
+		{
+			return static::$cache[$this->path];
+		}
+		else
+		{
+			return static::$cache[$this->path] = file_get_contents($this->path);
+		}
+	}
+
+	/**
 	 * Get the array of view data for the view instance.
 	 *
-	 * The shared view data will be combined with the view data for the instance.
+	 * The shared view data will be combined with the view data.
 	 *
 	 * @return array
 	 */
@@ -326,11 +374,11 @@ class View implements ArrayAccess {
 		// All nested views and responses are evaluated before the main view.
 		// This allows the assets used by nested views to be added to the
 		// asset container before the main view is evaluated.
-		foreach ($data as &$value) 
+		foreach ($data as $key => $value) 
 		{
 			if ($value instanceof View or $value instanceof Response)
 			{
-				$value = $value->render();
+				$data[$key] = $value->render();
 			}
 		}
 
@@ -367,9 +415,32 @@ class View implements ArrayAccess {
 	 * @param  mixed   $value
 	 * @return View
 	 */
-	public function with($key, $value)
+	public function with($key, $value = null)
 	{
-		$this->data[$key] = $value;
+		if (is_array($key))
+		{
+			$this->data = array_merge($this->data, $key);
+		}
+		else
+		{
+			$this->data[$key] = $value;
+		}
+
+		return $this;
+	}
+
+	/**
+	 * Add a key / value pair to the shared view data.
+	 *
+	 * Shared view data is accessible to every view created by the application.
+	 *
+	 * @param  string  $key
+	 * @param  mixed   $value
+	 * @return View
+	 */
+	public function shares($key, $value)
+	{
+		static::share($key, $value);
 		return $this;
 	}
 

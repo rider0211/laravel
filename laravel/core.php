@@ -13,6 +13,7 @@
 
 define('EXT', '.php');
 define('CRLF', "\r\n");
+define('BLADE_EXT', '.blade.php');
 define('DEFAULT_BUNDLE', 'application');
 define('MB_STRING', (int) function_exists('mb_get_info'));
 
@@ -61,6 +62,49 @@ spl_autoload_register(array('Laravel\\Autoloader', 'load'));
 */
 
 Autoloader::namespaces(array('Laravel' => path('sys')));
+
+/*
+|--------------------------------------------------------------------------
+| Register Eloquent Mappings
+|--------------------------------------------------------------------------
+|
+| A few of the Eloquent ORM classes use a non PSR-0 naming standard so
+| we will just map them with hard-coded paths here since PSR-0 uses
+| underscores as directory hierarchy indicators.
+|
+*/
+
+Autoloader::map(array(
+	'Laravel\\Database\\Eloquent\\Relationships\\Belongs_To' 
+                    => path('sys').'database/eloquent/relationships/belongs_to'.EXT,
+	'Laravel\\Database\\Eloquent\\Relationships\\Has_Many' 
+                    => path('sys').'database/eloquent/relationships/has_many'.EXT,
+	'Laravel\\Database\\Eloquent\\Relationships\\Has_Many_And_Belongs_To' 
+                    => path('sys').'database/eloquent/relationships/has_many_and_belongs_to'.EXT,
+	'Laravel\\Database\\Eloquent\\Relationships\\Has_One' 
+                    => path('sys').'database/eloquent/relationships/has_one'.EXT,
+	'Laravel\\Database\\Eloquent\\Relationships\\Has_One_Or_Many' 
+                    => path('sys').'database/eloquent/relationships/has_one_or_many'.EXT,
+));
+
+/*
+|--------------------------------------------------------------------------
+| Register The Symfony Components
+|--------------------------------------------------------------------------
+|
+| Laravel makes use of the Symfony components where the situation is
+| applicable and it is possible to do so. This allows us to focus
+| on the parts of the framework that are unique and not re-do
+| plumbing code that others have written.
+|
+*/
+
+Autoloader::namespaces(array(
+	'Symfony\Component\Console' 
+                    => path('sys').'vendor/Symfony/Component/Console',
+	'Symfony\Component\HttpFoundation'
+                    => path('sys').'vendor/Symfony/Component/HttpFoundation',
+));
 
 /*
 |--------------------------------------------------------------------------
@@ -118,3 +162,39 @@ foreach ($bundles as $bundle => $config)
 {
 	Bundle::register($bundle, $config);
 }
+
+/*
+|--------------------------------------------------------------------------
+| Magic Quotes Strip Slashes
+|--------------------------------------------------------------------------
+|
+| Even though "Magic Quotes" are deprecated in PHP 5.3.x, they may still
+| be enabled on the server. To account for this, we will strip slashes
+| on all input arrays if magic quotes are enabled for the server.
+|
+*/
+
+if (magic_quotes())
+{
+	$magics = array(&$_GET, &$_POST, &$_COOKIE, &$_REQUEST);
+
+	foreach ($magics as &$magic)
+	{
+		$magic = array_strip_slashes($magic);
+	}
+}
+
+/*
+|--------------------------------------------------------------------------
+| Create The HttpFoundation Request
+|--------------------------------------------------------------------------
+|
+| Laravel uses the HttpFoundation Symfony component to handle the request
+| and response functionality for the framework. This allows us to not
+| worry about that boilerplate code and focus on what matters.
+|
+*/
+
+use Symfony\Component\HttpFoundation\LaravelRequest as RequestFoundation;
+
+Request::$foundation = RequestFoundation::createFromGlobals();

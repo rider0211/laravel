@@ -14,7 +14,7 @@ class Section {
 	 *
 	 * @var array
 	 */
-	protected static $last = array();
+	public static $last = array();
 
 	/**
 	 * Start injecting content into a section.
@@ -33,9 +33,14 @@ class Section {
 	 */
 	public static function start($section, $content = '')
 	{
-		if ($content === '') ob_start() and static::$last[] = $section;
-
-		static::append($section, $content);
+		if ($content === '')
+		{
+			ob_start() and static::$last[] = $section;
+		}
+		else
+		{
+			static::extend($section, $content);
+		}
 	}
 
 	/**
@@ -58,30 +63,65 @@ class Section {
 	}
 
 	/**
-	 * Stop injecting content into a section.
+	 * Stop injecting content into a section and return its contents.
 	 *
-	 * @return void
+	 * @return string
 	 */
-	public static function stop()
+	public static function yield_section()
 	{
-		static::append(array_pop(static::$last), ob_get_clean());
+		return static::yield(static::stop());
 	}
 
 	/**
-	 * Append content to a given section.
+	 * Stop injecting content into a section.
+	 *
+	 * @return string
+	 */
+	public static function stop()
+	{
+		static::extend($last = array_pop(static::$last), ob_get_clean());
+
+		return $last;
+	}
+
+	/**
+	 * Extend the content in a given section.
+	 * The old content can be injected into the new using "@parent".
 	 *
 	 * @param  string  $section
 	 * @param  string  $content
 	 * @return void
 	 */
-	protected static function append($section, $content)
+	protected static function extend($section, $content)
 	{
 		if (isset(static::$sections[$section]))
 		{
-			$content = static::$sections[$section].PHP_EOL.$content;
+			static::$sections[$section] = str_replace('@parent', $content, static::$sections[$section]);
 		}
+		else
+		{
+			static::$sections[$section] = $content;
+		}
+	}
 
-		static::$sections[$section] = $content;
+	/**
+	 * Append content to a given section.
+	 * This concatenates the old content and the new.
+	 *
+	 * @param  string  $section
+	 * @param  string  $content
+	 * @return void
+	 */
+	public static function append($section, $content)
+	{
+		if (isset(static::$sections[$section]))
+		{
+			static::$sections[$section] .= $content;
+		}
+		else
+		{
+			static::$sections[$section] = $content;
+		}
 	}
 
 	/**

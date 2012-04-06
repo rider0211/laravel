@@ -340,13 +340,18 @@ function ends_with($haystack, $needle)
 /**
  * Determine if a given string contains a given sub-string.
  *
- * @param  string  $haystack
- * @param  string  $needle
+ * @param  string        $haystack
+ * @param  string|array  $needle
  * @return bool
  */
 function str_contains($haystack, $needle)
 {
-	return strpos($haystack, $needle) !== false;
+	foreach ((array) $needle as $n)
+	{
+		if (strpos($haystack, $n) !== false) return true;
+	}
+
+	return false;
 }
 
 /**
@@ -362,6 +367,17 @@ function str_finish($value, $cap)
 }
 
 /**
+ * Determine if the given object has a toString method.
+ *
+ * @param  object  $value
+ * @return bool
+ */
+function str_object($value)
+{
+	return is_object($value) and method_exists($value, '__toString');
+}
+
+/**
  * Get the root namespace of a given class.
  *
  * @param  string  $class
@@ -374,6 +390,21 @@ function root_namespace($class, $separator = '\\')
 	{
 		return head(explode($separator, $class));
 	}
+}
+
+/**
+ * Get the "class basename" of a class or object.
+ *
+ * The basename is considered the name of the class minus all namespaces.
+ *
+ * @param  object|string  $class
+ * @return string
+ */
+function class_basename($class)
+{
+	if (is_object($class)) $class = get_class($class);
+
+	return basename(str_replace('\\', '/', $class));
 }
 
 /**
@@ -412,6 +443,20 @@ function has_php($version)
 }
 
 /**
+ * Get a view instance.
+ *
+ * @param  string  $view
+ * @param  array   $data
+ * @return View
+ */
+function view($view, $data = array())
+{
+	if (is_null($view)) return '';
+
+	return Laravel\View::make($view, $data);
+}
+
+/**
  * Render the given view.
  *
  * @param  string  $view
@@ -420,5 +465,32 @@ function has_php($version)
  */
 function render($view, $data = array())
 {
+	if (is_null($view)) return '';
+
 	return Laravel\View::make($view, $data)->render();
+}
+
+/**
+ * Get the rendered contents of a partial from a loop.
+ *
+ * @param  string  $view
+ * @param  array   $data
+ * @param  string  $iterator
+ * @param  string  $empty
+ * @return string
+ */
+function render_each($partial, array $data, $iterator, $empty = 'raw|')
+{
+	return Laravel\View::render_each($partial, $data, $iterator, $empty);
+}
+
+/**
+ * Get the string contents of a section.
+ *
+ * @param  string  $section
+ * @return string
+ */
+function yield($section)
+{
+	return Laravel\Section::yield($section);
 }
