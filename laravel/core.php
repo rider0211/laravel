@@ -92,14 +92,18 @@ Autoloader::map(array(
 | Register The Symfony Components
 |--------------------------------------------------------------------------
 |
-| Laravel's "Artisan" CLI makes use of the Symfony Console component to
-| build a wonderful CLI environment that is both robust and testable.
-| We'll register the component's namespace here.
+| Laravel makes use of the Symfony components where the situation is
+| applicable and it is possible to do so. This allows us to focus
+| on the parts of the framework that are unique and not re-do
+| plumbing code that others have written.
 |
 */
 
 Autoloader::namespaces(array(
-	'Symfony\Component\Console' => path('base').'vendor/Symfony/Component/Console',
+	'Symfony\Component\Console' 
+                    => path('sys').'vendor/Symfony/Component/Console',
+	'Symfony\Component\HttpFoundation'
+                    => path('sys').'vendor/Symfony/Component/HttpFoundation',
 ));
 
 /*
@@ -158,3 +162,39 @@ foreach ($bundles as $bundle => $config)
 {
 	Bundle::register($bundle, $config);
 }
+
+/*
+|--------------------------------------------------------------------------
+| Magic Quotes Strip Slashes
+|--------------------------------------------------------------------------
+|
+| Even though "Magic Quotes" are deprecated in PHP 5.3.x, they may still
+| be enabled on the server. To account for this, we will strip slashes
+| on all input arrays if magic quotes are enabled for the server.
+|
+*/
+
+if (magic_quotes())
+{
+	$magics = array(&$_GET, &$_POST, &$_COOKIE, &$_REQUEST);
+
+	foreach ($magics as &$magic)
+	{
+		$magic = array_strip_slashes($magic);
+	}
+}
+
+/*
+|--------------------------------------------------------------------------
+| Create The HttpFoundation Request
+|--------------------------------------------------------------------------
+|
+| Laravel uses the HttpFoundation Symfony component to handle the request
+| and response functionality for the framework. This allows us to not
+| worry about that boilerplate code and focus on what matters.
+|
+*/
+
+use Symfony\Component\HttpFoundation\LaravelRequest as RequestFoundation;
+
+Request::$foundation = RequestFoundation::createFromGlobals();

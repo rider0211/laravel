@@ -1,7 +1,9 @@
-## Laravel Change Log
+# Laravel Change Log
 
 ## Contents
 
+- [Laravel 3.2](#3.2)
+- [Upgrading From 3.1](#upgrade-3.2)
 - [Laravel 3.1.6](#3.1.6)
 - [Upgrading From 3.1.5](#upgrade-3.1.6)
 - [Laravel 3.1.5](#3.1.5)
@@ -16,6 +18,26 @@
 - [Upgrading From 3.1](#upgrade-3.1.1)
 - [Laravel 3.1](#3.1)
 - [Upgrading From 3.0](#upgrade-3.1)
+
+<a name="3.2"></a>
+## Laravel 3.2
+
+- [Added `to_array` method to the base Eloquent model](/docs/database/eloquent#to-array).
+- [Added `$hidden` static variable to the base Eloquent model](/docs/database/eloquent#to-array).
+- [Added `sync` method to has\_many\_and\_belongs\_to Eloquent relationship](/docs/database/eloquent#sync-method).
+- [Added `save` method to has\_many Eloquent relationship](/docs/database/eloquent#has-many-save).
+- Migrated to the Symfony HttpFoundation component for core request / response handling.
+- Fixed the passing of strings into the Input::except method.
+- Fixed replacement of optional parameters in URL::transpose method.
+- Improved View performance by only loading contents from file once.
+- Fix handling of URLs beginning with has in URL::to.
+- Fix the resolution of unset Eloquent attributes.
+- Allows pivot table timestamps to be disabled.
+
+<a name="upgrade-3.2"></a>
+## Upgrading From 3.1
+
+- Replace the **laravel** folder.
 
 <a name="3.1.6"></a>
 ## Laravel 3.1.6
