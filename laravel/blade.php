@@ -9,6 +9,7 @@ class Blade {
 	 */
 	protected static $compilers = array(
 		'layouts',
+		'comments',
 		'echos',
 		'forelse',
 		'empty',
@@ -16,6 +17,8 @@ class Blade {
 		'structure_openings',
 		'structure_closings',
 		'else',
+		'unless',
+		'endunless',
 		'includes',
 		'render_each',
 		'render',
@@ -151,6 +154,19 @@ class Blade {
 	}
 
 	/**
+	 * Rewrites Blade comments into PHP comments.
+	 *
+	 * @param  string  $value
+	 * @return string
+	 */
+	protected static function compile_comments($value)
+	{
+		$value = preg_replace('/\{\{--(.+?)(--\}\})?\n/', "<?php // $1 ?>", $value);
+
+		return preg_replace('/\{\{--((.|\s)*?)--\}\}/', "<?php /* $1 */ ?>\n", $value);
+	}
+
+	/**
 	 * Rewrites Blade echo statements into PHP echo statements.
 	 *
 	 * @param  string  $value
@@ -252,6 +268,30 @@ class Blade {
 	protected static function compile_else($value)
 	{
 		return preg_replace('/(\s*)@(else)(\s*)/', '$1<?php $2: ?>$3', $value);
+	}
+
+	/**
+	 * Rewrites Blade "unless" statements into valid PHP.
+	 *
+	 * @param  string  $value
+	 * @return string
+	 */
+	protected static function compile_unless($value)
+	{
+		$pattern = '/(\s*)@unless(\s*\(.*\))/';
+
+		return preg_replace($pattern, '$1<?php if( ! ($2)): ?>', $value);
+	}
+
+	/**
+	 * Rewrites Blade "unless" endings into valid PHP.
+	 *
+	 * @param  string  $value
+	 * @return string
+	 */
+	protected static function compile_endunless($value)
+	{
+		return str_replace('@endunless', '<?php endif; ?>', $value);
 	}
 
 	/**
