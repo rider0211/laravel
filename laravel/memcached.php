@@ -5,7 +5,7 @@ class Memcached {
 	/**
 	 * The Memcached connection instance.
 	 *
-	 * @var Memcached
+	 * @var Memcache
 	 */
 	protected static $connection;
 
@@ -35,7 +35,7 @@ class Memcached {
 	/**
 	 * Create a new Memcached connection instance.
 	 *
-	 * @param  array     $servers
+	 * @param  array      $servers
 	 * @return Memcached
 	 */
 	protected static function connect($servers)
