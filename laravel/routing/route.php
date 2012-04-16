@@ -1,7 +1,6 @@
 <?php namespace Laravel\Routing;
 
 use Closure;
-use Laravel\Str;
 use Laravel\URI;
 use Laravel\Bundle;
 use Laravel\Request;
@@ -199,7 +198,7 @@ class Route {
 		// if they match we'll attach the filter.
 		foreach (Filter::$patterns as $pattern => $filter)
 		{
-			if (Str::is($pattern, $this->uri))
+			if (URI::is($pattern, $this->uri))
 			{
 				$filters[] = $filter;
 			}
