@@ -27,17 +27,6 @@ function __($key, $replacements = array(), $language = null)
 }
 
 /**
- * Dump the given value and kill the script.
- *
- * @param  mixed  $value
- * @return void
- */
-function dd($value)
-{
-	die(var_dump($value));
-}
-
-/**
  * Get an item from an array using "dot" notation.
  *
  * <code>
