@@ -51,7 +51,7 @@ class Lang {
 	{
 		$this->key = $key;
 		$this->language = $language;
-		$this->replacements = (array) $replacements;
+		$this->replacements = $replacements;
 	}
 
 	/**
