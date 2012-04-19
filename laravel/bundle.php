@@ -422,19 +422,13 @@ class Bundle {
 	 *
 	 * @param  string  $bundle
 	 * @param  string  $option
-	 * @param  mixed   $default
 	 * @return mixed
 	 */
-	public static function option($bundle, $option, $default = null)
+	public static function option($bundle, $option)
 	{
 		$bundle = static::get($bundle);
 
-		if (is_null($bundle))
-		{
-			return value($default);
-		}
-
-		return array_get($bundle, $option, $default);
+		if ( ! is_null($bundle)) return array_get($bundle, $option);
 	}
 
 	/**

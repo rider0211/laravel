@@ -306,8 +306,6 @@ class HTML {
 	{
 		$html = '';
 
-		if (count($list) == 0) return $html;
-
 		foreach ($list as $key => $value)
 		{
 			// If the value is an array, we will recurse the function so that we can
