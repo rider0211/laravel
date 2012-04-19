@@ -67,8 +67,6 @@ class File extends Driver {
 	 */
 	public function put($key, $value, $minutes)
 	{
-		if ($minutes <= 0) return;
-
 		$value = $this->expiration($minutes).serialize($value);
 
 		file_put_contents($this->path.$key, $value, LOCK_EX);

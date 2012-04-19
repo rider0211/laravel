@@ -110,13 +110,12 @@ class View implements ArrayAccess {
 	}
 
 	/**
-	 * Determine if the given view exists.
+	 * Get the path to a given view on disk.
 	 *
-	 * @param  string       $view
-	 * @param  boolean      $return_path
-	 * @return string|bool
+	 * @param  string  $view
+	 * @return string
 	 */
-	public static function exists($view, $return_path = false)
+	protected function path($view)
 	{
 		list($bundle, $view) = Bundle::parse($view);
 
@@ -128,22 +127,6 @@ class View implements ArrayAccess {
 		$path = Event::first(static::loader, array($bundle, $view));
 
 		if ( ! is_null($path))
-		{
-			return $return_path ? $path : true;
-		}
-
-		return false;
-	}
-
-	/**
-	 * Get the path to a given view on disk.
-	 *
-	 * @param  string  $view
-	 * @return string
-	 */
-	protected function path($view)
-	{
-		if ($path = $this->exists($view,true))
 		{
 			return $path;
 		}
