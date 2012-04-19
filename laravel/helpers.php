@@ -27,6 +27,17 @@ function __($key, $replacements = array(), $language = null)
 }
 
 /**
+ * Dump the given value and kill the script.
+ *
+ * @param  mixed  $value
+ * @return void
+ */
+function dd($value)
+{
+	die(var_dump($value));
+}
+
+/**
  * Get an item from an array using "dot" notation.
  *
  * <code>
@@ -417,7 +428,7 @@ function class_basename($class)
  */
 function value($value)
 {
-	return ($value instanceof Closure) ? call_user_func($value) : $value;
+	return (is_callable($value) and ! is_string($value)) ? call_user_func($value) : $value;
 }
 
 /**
