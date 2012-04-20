@@ -33,7 +33,8 @@
 - [Added `unless` structure to Blade template engine](/docs/views/templating#blade-unless).
 - [Added Blade comments](/docs/views/templating#blade-comments).
 - [Added simpler environment management](/docs/install#environments).
-- Switched to `Memcached` API instead of `Memcache`.
+- Added `View::exists` method.
+- Use [Memcached](http://php.net/manual/en/book.memcached.php) API instead of older [Memcache](http://php.net/manual/en/book.memcache.php) API.
 - Added support for bundles outside of the bundle directory.
 - Added support for DateTime database query bindings.
 - Migrated to the Symfony HttpFoundation component for core request / response handling.
@@ -47,6 +48,11 @@
 - Made the `get_timestamp` Eloquent method static.
 - `Request::secure` now takes `application.ssl` configuration option into consideration.
 - Simplified the `paths.php` file.
+- Only write file caches if number of minutes is greater than zero.
+- Added `$default` parameter to Bundle::option method.
+- Fixed bug present when using Eloquent models with Twig.
+- Allow multiple views to be registered for a single composer.
+- Added `Request::set_env` method.
 
 <a name="upgrade-3.2"></a>
 ## Upgrading From 3.1

@@ -44,7 +44,7 @@ class Memcached {
 
 		foreach ($servers as $server)
 		{
-			$memcache->addServer($server['host'], $server['port'], true, $server['weight']);
+			$memcache->addServer($server['host'], $server['port'], $server['weight']);
 		}
 
 		if ($memcache->getVersion() === false)

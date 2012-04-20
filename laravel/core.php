@@ -185,9 +185,9 @@ else
 |
 */
 
-if ( ! is_null($environment))
+if (isset($environment))
 {
-	Request::foundation()->server->set('LARAVEL_ENV', $environment);
+	Request::set_env($environment);
 }
 
 /*
@@ -219,7 +219,7 @@ if (defined('STDIN'))
 |
 | Finally we will register all of the bundles that have been defined for
 | the application. None of them will be started, yet but will be setup
-| so that they may be started by the develop at any time.
+| so that they may be started by the developer at any time.
 |
 */
 
