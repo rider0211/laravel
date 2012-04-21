@@ -298,9 +298,10 @@ class Payload {
 		// session on the user's subsequent requests to the application.
 		$this->cookie($config);
 
-		// Some session drivers implement the Sweeper interface meaning that
+		// Some session drivers implement the Sweeper interface, meaning that
 		// they must clean up expired sessions manually. If the driver is a
-		// sweeper, we'll calculate if we need to run garbage collection.
+		// sweeper, we need to determine if garbage collection should be
+		// run for the request.
 		$sweepage = $config['sweepage'];
 
 		if ($this->driver instanceof Sweeper and (mt_rand(1, $sweepage[1]) <= $sweepage[0]))

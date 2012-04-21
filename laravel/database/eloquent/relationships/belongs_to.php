@@ -65,10 +65,7 @@ class Belongs_To extends Relationship {
 		// are looking for the parent of a child model in this relationship.
 		foreach ($results as $result)
 		{
-			if ( ! is_null($key = $result->{$this->foreign_key()}))
-			{
-				$keys[] = $key;
-			}
+			$keys[] = $result->{$this->foreign_key()};
 		}
 
 		$this->table->where_in($this->model->key(), array_unique($keys));
