@@ -62,7 +62,7 @@ class HTML {
 	 */
 	public static function script($url, $attributes = array())
 	{
-		$url = urlencode(URL::to_asset($url));
+		$url = static::entities(URL::to_asset($url));
 
 		return '<script src="'.$url.'"'.static::attributes($attributes).'></script>'.PHP_EOL;
 	}
@@ -90,7 +90,7 @@ class HTML {
 
 		$attributes = $attributes + $defaults;
 
-		$url = urlencode(URL::to_asset($url));
+		$url = static::entities(URL::to_asset($url));
 
 		return '<link href="'.$url.'"'.static::attributes($attributes).'>'.PHP_EOL;
 	}
@@ -126,7 +126,7 @@ class HTML {
 	 */
 	public static function link($url, $title, $attributes = array(), $https = false)
 	{
-		$url = urlencode(URL::to($url, $https));
+		$url = static::entities(URL::to($url, $https));
 
 		return '<a href="'.$url.'"'.static::attributes($attributes).'>'.static::entities($title).'</a>';
 	}
@@ -157,7 +157,7 @@ class HTML {
 	 */
 	public static function link_to_asset($url, $title, $attributes = array(), $https = null)
 	{
-		$url = urlencode(URL::to_asset($url, $https));
+		$url = static::entities(URL::to_asset($url, $https));
 
 		return '<a href="'.$url.'"'.static::attributes($attributes).'>'.static::entities($title).'</a>';
 	}
@@ -267,7 +267,7 @@ class HTML {
 	{
 		$attributes['alt'] = $alt;
 
-		return '<img src="'.urlencode(URL::to_asset($url)).'"'.static::attributes($attributes).'>';
+		return '<img src="'.static::entities(URL::to_asset($url)).'"'.static::attributes($attributes).'>';
 	}
 
 	/**
@@ -305,6 +305,8 @@ class HTML {
 	private static function listing($type, $list, $attributes = array())
 	{
 		$html = '';
+
+		if (count($list) == 0) return $html;
 
 		foreach ($list as $key => $value)
 		{
