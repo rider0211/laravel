@@ -94,7 +94,7 @@ class File {
 
 	/**
 	 * Extract the file extension from a file path.
-	 *
+	 * 
 	 * @param  string  $path
 	 * @return string
 	 */
@@ -273,9 +273,8 @@ class File {
 			}
 		}
 
-		unset($items);
-		if ($delete) @rmdir($source);
-
+		if ($delete) rmdir($source);
+		
 		return true;
 	}
 
@@ -307,7 +306,6 @@ class File {
 			}
 		}
 
-		unset($items);
 		if ( ! $preserve) @rmdir($directory);
 	}
 

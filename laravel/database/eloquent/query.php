@@ -66,11 +66,12 @@ class Query {
 	 * Get all of the model results for the query.
 	 *
 	 * @param  array  $columns
+	 * @param  bool   $keyed
 	 * @return array
 	 */
-	public function get($columns = array('*'))
+	public function get($columns = array('*'), $keyed = true)
 	{
-		return $this->hydrate($this->model, $this->table->get($columns));
+		return $this->hydrate($this->model, $this->table->get($columns), $keyed);
 	}
 
 	/**
@@ -99,9 +100,10 @@ class Query {
 	 *
 	 * @param  Model  $model
 	 * @param  array  $results
+	 * @param  bool   $keyed
 	 * @return array
 	 */
-	public function hydrate($model, $results)
+	public function hydrate($model, $results, $keyed = true)
 	{
 		$class = get_class($model);
 
@@ -126,7 +128,17 @@ class Query {
 
 			$new->original = $new->attributes;
 
-			$models[] = $new;
+			// Typically, the resulting models are keyed by their primary key, but it
+			// may be useful to not do this in some circumstances such as when we
+			// are eager loading a *-to-* relationships which has duplicates.
+			if ($keyed)
+			{
+				$models[$result[$this->model->key()]] = $new;
+			}
+			else
+			{
+				$models[] = $new;
+			}
 		}
 
 		if (count($results) > 0)
@@ -187,7 +199,17 @@ class Query {
 
 		$query->initialize($results, $relationship);
 
-		$query->match($relationship, $results, $query->get());
+		// If we're eager loading a many-to-many relationship we will disable
+		// the primary key indexing on the hydration since there could be
+		// roles shared across users and we don't want to overwrite.
+		if ( ! $query instanceof Has_Many_And_Belongs_To)
+		{
+			$query->match($relationship, $results, $query->get());
+		}
+		else
+		{
+			$query->match($relationship, $results, $query->get(array('*'), false));
+		}
 	}
 
 	/**

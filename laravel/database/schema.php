@@ -44,14 +44,11 @@ class Schema {
 	 * Drop a database table from the schema.
 	 *
 	 * @param  string  $table
-	 * @param  string  $connection
 	 * @return void
 	 */
-	public static function drop($table, $connection = null)
+	public static function drop($table)
 	{
 		$table = new Schema\Table($table);
-
-		$table->on($connection);
 
 		// To indicate that the table needs to be dropped, we will run the
 		// "drop" command on the table instance and pass the instance to
