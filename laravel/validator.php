@@ -946,18 +946,17 @@ class Validator {
 		// of the attribute name in the message.
 		$line = "{$bundle}validation.attributes.{$attribute}";
 
-		if (Lang::has($line, $this->language))
-		{
-			return Lang::line($line)->get($this->language);
-		}
+		$display = Lang::line($line)->get($this->language);
 
 		// If no language line has been specified for the attribute, all of
 		// the underscores are removed from the attribute name and that
 		// will be used as the attribtue name.
-		else
+		if (is_null($display))
 		{
 			return str_replace('_', ' ', $attribute);
 		}
+
+		return $display;
 	}
 
 	/**

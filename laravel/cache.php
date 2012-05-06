@@ -1,4 +1,4 @@
-<?php namespace Laravel; use Closure;
+<?php namespace Laravel; defined('DS') or die('No direct script access.');
 
 class Cache {
 
@@ -8,13 +8,6 @@ class Cache {
 	 * @var array
 	 */
 	public static $drivers = array();
-
-	/**
-	 * The third-party driver registrar.
-	 *
-	 * @var array
-	 */
-	public static $registrar = array();
 
 	/**
 	 * Get a cache driver instance.
@@ -52,13 +45,6 @@ class Cache {
 	 */
 	protected static function factory($driver)
 	{
-		if (isset(static::$registrar[$driver]))
-		{
-			$resolver = static::$registrar[$driver];
-
-			return $resolver();
-		}
-
 		switch ($driver)
 		{
 			case 'apc':
@@ -82,18 +68,6 @@ class Cache {
 			default:
 				throw new \Exception("Cache driver {$driver} is not supported.");
 		}
-	}
-
-	/**
-	 * Register a third-party cache driver.
-	 *
-	 * @param  string   $driver
-	 * @param  Closure  $resolver
-	 * @return void
-	 */
-	public static function extend($driver, Closure $resolver)
-	{
-		static::$registrar[$driver] = $resolver;
 	}
 
 	/**

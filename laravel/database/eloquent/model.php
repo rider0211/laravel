@@ -1,7 +1,6 @@
 <?php namespace Laravel\Database\Eloquent;
 
 use Laravel\Str;
-use Laravel\Event;
 use Laravel\Database;
 use Laravel\Database\Eloquent\Relationships\Has_Many_And_Belongs_To;
 
@@ -116,23 +115,14 @@ abstract class Model {
 	 * Hydrate the model with an array of attributes.
 	 *
 	 * @param  array  $attributes
-	 * @param  bool   $raw
 	 * @return Model
 	 */
-	public function fill(array $attributes, $raw = false)
+	public function fill($attributes)
 	{
+		$attributes = (array) $attributes;
+
 		foreach ($attributes as $key => $value)
 		{
-			// If the "raw" flag is set, it means that we'll just load every value from
-			// the array directly into the attributes, without any accessibility or
-			// mutators being accounted for. What you pass in is what you get.
-			if ($raw)
-			{
-				$this->set_attribute($key, $value);
-
-				continue;
-			}
-
 			// If the "accessible" property is an array, the developer is limiting the
 			// attributes that may be mass assigned, and we need to verify that the
 			// current attribute is included in that list of allowed attributes.
@@ -165,28 +155,13 @@ abstract class Model {
 	}
 
 	/**
-	 * Fill the model with the contents of the array.
-	 *
-	 * No mutators or accessibility checks will be accounted for.
-	 *
-	 * @param  array  $attributes
-	 * @return Model
-	 */
-	public function fill_raw(array $attributes)
-	{
-		return $this->fill($attributes, true);
-	}
-
-	/**
 	 * Set the accessible attributes for the given model.
 	 *
 	 * @param  array  $attributes
 	 * @return void
 	 */
-	public static function accessible($attributes = null)
+	public static function accessible($attributes)
 	{
-		if (is_null($attributes)) return static::$accessible;
-
 		static::$accessible = $attributes;
 	}
 
@@ -380,8 +355,6 @@ abstract class Model {
 			$this->timestamp();
 		}
 
-		$this->fire_event('saving');
-
 		// If the model exists, we only need to update it in the database, and the update
 		// will be considered successful if there is one affected row returned from the
 		// fluent query instance. We'll set the where condition automatically.
@@ -390,8 +363,6 @@ abstract class Model {
 			$query = $this->query()->where(static::$key, '=', $this->get_key());
 
 			$result = $query->update($this->get_dirty()) === 1;
-
-			if ($result) $this->fire_event('updated');
 		}
 
 		// If the model does not exist, we will insert the record and retrieve the last
@@ -404,19 +375,12 @@ abstract class Model {
 			$this->set_key($id);
 
 			$this->exists = $result = is_numeric($this->get_key());
-
-			if ($result) $this->fire_event('created');
 		}
 
 		// After the model has been "saved", we will set the original attributes to
 		// match the current attributes so the model will not be viewed as being
 		// dirty and subsequent calls won't hit the database.
 		$this->original = $this->attributes;
-
-		if ($result)
-		{
-			$this->fire_event('saved');
-		}
 
 		return $result;
 	}
@@ -430,13 +394,7 @@ abstract class Model {
 	{
 		if ($this->exists)
 		{
-			$this->fire_event('deleting');
-
-			$result = $this->query()->where(static::$key, '=', $this->get_key())->delete();
-
-			$this->fire_event('deleted');
-
-			return $result;
+			return $this->query()->where(static::$key, '=', $this->get_key())->delete();
 		}
 	}
 
@@ -628,19 +586,6 @@ abstract class Model {
 	}
 
 	/**
-	 * Fire a given event for the model.
-	 *
-	 * @param  string  $event
-	 * @return array
-	 */
-	protected function fire_event($event)
-	{
-		$events = array("eloquent.{$event}", "eloquent.{$event}: ".get_class($this));
-
-		Event::fire($events, array($this));
-	}
-
-	/**
 	 * Handle the dynamic retrieval of attributes and associations.
 	 *
 	 * @param  string  $key
@@ -705,8 +650,6 @@ abstract class Model {
 		{
 			if (array_key_exists($key, $this->$source)) return true;
 		}
-		
-		if (method_exists($this, $key)) return true;
 	}
 
 	/**

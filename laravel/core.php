@@ -156,7 +156,15 @@ Request::$foundation = RequestFoundation::createFromGlobals();
 
 if (Request::cli())
 {
-	$environment = get_cli_option('env');
+	foreach (Request::foundation()->server->get('argv') as $argument)
+	{
+		if (starts_with($argument, '--env='))
+		{
+			$environment = substr($argument, 6);
+
+			break;
+		}
+	}
 }
 else
 {
@@ -177,9 +185,9 @@ else
 |
 */
 
-if (isset($environment))
+if ( ! is_null($environment))
 {
-	Request::set_env($environment);
+	Request::foundation()->server->set('LARAVEL_ENV', $environment);
 }
 
 /*
@@ -210,8 +218,8 @@ if (defined('STDIN'))
 |--------------------------------------------------------------------------
 |
 | Finally we will register all of the bundles that have been defined for
-| the application. None of them will be started yet, but will be setup
-| so that they may be started by the developer at any time.
+| the application. None of them will be started, yet but will be setup
+| so that they may be started by the develop at any time.
 |
 */
 

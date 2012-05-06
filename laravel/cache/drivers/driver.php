@@ -69,25 +69,13 @@ abstract class Driver {
 	 * @param  int     $minutes
 	 * @return mixed
 	 */
-	public function remember($key, $default, $minutes, $function = 'put')
+	public function remember($key, $default, $minutes)
 	{
 		if ( ! is_null($item = $this->get($key, null))) return $item;
 
-		$this->$function($key, $default = value($default), $minutes);
+		$this->put($key, $default = value($default), $minutes);
 
 		return $default;
-	}
-
-	/**
-	 * Get an item from the cache, or cache the default value forever.
-	 *
-	 * @param  string  $key
-	 * @param  mixed   $default
-	 * @return mixed
-	 */
-	public function sear($key, $default)
-	{
-		return $this->remember($key, $default, null, 'forever');
 	}
 
 	/**

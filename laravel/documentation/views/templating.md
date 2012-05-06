@@ -64,10 +64,6 @@ Blade makes writing your views pure bliss. To create a blade view, simply name y
 #### Echoing a variable using Blade:
 
 	Hello, {{$name}}.
-	
-#### Echoing function results using Blade:
-
-	{{ Asset::styles() }}
 
 #### Rendering a view:
 

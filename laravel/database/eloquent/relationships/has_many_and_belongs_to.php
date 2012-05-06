@@ -311,7 +311,7 @@ class Has_Many_And_Belongs_To extends Relationship {
 	 */
 	public function eagerly_constrain($results)
 	{
-		$this->table->where_in($this->joining.'.'.$this->foreign_key(), $this->keys($results));
+		$this->table->where_in($this->joining.'.'.$this->foreign_key(), array_keys($results));
 	}
 
 	/**
@@ -325,14 +325,14 @@ class Has_Many_And_Belongs_To extends Relationship {
 	{
 		$foreign = $this->foreign_key();
 
-		foreach ($parents as &$parent)
+		// For each child we'll just get the parent that connects to the child and set the
+		// child model on the relationship array using the keys. Once we're done looping
+		// through the children all of the proper relations will be set.
+		foreach ($children as $key => $child)
 		{
-			$matching = array_filter($children, function($v) use ($parent, $foreign)
-			{
-				return $v->pivot->$foreign == $parent->get_key();
-			});
+			$parent =& $parents[$child->pivot->$foreign];
 
-			$parent->relationships[$relationship] = array_values($matching);
+			$parent->relationships[$relationship][$child->{$child->key()}] = $child;
 		}
 	}
 
@@ -349,7 +349,7 @@ class Has_Many_And_Belongs_To extends Relationship {
 			// Every model result for a many-to-many relationship needs a Pivot instance
 			// to represent the pivot table's columns. Sometimes extra columns are on
 			// the pivot table that may need to be accessed by the developer.
-			$pivot = new Pivot($this->joining, $this->model->connection());
+			$pivot = new Pivot($this->joining);
 
 			// If the attribute key starts with "pivot_", we know this is a column on
 			// the pivot table, so we will move it to the Pivot model and purge it
@@ -400,9 +400,7 @@ class Has_Many_And_Belongs_To extends Relationship {
 	 */
 	public function pivot()
 	{
-		$pivot = new Pivot($this->joining, $this->model->connection());
-
-		return new Has_Many($this->base, $pivot, $this->foreign_key());
+		return new Has_Many($this->base, new Pivot($this->joining), $this->foreign_key());
 	}
 
 	/**

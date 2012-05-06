@@ -40,7 +40,7 @@ class URL {
 		$route = Router::find('home');
 
 		// If a route named "home" exists, we'll route to that instead of using
-		// the single slash root URI. This allows the HTTPS attribute to be
+		// the single slash root URI. THis allows the HTTPS attribute to be
 		// respected instead of being hard-coded in the redirect.
 		if ( ! is_null($route))
 		{
@@ -220,16 +220,6 @@ class URL {
 	 */
 	public static function to_asset($url, $https = null)
 	{
-		if (static::valid($url)) return $url;
-
-		// If a base asset URL is defined in the configuration, use that and don't
-		// try and change the HTTP protocol. This allows the delivery of assets
-		// through a different server or third-party content delivery network.
-		if ($root = Config::get('application.asset_url', false))
-		{
-			return rtrim($root, '/').'/'.ltrim($url, '/');
-		}
-
 		if (is_null($https)) $https = Request::secure();
 
 		$url = static::to($url, $https);

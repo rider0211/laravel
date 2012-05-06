@@ -79,46 +79,6 @@ class Response {
 	}
 
 	/**
-	 * Create a new JSON response.
-	 *
-	 * <code>
-	 *		// Create a response instance with JSON
-	 *		return Response::json($data, 200, array('header' => 'value'));
-	 * </code>
-	 *
-	 * @param  mixed     $data
-	 * @param  int       $status
-	 * @param  array     $headers
-	 * @return Response
-	 */
-	public static function json($data, $status = 200, $headers = array())
-	{
-		$headers['Content-Type'] = 'application/json';
-
-		return new static(json_encode($data), $status, $headers);
-	}
-
-	/**
-	 * Create a new response of JSON'd Eloquent models.
-	 *
-	 * <code>
-	 *		// Create a new response instance with Eloquent models
-	 *		return Response::eloquent($data, 200, array('header' => 'value'));
-	 * </code>
-	 *
-	 * @param  Eloquenet|array  $data
-	 * @param  int              $status
-	 * @param  array            $headers
-	 * @return Response
-	 */
-	public static function eloquent($data, $status = 200, $headers = array())
-	{
-		$headers['Content-Type'] = 'application/json';
-
-		return new static(eloquent_to_json($data), $status, $headers);
-	}
-
-	/**
 	 * Create a new error response instance.
 	 *
 	 * The response status code will be set using the specified code.
@@ -214,21 +174,9 @@ class Response {
 			$response = new static($response);
 		}
 
+		$response->render();
+
 		return $response;
-	}
-
-	/**
-	 * Send the headers and content of the response to the browser.
-	 *
-	 * @return void
-	 */
-	public function send()
-	{
-		$this->cookies();
-
-		$this->foundation->prepare(Request::foundation());
-
-		$this->foundation->send();
 	}
 
 	/**
@@ -259,6 +207,20 @@ class Response {
 	}
 
 	/**
+	 * Send the headers and content of the response to the browser.
+	 *
+	 * @return void
+	 */
+	public function send()
+	{
+		$this->cookies();
+
+		$this->foundation->prepare(Request::foundation());
+
+		$this->foundation->send();
+	}
+
+	/**
 	 * Send all of the response headers to the browser.
 	 *
 	 * @return void
@@ -281,7 +243,7 @@ class Response {
 
 		// All of the cookies for the response are actually stored on the
 		// Cookie class until we're ready to send the response back to
-		// the browser. This allows our cookies to be set easily.
+		// the browser. This allows a cookies to be set easily.
 		foreach (Cookie::$jar as $name => $cookie)
 		{
 			$config = array_values($cookie);
@@ -315,23 +277,16 @@ class Response {
 	}
 
 	/**
-	 * Get / set the response status code.
+	 * Set the response status code.
 	 *
-	 * @param  int    $status
-	 * @return mixed
+	 * @param  int       $status
+	 * @return Response
 	 */
-	public function status($status = null)
+	public function status($status)
 	{
-		if (is_null($status))
-		{
-			return $this->foundation->getStatusCode();
-		}
-		else
-		{
-			$this->foundation->setStatusCode($status);
+		$this->foundation->setStatusCode($status);
 
-			return $this;
-		}
+		return $this;
 	}
 
 }

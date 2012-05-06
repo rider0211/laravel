@@ -198,17 +198,6 @@ class Request {
 	}
 
 	/**
-	 * Set the Laravel environment for the current request.
-	 *
-	 * @param  string  $env
-	 * @return void
-	 */
-	public static function set_env($env)
-	{
-		static::foundation()->server->set('LARAVEL_ENV', $env);
-	}
-
-	/**
 	 * Determine the current request environment.
 	 *
 	 * @param  string  $env
@@ -232,7 +221,7 @@ class Request {
 		{
 			// Essentially we just want to loop through each environment pattern
 			// and determine if the current URI matches the pattern and if so
-			// we will simply return the environment for that URI pattern.
+			// we'll simply return the environment for that URI pattern.
 			foreach ($patterns as $pattern)
 			{
 				if (Str::is($pattern, $uri))

@@ -10,13 +10,6 @@ class Session {
 	public static $instance;
 
 	/**
-	 * The third-party driver registrar.
-	 *
-	 * @var array
-	 */
-	public static $registrar = array();
-
-	/**
 	 * The string name of the CSRF token stored in the session.
 	 *
 	 * @var string
@@ -54,13 +47,6 @@ class Session {
 	 */
 	public static function factory($driver)
 	{
-		if (isset(static::$registrar[$driver]))
-		{
-			$resolver = static::$registrar[$driver];
-
-			return $resolver();
-		}
-
 		switch ($driver)
 		{
 			case 'apc':
@@ -117,18 +103,6 @@ class Session {
 	public static function started()
 	{
 		return ! is_null(static::$instance);
-	}
-
-	/**
-	 * Register a third-party cache driver.
-	 *
-	 * @param  string   $driver
-	 * @param  Closure  $resolver
-	 * @return void
-	 */
-	public static function extend($driver, Closure $resolver)
-	{
-		static::$registrar[$driver] = $resolver;
 	}
 
 	/**
