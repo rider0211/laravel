@@ -64,7 +64,7 @@ class Bundle {
 
 		static::$bundles[$bundle] = array_merge($defaults, $config);
 
-		// It is possible for the develoepr to specify auto-loader mappings
+		// It is possible for the developer to specify auto-loader mappings
 		// directly on the bundle registration. This provides a convenient
 		// way to register mappings withuot a bootstrap.
 		if (isset($config['autoloads']))
@@ -92,8 +92,12 @@ class Bundle {
 
 		// Each bundle may have a start script which is responsible for preparing
 		// the bundle for use by the application. The start script may register
-		// any classes the bundle uses with the auto-loader, etc.
-		if (file_exists($path = static::path($bundle).'start'.EXT))
+		// any classes the bundle uses with the auto-loader class, etc.
+		if ( ! is_null($starter = static::option($bundle, 'starter')))
+		{
+			$starter();
+		}
+		elseif (file_exists($path = static::path($bundle).'start'.EXT))
 		{
 			require $path;
 		}
@@ -297,7 +301,7 @@ class Bundle {
 	{
 		if (is_null($bundle)) return static::assets(DEFAULT_BUNDLE);
 
-		return ($bundle != DEFAULT_BUNDLE) ? URL::base()."/bundles/{$bundle}/" : URL::base().'/';
+		return ($bundle != DEFAULT_BUNDLE) ? "/bundles/{$bundle}/" : '/';
 	}
 
 	/**
@@ -422,13 +426,19 @@ class Bundle {
 	 *
 	 * @param  string  $bundle
 	 * @param  string  $option
+	 * @param  mixed   $default
 	 * @return mixed
 	 */
-	public static function option($bundle, $option)
+	public static function option($bundle, $option, $default = null)
 	{
 		$bundle = static::get($bundle);
 
-		if ( ! is_null($bundle)) return array_get($bundle, $option);
+		if (is_null($bundle))
+		{
+			return value($default);
+		}
+
+		return array_get($bundle, $option, $default);
 	}
 
 	/**
@@ -449,18 +459,6 @@ class Bundle {
 	public static function names()
 	{
 		return array_keys(static::$bundles);
-	}
-
-	/**
-	 * Expand given bundle path of form "[bundle::]path/...".
-	 *
-	 * @param  string  $path
-	 * @return string
-	 */
-	public static function expand($path)
-	{
-		list($bundle, $element) = static::parse($path);
-		return static::path($bundle).$element;
 	}
 
 }

@@ -110,12 +110,13 @@ class View implements ArrayAccess {
 	}
 
 	/**
-	 * Get the path to a given view on disk.
+	 * Determine if the given view exists.
 	 *
-	 * @param  string  $view
-	 * @return string
+	 * @param  string       $view
+	 * @param  boolean      $return_path
+	 * @return string|bool
 	 */
-	protected function path($view)
+	public static function exists($view, $return_path = false)
 	{
 		list($bundle, $view) = Bundle::parse($view);
 
@@ -124,9 +125,25 @@ class View implements ArrayAccess {
 		// We delegate the determination of view paths to the view loader event
 		// so that the developer is free to override and manage the loading
 		// of views in any way they see fit for their application.
-		$path = Event::first(static::loader, array($bundle, $view));
+		$path = Event::until(static::loader, array($bundle, $view));
 
 		if ( ! is_null($path))
+		{
+			return $return_path ? $path : true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Get the path to a given view on disk.
+	 *
+	 * @param  string  $view
+	 * @return string
+	 */
+	protected function path($view)
+	{
+		if ($path = $this->exists($view,true))
 		{
 			return $path;
 		}
@@ -233,13 +250,18 @@ class View implements ArrayAccess {
 	 *		});
 	 * </code>
 	 *
-	 * @param  string   $view
-	 * @param  Closure  $composer
+	 * @param  string|array  $view
+	 * @param  Closure       $composer
 	 * @return void
 	 */
-	public static function composer($view, $composer)
+	public static function composer($views, $composer)
 	{
-		Event::listen("laravel.composing: {$view}", $composer);
+		$views = (array) $views;
+
+		foreach ($views as $view)
+		{
+			Event::listen("laravel.composing: {$view}", $composer);
+		}
 	}
 
 	/**
@@ -300,9 +322,9 @@ class View implements ArrayAccess {
 		// allows easy attachment of other view parsers.
 		if (Event::listeners(static::engine))
 		{
-			$result = Event::first(static::engine, array($this));
+			$result = Event::until(static::engine, array($this));
 
-			if ($result !== false) return $result;
+			if ( ! is_null($result)) return $result;
 		}
 
 		return $this->get();

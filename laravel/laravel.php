@@ -27,18 +27,24 @@ require 'core.php';
 
 set_exception_handler(function($e)
 {
+	require_once path('sys').'error'.EXT;
+
 	Error::exception($e);
 });
 
 
 set_error_handler(function($code, $error, $file, $line)
 {
+	require_once path('sys').'error'.EXT;
+
 	Error::native($code, $error, $file, $line);
 });
 
 
 register_shutdown_function(function()
 {
+	require_once path('sys').'error'.EXT;
+
 	Error::shutdown();
 });
 
@@ -117,6 +123,19 @@ $uri = URI::current();
 Request::$route = Routing\Router::route(Request::method(), $uri);
 
 $response = Request::$route->call();
+
+/*
+|--------------------------------------------------------------------------
+| "Render" The Response
+|--------------------------------------------------------------------------
+|
+| The render method evaluates the content of the response and converts it
+| to a string. This evaluates any views and sub-responses within the
+| content and sets the raw string result as the new response.
+|
+*/
+
+$response->render();
 
 /*
 |--------------------------------------------------------------------------

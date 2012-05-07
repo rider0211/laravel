@@ -1,4 +1,4 @@
-<?php namespace Laravel; use FilesystemIterator as fIterator;
+<?php namespace Laravel; use FilesystemIterator as fIterator; use Closure;
 
 class Blade {
 
@@ -26,7 +26,15 @@ class Blade {
 		'yield_sections',
 		'section_start',
 		'section_end',
+		'extensions',
 	);
+
+	/**
+	 * An array of user defined compilers.
+	 *
+	 * @var array
+	 */
+	protected static $extensions = array();
 
 	/**
 	 * Register the Blade view engine with Laravel.
@@ -42,7 +50,7 @@ class Blade {
 			// return false so the View can be rendered as normal.
 			if ( ! str_contains($view->path, BLADE_EXT))
 			{
-				return false;
+				return;
 			}
 
 			$compiled = path('storage').'views/'.md5($view->path);
@@ -65,6 +73,24 @@ class Blade {
 	}
 
 	/**
+	 * Register a custom Blade compiler.
+	 *
+	 * <code>
+	 * 		Blade::extend(function($view)
+	 *		{
+	 * 			return str_replace('foo', 'bar', $view);
+	 * 		});
+	 * </code>
+	 *
+	 * @param  Closure  $compiler
+	 * @return void
+	 */
+	public static function extend(Closure $compiler)
+	{
+		static::$extensions[] = $compiler;
+	}
+
+	/**
 	 * Determine if a view is "expired" and needs to be re-compiled.
 	 *
 	 * @param  string  $view
@@ -74,8 +100,6 @@ class Blade {
 	 */
 	public static function expired($view, $path)
 	{
-		$compiled = static::compiled($path);
-
 		return filemtime($path) > filemtime(static::compiled($path));
 	}
 
@@ -192,7 +216,7 @@ class Blade {
 			preg_match('/\$[^\s]*/', $forelse, $variable);
 
 			// Once we have extracted the variable being looped against, we can add
-			// an if statmeent to the start of the loop that checks if the count
+			// an if statement to the start of the loop that checks if the count
 			// of the variable being looped against is greater than zero.
 			$if = "<?php if (count({$variable[0]}) > 0): ?>";
 
@@ -389,12 +413,28 @@ class Blade {
 	}
 
 	/**
+	 * Execute user defined compilers.
+	 *
+	 * @param  string  $value
+	 * @return string
+	 */
+	protected static function compile_extensions($value)
+	{
+		foreach (static::$extensions as $compiler)
+		{
+			$value = $compiler($value);
+		}
+
+		return $value;
+	}	
+
+	/**
 	 * Get the regular expression for a generic Blade function.
 	 *
 	 * @param  string  $function
 	 * @return string
 	 */
-	protected static function matcher($function)
+	public static function matcher($function)
 	{
 		return '/(\s*)@'.$function.'(\s*\(.*\))/';
 	}

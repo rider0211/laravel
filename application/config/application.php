@@ -17,6 +17,19 @@ return array(
 
 	/*
 	|--------------------------------------------------------------------------
+	| Asset URL
+	|--------------------------------------------------------------------------
+	|
+	| The base URL used for your application's asset files. This is useful if
+	| you are serving your assets through a different server or a CDN. If it
+	| is not set, we'll default to the application URL above.
+	|
+	*/
+
+	'asset_url' => '',
+
+	/*
+	|--------------------------------------------------------------------------
 	| Application Index
 	|--------------------------------------------------------------------------
 	|
@@ -54,7 +67,7 @@ return array(
 	|
 	*/
 
-	'profiler' => true,
+	'profiler' => false,
 
 	/*
 	|--------------------------------------------------------------------------
