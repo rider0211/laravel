@@ -96,7 +96,7 @@
 		}
 	</style>
 </head>
-<body>
+<body onload="prettyPrint()">
 	<div class="wrapper">
 		<div class="error-spacer"></div>
 		<div role="main" class="main">
