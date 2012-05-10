@@ -4,7 +4,6 @@ use Laravel\Str;
 use Laravel\Cookie;
 use Laravel\Config;
 use Laravel\Session;
-use Laravel\Crypter;
 
 abstract class Driver {
 

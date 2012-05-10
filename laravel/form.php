@@ -397,37 +397,10 @@ class Form {
 
 		foreach ($options as $value => $display)
 		{
-			if (is_array($display)) 
-			{
-				$html[] = static::optgroup($display, $value, $selected);
-			}
-			else
-			{
-				$html[] = static::option($value, $display, $selected);
-			}
-		}
-
-		return '<select'.HTML::attributes($attributes).'>'.implode('', $html).'</select>';
-	}
-
-	/**
-	 * Create a HTML select element optgroup.
-	 *
-	 * @param  array   $options
-	 * @param  string  $label
-	 * @param  string  $selected
-	 * @return string
-	 */
-	protected static function optgroup($options, $label, $selected)
-	{
-		$html = array();
-
-		foreach ($options as $value => $display)
-		{
 			$html[] = static::option($value, $display, $selected);
 		}
 
-		return '<optgroup label="'.HTML::entities($label).'">'.implode('', $html).'</option>';
+		return '<select'.HTML::attributes($attributes).'>'.implode('', $html).'</select>';
 	}
 
 	/**
