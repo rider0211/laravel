@@ -32,7 +32,7 @@ class Belongs_To extends Relationship {
 	 */
 	protected function constrain()
 	{
-		$this->table->where($this->model->key(), '=', $this->foreign_value());
+		$this->table->where($this->base->key(), '=', $this->foreign_value());
 	}
 
 	/**
@@ -65,13 +65,8 @@ class Belongs_To extends Relationship {
 		// are looking for the parent of a child model in this relationship.
 		foreach ($results as $result)
 		{
-			if ( ! is_null($key = $result->{$this->foreign_key()}))
-			{
-				$keys[] = $key;
-			}
+			$keys[] = $result->{$this->foreign_key()};
 		}
-
-		if (count($keys) == 0) $keys = array(0);
 
 		$this->table->where_in($this->model->key(), array_unique($keys));
 	}
@@ -89,14 +84,9 @@ class Belongs_To extends Relationship {
 
 		foreach ($children as &$child)
 		{
-			$parent = array_first($parents, function($k, $v) use ($child, $foreign)
+			if (array_key_exists($child->$foreign, $parents))
 			{
-				return $v->get_key() == $child->$foreign;
-			});
-
-			if ( ! is_null($parent))
-			{
-				$child->relationships[$relationship] = $parent;
+				$child->relationships[$relationship] = $parents[$child->$foreign];
 			}
 		}
 	}

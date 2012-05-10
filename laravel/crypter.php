@@ -74,7 +74,7 @@ class Crypter {
 	 *
 	 * @return int
 	 */
-	public static function randomizer()
+	protected static function randomizer()
 	{
 		// There are various sources from which we can get random numbers
 		// but some are more random than others. We'll choose the most

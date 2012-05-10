@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="utf-8">
 
-		<title>Error 500 - Internal Server Error</title>
+		<title>Laravel - A Framework For Web Artisans</title>
 
 		<style>
 			@import url(http://fonts.googleapis.com/css?family=Ubuntu);
@@ -69,6 +69,14 @@
 				padding: 10px;
 			}
 
+			#main div.warning {
+				background-color: #feefb3;
+				border: 1px solid;
+				border-radius: 5px;
+				color: #9f6000;
+				padding: 10px;
+			}
+
 			#main ul {
 				margin: 10px 0;
 				padding: 0 30px;
@@ -81,23 +89,41 @@
 	</head>
 	<body>
 		<div id="main">
-			<?php $messages = array('Ouch.', 'Oh no!', 'Whoops!'); ?>
+			<h1>Welcome To Laravel</h1>
 
-			<h1><?php echo $messages[mt_rand(0, 2)]; ?></h1>
-
-			<h2>Server Error: 500 (Internal Server Error)</h2>
-
-			<h3>What does this mean?</h3>
+			<h2>A Framework For Web Artisans</h2>
 
 			<p>
-				Something went wrong on our servers while we were processing your request.
-				We're really sorry about this, and will work hard to get this resolved as
-				soon as possible.
+				You have successfully installed the Laravel framework. Laravel is a simple framework
+				that helps web artisans create beautiful, creative applications using elegant, expressive
+				syntax. You'll love using it.
 			</p>
 
+			<h3>Learn the terrain.</h3>
+
 			<p>
-				Perhaps you would like to go to our <?php echo HTML::link('/', 'home page'); ?>?
+				You've landed yourself on our default home page. The route that
+				is generating this page lives at:
 			</p>
+
+			<pre><code>APP_PATH/routes.php</code></pre>
+
+			<p>And the view sitting before you can be found at:</p>
+
+			<pre><code>APP_PATH/views/home/index.php</code></pre>
+
+			<h3>Create something beautiful.</h3>
+
+			<p>
+				Now that you're up and running, it's time to start creating!
+				Here are some links to help you get started:
+			</p>
+
+			<ul>
+				<li><a href="http://laravel.com">Official Website</a></li>
+				<li><a href="http://forums.laravel.com">Laravel Forums</a></li>
+				<li><a href="http://github.com/laravel/laravel">GitHub Repository</a></li>
+			</ul>
 		</div>
 	</body>
 </html>
