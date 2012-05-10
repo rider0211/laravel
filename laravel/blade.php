@@ -1,4 +1,4 @@
-<?php namespace Laravel; use FilesystemIterator as fIterator;
+<?php namespace Laravel; use FilesystemIterator as fIterator; use Closure;
 
 class Blade {
 
@@ -8,6 +8,7 @@ class Blade {
 	 * @var array
 	 */
 	protected static $compilers = array(
+		'extensions',
 		'layouts',
 		'comments',
 		'echos',
@@ -27,6 +28,13 @@ class Blade {
 		'section_start',
 		'section_end',
 	);
+
+	/**
+	 * An array of user defined compilers.
+	 *
+	 * @var array
+	 */
+	protected static $extensions = array();
 
 	/**
 	 * Register the Blade view engine with Laravel.
@@ -62,6 +70,24 @@ class Blade {
 			// method on the view to evaluate the compiled PHP view.
 			return $view->get();
 		});
+	}
+
+	/**
+	 * Register a custom Blade compiler.
+	 *
+	 * <code>
+	 * 		Blade::extend(function($view)
+	 *		{
+	 * 			return str_replace('foo', 'bar', $view);
+	 * 		});
+	 * </code>
+	 *
+	 * @param  Closure  $compiler
+	 * @return void
+	 */
+	public static function extend(Closure $compiler)
+	{
+		static::$extensions[] = $compiler;
 	}
 
 	/**
@@ -387,12 +413,28 @@ class Blade {
 	}
 
 	/**
+	 * Execute user defined compilers.
+	 *
+	 * @param  string  $value
+	 * @return string
+	 */
+	protected static function compile_extensions($value)
+	{
+		foreach (static::$extensions as $compiler)
+		{
+			$value = $compiler($value);
+		}
+
+		return $value;
+	}	
+
+	/**
 	 * Get the regular expression for a generic Blade function.
 	 *
 	 * @param  string  $function
 	 * @return string
 	 */
-	protected static function matcher($function)
+	public static function matcher($function)
 	{
 		return '/(\s*)@'.$function.'(\s*\(.*\))/';
 	}
