@@ -1,13 +1,6 @@
-<?php namespace Laravel;
+<?php namespace Laravel; use Closure;
 
 class Cookie {
-
-	/**
-	 * How long is forever (in minutes).
-	 *
-	 * @var int
-	 */
-	const forever = 525600;
 
 	/**
 	 * The cookies that have been set.
@@ -34,7 +27,7 @@ class Cookie {
 	 *		// Get the value of the "favorite" cookie
 	 *		$favorite = Cookie::get('favorite');
 	 *
-	 *		// Get the value of a cookie or return a default value
+	 *		// Get the value of a cookie or return a default value 
 	 *		$favorite = Cookie::get('framework', 'Laravel');
 	 * </code>
 	 *
@@ -103,7 +96,7 @@ class Cookie {
 	 */
 	public static function forever($name, $value, $path = '/', $domain = null, $secure = false)
 	{
-		return static::put($name, $value, static::forever, $path, $domain, $secure);
+		return static::put($name, $value, 525600, $path, $domain, $secure);
 	}
 
 	/**
