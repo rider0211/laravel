@@ -414,10 +414,7 @@ class Query {
 		// Once the callback has been run on the query, we will store the nested
 		// query instance on the where clause array so that it's passed to the
 		// query's query grammar instance when building.
-		if ($query->wheres !== null)
-		{
-			$this->wheres[] = compact('type', 'query', 'connector');
-		}
+		$this->wheres[] = compact('type', 'query', 'connector');
 
 		$this->bindings = array_merge($this->bindings, $query->bindings);
 
