@@ -3,29 +3,28 @@
  * Laravel - A PHP Framework For Web Artisans
  *
  * @package  Laravel
- * @version  3.2.0 Beta 1
+ * @version  3.1.9
  * @author   Taylor Otwell <taylorotwell@gmail.com>
  * @link     http://laravel.com
  */
 
-/*
-|----------------------------------------------------------------
-| Application Environemtns
-|----------------------------------------------------------------
-|
-| Laravel takes a dead simple approach to environments, and we
-| think you'll love it. Just specify which URLs belongs to a
-| given environment, and when you access your application
-| from a URL matching that pattern, we'll be sure to
-| merge in that environment's configuration files.
-|
-*/
+// --------------------------------------------------------------
+// Initialize the web variable if it doesn't exist.
+// --------------------------------------------------------------
+if ( ! isset($web)) $web = false;
 
-$environments = array(
+// --------------------------------------------------------------
+// Define the directory separator for the environment.
+// --------------------------------------------------------------
+if ( ! defined('DS'))
+{
+	define('DS', DIRECTORY_SEPARATOR);
+}
 
-	'local' => array('http://localhost*', '*.dev'),
-
-);
+// --------------------------------------------------------------
+// Define the path to the base directory.
+// --------------------------------------------------------------
+$GLOBALS['laravel_paths']['base'] = __DIR__.DS;
 
 // --------------------------------------------------------------
 // The path to the application directory.
@@ -50,35 +49,22 @@ $paths['storage'] = 'storage';
 // --------------------------------------------------------------
 // The path to the public directory.
 // --------------------------------------------------------------
-$paths['public'] = 'public';
-
-// *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
-// END OF USER CONFIGURATION. HERE BE DRAGONS!
-// *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
-
-// --------------------------------------------------------------
-// Change to the current working directory.
-// --------------------------------------------------------------
-chdir(__DIR__);
-
-// --------------------------------------------------------------
-// Define the directory separator for the environment.
-// --------------------------------------------------------------
-if ( ! defined('DS'))
+if ($web)
 {
-	define('DS', DIRECTORY_SEPARATOR);
+	$GLOBALS['laravel_paths']['public'] = realpath('').DS;
 }
-
-// --------------------------------------------------------------
-// Define the path to the base directory.
-// --------------------------------------------------------------
-$GLOBALS['laravel_paths']['base'] = __DIR__.DS;
+else
+{
+	$paths['public'] = 'public';
+}
 
 // --------------------------------------------------------------
 // Define each constant if it hasn't been defined.
 // --------------------------------------------------------------
 foreach ($paths as $name => $path)
 {
+	if ($web) $path = "../{$path}";
+
 	if ( ! isset($GLOBALS['laravel_paths'][$name]))
 	{
 		$GLOBALS['laravel_paths'][$name] = realpath($path).DS;

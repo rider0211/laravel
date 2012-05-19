@@ -1,5 +1,7 @@
 <?php namespace Laravel; defined('DS') or die('No direct script access.');
 
+use Closure;
+
 class Config {
 
 	/**
@@ -224,9 +226,9 @@ class Config {
 		// Configuration files can be made specific for a given environment. If an
 		// environment has been set, we will merge the environment configuration
 		// in last, so that it overrides all other options.
-		if ( ! is_null(Request::env()))
+		if (isset($_SERVER['LARAVEL_ENV']))
 		{
-			$paths[] = $paths[count($paths) - 1].Request::env().'/';
+			$paths[] = $paths[count($paths) - 1].$_SERVER['LARAVEL_ENV'].'/';
 		}
 
 		return $paths;
