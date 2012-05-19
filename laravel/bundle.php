@@ -64,7 +64,7 @@ class Bundle {
 
 		static::$bundles[$bundle] = array_merge($defaults, $config);
 
-		// It is possible for the developer to specify auto-loader mappings
+		// It is possible for the develoepr to specify auto-loader mappings
 		// directly on the bundle registration. This provides a convenient
 		// way to register mappings withuot a bootstrap.
 		if (isset($config['autoloads']))
@@ -92,12 +92,8 @@ class Bundle {
 
 		// Each bundle may have a start script which is responsible for preparing
 		// the bundle for use by the application. The start script may register
-		// any classes the bundle uses with the auto-loader class, etc.
-		if ( ! is_null($starter = static::option($bundle, 'starter')))
-		{
-			$starter();
-		}
-		elseif (file_exists($path = static::path($bundle).'start'.EXT))
+		// any classes the bundle uses with the auto-loader, etc.
+		if (file_exists($path = static::path($bundle).'start'.EXT))
 		{
 			require $path;
 		}
@@ -275,19 +271,9 @@ class Bundle {
 		{
 			return path('app');
 		}
-		elseif ($location = array_get(static::$bundles, $bundle.'.location'))
+		else if ($location = array_get(static::$bundles, $bundle.'.location'))
 		{
-			// If the bundle location starts with "path: ", we will assume that a raw
-			// path has been specified and will simply return it. Otherwise, we'll
-			// prepend the bundle directory path onto the location and return.
-			if (starts_with($location, 'path: '))
-			{
-				return str_finish(substr($location, 6), DS);
-			}
-			else
-			{
-				return str_finish(path('bundle').$location, DS);
-			}
+			return str_finish(path('bundle').$location, DS);
 		}
 	}
 
@@ -301,7 +287,7 @@ class Bundle {
 	{
 		if (is_null($bundle)) return static::assets(DEFAULT_BUNDLE);
 
-		return ($bundle != DEFAULT_BUNDLE) ? "/bundles/{$bundle}/" : '/';
+		return ($bundle != DEFAULT_BUNDLE) ? URL::base()."/bundles/{$bundle}/" : URL::base().'/';
 	}
 
 	/**
@@ -388,8 +374,8 @@ class Bundle {
 	public static function parse($identifier)
 	{
 		// The parsed elements are cached so we don't have to reparse them on each
-		// subsequent request for the parsed element. So if we've already parsed
-		// the given element, we'll just return the cached copy as the value.
+		// subsequent request for the parsed element. So, if we've already parsed
+		// the given element, we'll just return the cached copy.
 		if (isset(static::$elements[$identifier]))
 		{
 			return static::$elements[$identifier];
@@ -401,7 +387,7 @@ class Bundle {
 		}
 		// If no bundle is in the identifier, we will insert the default bundle
 		// since classes like Config and Lang organize their items by bundle.
-		// The application folder essentially behaves as a default bundle.
+		// The "application" folder essentially behaves as a bundle.
 		else
 		{
 			$element = array(DEFAULT_BUNDLE, strtolower($identifier));
@@ -426,19 +412,13 @@ class Bundle {
 	 *
 	 * @param  string  $bundle
 	 * @param  string  $option
-	 * @param  mixed   $default
 	 * @return mixed
 	 */
-	public static function option($bundle, $option, $default = null)
+	public static function option($bundle, $option)
 	{
 		$bundle = static::get($bundle);
 
-		if (is_null($bundle))
-		{
-			return value($default);
-		}
-
-		return array_get($bundle, $option, $default);
+		if ( ! is_null($bundle)) return array_get($bundle, $option);
 	}
 
 	/**

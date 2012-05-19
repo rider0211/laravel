@@ -6,8 +6,9 @@
 |--------------------------------------------------------------------------
 |
 | Simply tell Laravel the HTTP verbs and URIs it should respond to. It is a
-| breeze to setup your application using Laravel's RESTful routing and it
-| is perfectly suited for building large applications and simple APIs.
+| breeze to setup your applications using Laravel's RESTful routing, and it
+| is perfectly suited for building both large applications and simple APIs.
+| Enjoy the fresh air and simplicity of the framework.
 |
 | Let's respond to a simple GET request to http://example.com/hello:
 |
@@ -18,7 +19,7 @@
 |
 | You can even respond to more than one URI:
 |
-|		Route::post(array('hello', 'world'), function()
+|		Route::post('hello, world', function()
 |		{
 |			return 'Hello World!';
 |		});
@@ -68,9 +69,9 @@ Event::listen('500', function()
 |--------------------------------------------------------------------------
 |
 | Filters provide a convenient method for attaching functionality to your
-| routes. The built-in before and after filters are called before and
-| after every request to your application, and you may even create
-| other filters that can be attached to individual routes.
+| routes. The built-in "before" and "after" filters are called before and
+| after every request to your application, and you may even create other
+| filters that can be attached to individual routes.
 |
 | Let's walk through an example...
 |

@@ -20,13 +20,11 @@ class Pivot extends Model {
 	 * Create a new pivot table instance.
 	 *
 	 * @param  string  $table
-	 * @param  string  $connection
 	 * @return void
 	 */
-	public function __construct($table, $connection = null)
+	public function __construct($table)
 	{
 		$this->pivot_table = $table;
-		$this->connection = $connection;
 
 		parent::__construct(array(), true);
 	}
@@ -39,16 +37,6 @@ class Pivot extends Model {
 	public function table()
 	{
 		return $this->pivot_table;
-	}
-
-	/**
-	 * Get the connection used by the pivot table.
-	 *
-	 * @return string
-	 */
-	public function connection()
-	{
-		return $this->connection;
 	}
 
 }
