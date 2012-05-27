@@ -1,8 +1,4 @@
-<?php namespace Laravel\Database\Eloquent;
-
-use Laravel\Event;
-use Laravel\Database;
-use Laravel\Database\Eloquent\Relationships\Has_Many_And_Belongs_To;
+<?php namespace Laravel\Database\Eloquent; use Laravel\Database;
 
 class Query {
 
@@ -34,7 +30,7 @@ class Query {
 	 */
 	public $passthru = array(
 		'lists', 'only', 'insert', 'insert_get_id', 'update', 'increment',
-		'delete', 'decrement', 'count', 'min', 'max', 'avg', 'sum',
+		'decrement', 'count', 'min', 'max', 'avg', 'sum',
 	);
 
 	/**
@@ -58,7 +54,7 @@ class Query {
 	 */
 	public function first($columns = array('*'))
 	{
-		$results = $this->hydrate($this->model, $this->table->take(1)->get($columns));
+		$results = $this->hydrate($this->model, $this->table->take(1)->get($columns, false));
 
 		return (count($results) > 0) ? head($results) : null;
 	}
@@ -67,11 +63,12 @@ class Query {
 	 * Get all of the model results for the query.
 	 *
 	 * @param  array  $columns
+	 * @param  bool   $include
 	 * @return array
 	 */
-	public function get($columns = array('*'))
+	public function get($columns = array('*'), $include = true)
 	{
-		return $this->hydrate($this->model, $this->table->get($columns));
+		return $this->hydrate($this->model, $this->table->get($columns), $include);
 	}
 
 	/**
@@ -102,7 +99,7 @@ class Query {
 	 * @param  array  $results
 	 * @return array
 	 */
-	public function hydrate($model, $results)
+	public function hydrate($model, $results, $include = true)
 	{
 		$class = get_class($model);
 
@@ -120,18 +117,23 @@ class Query {
 			// We need to set the attributes manually in case the accessible property is
 			// set on the array which will prevent the mass assignemnt of attributes if
 			// we were to pass them in using the constructor or fill methods.
-			$new->fill_raw($result);
+			foreach ($result as $key => $value)
+			{
+				$new->set_attribute($key, $value);
+			}
 
-			$models[] = $new;
+			$new->original = $new->attributes;
+
+			$models[$result[$this->model->key()]] = $new;
 		}
 
-		if (count($results) > 0)
+		if ($include and count($results) > 0)
 		{
 			foreach ($this->model_includes() as $relationship => $constraints)
 			{
-				// If the relationship is nested, we will skip loading it here and let
+				// If the relationship is nested, we will skip laoding it here and let
 				// the load method parse and set the nested eager loads on the right
-				// relationship when it is getting ready to eager load.
+				// relationship when it is getting ready to eager laod.
 				if (str_contains($relationship, '.'))
 				{
 					continue;
@@ -181,6 +183,9 @@ class Query {
 			$query->table->where_nested($constraints);
 		}
 
+		// Before matching the models, we will initialize the relationships
+		// to either null for single-value relationships or an array for
+		// the multi-value relationships as their baseline value.
 		$query->initialize($results, $relationship);
 
 		$query->match($relationship, $results, $query->get());
@@ -267,8 +272,8 @@ class Query {
 		$result = call_user_func_array(array($this->table, $method), $parameters);
 
 		// Some methods may get their results straight from the fluent query
-		// builder such as the aggregate methods. If the called method is
-		// one of these, we will just return the result straight away.
+		// builder, such as the aggregate methods. If the called method is
+		// one of these, we will return the result straight away.
 		if (in_array($method, $this->passthru))
 		{
 			return $result;

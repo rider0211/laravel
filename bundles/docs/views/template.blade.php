@@ -5,9 +5,8 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 	<title>Laravel: A Framework For Web Artisans</title>
 	<meta name="viewport" content="width=device-width">
-
-	{{ HTML::style('laravel/css/style.css') }}
-	{{ HTML::style('laravel/js/modernizr-2.5.3.min.js') }}
+	{{ Asset::bundle('docs')->styles(); }}
+	{{ Asset::bundle('docs')->scripts(); }}
 </head>
 <body onload="prettyPrint()">
 	<div class="wrapper">
@@ -15,20 +14,21 @@
 			<h1>Laravel</h1>
 			<h2>A Framework For Web Artisans</h2>
 
-			<p class="intro-text">
+			<p>
+				You have successfully installed the Laravel framework. Laravel is a simple framework
+				that helps web artisans create beautiful, creative applications using elegant, expressive
+				syntax. You'll love using it.
 			</p>
 		</header>
 		<div role="main" class="main">
 			<aside class="sidebar">
-				{{ $sidebar }}
+				@include('docs::menu')
 			</aside>
 			<div class="content">
 				@yield('content')
 			</div>
 		</div>
 	</div>
-	{{ HTML::script('http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js') }}
-	{{ HTML::script('laravel/js/prettify.js') }}
-	{{ HTML::script('laravel/js/scroll.js') }}
+	{{ Asset::container('footer')->bundle('docs')->scripts(); }}
 </body>
 </html>

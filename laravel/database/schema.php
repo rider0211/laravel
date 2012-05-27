@@ -41,17 +41,33 @@ class Schema {
 	}
 
 	/**
-	 * Drop a database table from the schema.
+	 * Rename a database table in the schema.
 	 *
 	 * @param  string  $table
-	 * @param  string  $connection
+	 * @param  string  $name
 	 * @return void
 	 */
-	public static function drop($table, $connection = null)
+	public static function rename($table, $new_name)
 	{
 		$table = new Schema\Table($table);
 
-		$table->on($connection);
+		// To indicate that the table needs to be renamed, we will run the
+		// "rename" command on the table instance and pass the instance to
+		// the execute method as calling a Closure isn't needed.
+		$table->rename($new_name);
+
+		return static::execute($table);
+	}
+
+	/**
+	 * Drop a database table from the schema.
+	 *
+	 * @param  string  $table
+	 * @return void
+	 */
+	public static function drop($table)
+	{
+		$table = new Schema\Table($table);
 
 		// To indicate that the table needs to be dropped, we will run the
 		// "drop" command on the table instance and pass the instance to
@@ -147,11 +163,6 @@ class Schema {
 	public static function grammar(Connection $connection)
 	{
 		$driver = $connection->driver();
-
-		if (isset(\Laravel\Database::$registrar[$driver]))
-		{
-			return \Laravel\Database::$registrar[$driver]['schema']();
-		}
 
 		switch ($driver)
 		{

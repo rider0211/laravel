@@ -1,7 +1,6 @@
 <?php namespace Laravel\Database\Eloquent;
 
 use Laravel\Str;
-use Laravel\Event;
 use Laravel\Database;
 use Laravel\Database\Eloquent\Relationships\Has_Many_And_Belongs_To;
 
@@ -116,23 +115,14 @@ abstract class Model {
 	 * Hydrate the model with an array of attributes.
 	 *
 	 * @param  array  $attributes
-	 * @param  bool   $raw
 	 * @return Model
 	 */
-	public function fill(array $attributes, $raw = false)
+	public function fill($attributes)
 	{
+		$attributes = (array) $attributes;
+
 		foreach ($attributes as $key => $value)
 		{
-			// If the "raw" flag is set, it means that we'll just load every value from
-			// the array directly into the attributes, without any accessibility or
-			// mutators being accounted for. What you pass in is what you get.
-			if ($raw)
-			{
-				$this->set_attribute($key, $value);
-
-				continue;
-			}
-
 			// If the "accessible" property is an array, the developer is limiting the
 			// attributes that may be mass assigned, and we need to verify that the
 			// current attribute is included in that list of allowed attributes.
@@ -165,28 +155,13 @@ abstract class Model {
 	}
 
 	/**
-	 * Fill the model with the contents of the array.
-	 *
-	 * No mutators or accessibility checks will be accounted for.
-	 *
-	 * @param  array  $attributes
-	 * @return Model
-	 */
-	public function fill_raw(array $attributes)
-	{
-		return $this->fill($attributes, true);
-	}
-
-	/**
 	 * Set the accessible attributes for the given model.
 	 *
 	 * @param  array  $attributes
 	 * @return void
 	 */
-	public static function accessible($attributes = null)
+	public static function accessible($attributes)
 	{
-		if (is_null($attributes)) return static::$accessible;
-
 		static::$accessible = $attributes;
 	}
 
@@ -218,7 +193,7 @@ abstract class Model {
 	{
 		$model = new static(array(), true);
 
-		if (static::$timestamps) $attributes['updated_at'] = new \DateTime;
+		if (static::$timestamps) $attributes['updated_at'] = $model->get_timestamp();
 
 		return $model->query()->where($model->key(), '=', $id)->update($attributes);
 	}
@@ -380,8 +355,6 @@ abstract class Model {
 			$this->timestamp();
 		}
 
-		$this->fire_event('saving');
-
 		// If the model exists, we only need to update it in the database, and the update
 		// will be considered successful if there is one affected row returned from the
 		// fluent query instance. We'll set the where condition automatically.
@@ -390,8 +363,6 @@ abstract class Model {
 			$query = $this->query()->where(static::$key, '=', $this->get_key());
 
 			$result = $query->update($this->get_dirty()) === 1;
-
-			if ($result) $this->fire_event('updated');
 		}
 
 		// If the model does not exist, we will insert the record and retrieve the last
@@ -404,19 +375,12 @@ abstract class Model {
 			$this->set_key($id);
 
 			$this->exists = $result = is_numeric($this->get_key());
-
-			if ($result) $this->fire_event('created');
 		}
 
 		// After the model has been "saved", we will set the original attributes to
 		// match the current attributes so the model will not be viewed as being
 		// dirty and subsequent calls won't hit the database.
 		$this->original = $this->attributes;
-
-		if ($result)
-		{
-			$this->fire_event('saved');
-		}
 
 		return $result;
 	}
@@ -430,13 +394,7 @@ abstract class Model {
 	{
 		if ($this->exists)
 		{
-			$this->fire_event('deleting');
-
-			$result = $this->query()->where(static::$key, '=', $this->get_key())->delete();
-
-			$this->fire_event('deleted');
-
-			return $result;
+			return $this->query()->where(static::$key, '=', $this->get_key())->delete();
 		}
 	}
 
@@ -447,9 +405,19 @@ abstract class Model {
 	 */
 	protected function timestamp()
 	{
-		$this->updated_at = new \DateTime;
+		$this->updated_at = $this->get_timestamp();
 
 		if ( ! $this->exists) $this->created_at = $this->updated_at;
+	}
+
+	/**
+	 * Get the current timestamp in its storable form.
+	 *
+	 * @return mixed
+	 */
+	public function get_timestamp()
+	{
+		return date('Y-m-d H:i:s');
 	}
 
 	/**
@@ -504,7 +472,7 @@ abstract class Model {
 	 */
 	public function table()
 	{
-		return static::$table ?: strtolower(Str::plural(class_basename($this)));
+		return static::$table ?: strtolower(Str::plural(basename(get_class($this))));
 	}
 
 	/**
@@ -514,17 +482,7 @@ abstract class Model {
 	 */
 	public function get_dirty()
 	{
-		$dirty = array();
-
-		foreach ($this->attributes as $key => $value)
-		{
-			if ( ! isset($this->original[$key]) or $value !== $this->original[$key])
-			{
-				$dirty[$key] = $value;
-			}
-		}
-
-		return $dirty;
+		return array_diff_assoc($this->attributes, $this->original);
 	}
 
 	/**
@@ -607,7 +565,7 @@ abstract class Model {
 			// If the relationship is not a "to-many" relationship, we can just
 			// to_array the related model and add it as an attribute to the
 			// array of existing regular attributes we gathered.
-			if ($models instanceof Model)
+			if ( ! is_array($models))
 			{
 				$attributes[$name] = $models->to_array();
 			}
@@ -615,33 +573,16 @@ abstract class Model {
 			// If the relationship is a "to-many" relationship we need to spin
 			// through each of the related models and add each one with the
 			// to_array method, keying them both by name and ID.
-			elseif (is_array($models))
+			else
 			{
 				foreach ($models as $id => $model)
 				{
 					$attributes[$name][$id] = $model->to_array();
 				}
 			}
-			elseif (is_null($models))
-			{
-				$attributes[$name] = $models;
-			}
 		}
 
 		return $attributes;
-	}
-
-	/**
-	 * Fire a given event for the model.
-	 *
-	 * @param  string  $event
-	 * @return array
-	 */
-	protected function fire_event($event)
-	{
-		$events = array("eloquent.{$event}", "eloquent.{$event}: ".get_class($this));
-
-		Event::fire($events, array($this));
 	}
 
 	/**
@@ -709,8 +650,6 @@ abstract class Model {
 		{
 			if (array_key_exists($key, $this->$source)) return true;
 		}
-		
-		if (method_exists($this, $key)) return true;
 	}
 
 	/**
@@ -736,7 +675,7 @@ abstract class Model {
 	 */
 	public function __call($method, $parameters)
 	{
-		$meta = array('key', 'table', 'connection', 'sequence', 'per_page', 'timestamps');
+		$meta = array('key', 'table', 'connection', 'sequence', 'per_page');
 
 		// If the method is actually the name of a static property on the model we'll
 		// return the value of the static property. This makes it convenient for
@@ -759,11 +698,11 @@ abstract class Model {
 		// to perform the appropriate action based on the method.
 		if (starts_with($method, 'get_'))
 		{
-			return $this->get_attribute(substr($method, 4));
+			return $this->attributes[substr($method, 4)];
 		}
 		elseif (starts_with($method, 'set_'))
 		{
-			$this->set_attribute(substr($method, 4), $parameters[0]);
+			$this->attributes[substr($method, 4)] = $parameters[0];
 		}
 
 		// Finally we will assume that the method is actually the beginning of a
