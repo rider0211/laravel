@@ -31,6 +31,7 @@
 ## Laravel 3.2.1
 
 - Fixed bug in cookie retrieval when cookie is set on same request.
+- Fixed bug in SQL Server grammar for primary keys.
 
 <a name="upgrade-3.2.1"></a>
 ## Upgrading From 3.2
@@ -94,6 +95,18 @@
 
 - Add new `asset_url` and `profiler` options to application configuration.
 - Replace **auth** configuration file.
+
+Add the following entry to the `aliases` array in `config/application.php`..
+
+	'Profiler'   => 'Laravel\\Profiling\\Profiler',
+
+Add the following code above `Blade::sharpen()` in `application/start.php`..
+
+	if (Config::get('application.profiler'))
+	{
+	    Profiler::attach();
+	}
+
 - Upgrade the **paths.php** file.
 - Replace the **laravel** folder.
 
