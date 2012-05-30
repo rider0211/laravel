@@ -19,29 +19,6 @@ class Eloquent extends Driver {
 	}
 
 	/**
-	 * Login the user assigned to the given token.
-	 *
-	 * The token is typically a numeric ID for the user.
-	 *
-	 * @param  mixed   $token
-	 * @param  bool    $remember
-	 * @return bool
-	 */
-	public function login($token, $remember = false)
-	{
-		// if the token is an Eloquent model get the primary key
-		if ($token instanceof \Eloquent) $token = $token->get_key();
-
-		$this->token = $token;
-
-		$this->store($token);
-
-		if ($remember) $this->remember($token);
-
-		return true;
-	}
-
-	/**
 	 * Attempt to log a user into the application.
 	 *
 	 * @param  array  $arguments
@@ -58,35 +35,14 @@ class Eloquent extends Driver {
 		// log the user into the application and remember them if asked.
 		$password = $arguments['password'];
 
-		if ( ! is_null($user) and Hash::check($password, $user->password))
+		$password_field = Config::get('auth.password');
+
+		if ( ! is_null($user) and Hash::check($password, $user->get_attribute($password_field)))
 		{
 			return $this->login($user->id, array_get($arguments, 'remember'));
 		}
 
 		return false;
-	}
-
-	/**
-	 * Login the user assigned to the given token.
-	 *
-	 * The token is typically a numeric ID for the user.
-	 *
-	 * @param  mixed   $token
-	 * @param  bool    $remember
-	 * @return bool
-	 */
-	public function login($token, $remember = false)
-	{
-		// if the token is an Eloquent model get the primary key
-		if ($token instanceof \Eloquent) $token = $token->get_key();
-
-		$this->token = $token;
-
-		$this->store($token);
-
-		if ($remember) $this->remember($token);
-
-		return true;
 	}
 
 	/**
