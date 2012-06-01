@@ -334,14 +334,4 @@ class Response {
 		}
 	}
 
-	/**
-	 * Render the response when cast to string
-	 *
-	 * @return string
-	 */
-	public function __toString()
-	{
-		return $this->render();
-	}
-
 }
