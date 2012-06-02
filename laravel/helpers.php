@@ -323,7 +323,7 @@ function head($array)
  * @param  bool    $https
  * @return string
  */
-function url($url = '', $https = null)
+function url($url = '', $https = false)
 {
 	return Laravel\URL::to($url, $https);
 }
@@ -335,7 +335,7 @@ function url($url = '', $https = null)
  * @param  bool    $https
  * @return string
  */
-function asset($url, $https = null)
+function asset($url, $https = false)
 {
 	return Laravel\URL::to_asset($url, $https);
 }
