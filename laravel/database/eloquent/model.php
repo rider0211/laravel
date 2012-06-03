@@ -230,9 +230,11 @@ abstract class Model {
 	 * @param  array   $columns
 	 * @return Model
 	 */
-	public function _find($id, $columns = array('*'))
+	public static function find($id, $columns = array('*'))
 	{
-		return $this->query()->where(static::$key, '=', $id)->first($columns);
+		$model = new static;
+
+		return $model->query()->where(static::$key, '=', $id)->first($columns);
 	}
 
 	/**
@@ -397,7 +399,7 @@ abstract class Model {
 		// then we can consider the insert successful.
 		else
 		{
-			$id = $this->query()->insert_get_id($this->attributes, $this->key());
+			$id = $this->query()->insert_get_id($this->attributes, $this->sequence());
 
 			$this->set_key($id);
 
@@ -744,12 +746,10 @@ abstract class Model {
 			return static::$$method;
 		}
 
-		$underscored = array('with', 'find');
-
 		// Some methods need to be accessed both staticly and non-staticly so we'll
 		// keep underscored methods of those methods and intercept calls to them
 		// here so they can be called either way on the model instance.
-		if (in_array($method, $underscored))
+		if (in_array($method, array('with')))
 		{
 			return call_user_func_array(array($this, '_'.$method), $parameters);
 		}
