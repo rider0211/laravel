@@ -129,12 +129,6 @@ Blade makes writing your views pure bliss. To create a blade view, simply name y
 		{{-- This is a comment --}}
 		...
 	@endif
-	
-	{{--
-		This is
-		a multi-line
-		comment.
-	--}}
 
 > **Note:** Blade comments, unlike HTML comments, are not visible in the HTML source.
 
