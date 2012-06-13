@@ -3,6 +3,7 @@
 use Closure;
 use Laravel\Database;
 use Laravel\Paginator;
+use Laravel\Database\Query\Grammars\Postgres;
 use Laravel\Database\Query\Grammars\SQLServer;
 
 class Query {
@@ -157,7 +158,7 @@ class Query {
 	{
 		// If the "column" is really an instance of a Closure, the developer is
 		// trying to create a join with a complex "ON" clause. So, we will add
-		// the join, and then call the Closure with the join/
+		// the join, and then call the Closure with the join.
 		if ($column1 instanceof Closure)
 		{
 			$this->joins[] = new Query\Join($type, $table);
@@ -166,8 +167,8 @@ class Query {
 		}
 
 		// If the column is just a string, we can assume that the join just
-		// has a simple on clause, and we'll create the join instance and
-		// add the clause automatically for the develoepr.
+		// has a simple "ON" clause, and we'll create the join instance and
+		// add the clause automatically for the developer.
 		else
 		{
 			$join = new Query\Join($type, $table);
@@ -452,7 +453,7 @@ class Query {
 
 		foreach ($segments as $segment)
 		{
-			// If the segment is not a boolean connector, we can assume it it is
+			// If the segment is not a boolean connector, we can assume it is
 			// a column name, and we'll add it to the query as a new constraint
 			// of the query's where clause and keep iterating the segments.
 			if ($segment != '_and_' and $segment != '_or_')
@@ -675,7 +676,7 @@ class Query {
 	public function aggregate($aggregator, $columns)
 	{
 		// We'll set the aggregate value so the grammar does not try to compile
-		// a SELECT clause on the query. If an aggregator is present, it's own
+		// a SELECT clause on the query. If an aggregator is present, its own
 		// grammar function will be used to build the SQL syntax.
 		$this->aggregate = compact('aggregator', 'columns');
 
@@ -729,12 +730,12 @@ class Query {
 	{
 		// Force every insert to be treated like a batch insert to make creating
 		// the binding array simpler since we can just spin through the inserted
-		// rows as if there/ was more than one every time.
+		// rows as if there was more than one every time.
 		if ( ! is_array(reset($values))) $values = array($values);
 
 		$bindings = array();
 
-		// We need to merge the the insert values into the array of the query
+		// We need to merge the insert values into the array of the query
 		// bindings so that they will be bound to the PDO statement when it
 		// is executed by the database connection.
 		foreach ($values as $value)
@@ -751,19 +752,23 @@ class Query {
 	 * Insert an array of values into the database table and return the ID.
 	 *
 	 * @param  array   $values
-	 * @param  string  $sequence
+	 * @param  string  $column
 	 * @return int
 	 */
-	public function insert_get_id($values, $sequence = null)
+	public function insert_get_id($values, $column = 'id')
 	{
-		$sql = $this->grammar->insert($this, $values);
+		$sql = $this->grammar->insert_get_id($this, $values, $column);
 
-		$this->connection->query($sql, array_values($values));
+		$result = $this->connection->query($sql, array_values($values));
 
-		// Some database systems (Postgres) require a sequence name to be
-		// given when retrieving the auto-incrementing ID, so we'll pass
-		// the given sequence into the method just in case.
-		return (int) $this->connection->pdo->lastInsertId($sequence);
+		if ($this->grammar instanceof Postgres)
+		{
+			return (int) $result[0]->$column;
+		}
+		else
+		{
+			return (int) $this->connection->pdo->lastInsertId();
+		}
 	}
 
 	/**
@@ -831,7 +836,7 @@ class Query {
 	/**
 	 * Execute the query as a DELETE statement.
 	 *
-	 * Optionally, an ID may be passed to the method do delete a specific row.
+	 * Optionally, an ID may be passed to the method to delete a specific row.
 	 *
 	 * @param  int   $id
 	 * @return int

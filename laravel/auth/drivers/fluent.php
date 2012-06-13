@@ -11,7 +11,7 @@ class Fluent extends Driver {
 	 *
 	 * If the user is a guest, null should be returned.
 	 *
-	 * @param  int         $id
+	 * @param  int  $id
 	 * @return mixed|null
 	 */
 	public function retrieve($id)
@@ -19,7 +19,7 @@ class Fluent extends Driver {
 		if (filter_var($id, FILTER_VALIDATE_INT) !== false)
 		{
 			return DB::table(Config::get('auth.table'))->find($id);
-		} 
+		}
 	}
 
 	/**
@@ -33,11 +33,13 @@ class Fluent extends Driver {
 		$user = $this->get_user($arguments['username']);
 
 		// This driver uses a basic username and password authentication scheme
-		// so if the credentials mmatch what is in the database we will just
+		// so if the credentials match what is in the database we will just
 		// log the user into the application and remember them if asked.
 		$password = $arguments['password'];
 
-		if ( ! is_null($user) and Hash::check($password, $user->password))
+		$password_field = Config::get('auth.password', 'password');
+
+		if ( ! is_null($user) and Hash::check($password, $user->{$password_field}))
 		{
 			return $this->login($user->id, array_get($arguments, 'remember'));
 		}

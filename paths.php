@@ -3,7 +3,7 @@
  * Laravel - A PHP Framework For Web Artisans
  *
  * @package  Laravel
- * @version  3.2.1
+ * @version  3.2.2
  * @author   Taylor Otwell <taylorotwell@gmail.com>
  * @link     http://laravel.com
  */
@@ -14,7 +14,7 @@
 |----------------------------------------------------------------
 |
 | Laravel takes a dead simple approach to environments, and we
-| think you'll love it. Just specify which URLs belongs to a
+| think you'll love it. Just specify which URLs belong to a
 | given environment, and when you access your application
 | from a URL matching that pattern, we'll be sure to
 | merge in that environment's configuration files.
