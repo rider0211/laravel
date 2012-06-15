@@ -85,14 +85,12 @@ class Has_Many_And_Belongs_To extends Relationship {
 	/**
 	 * Insert a new record into the joining table of the association.
 	 *
-	 * @param  Model|int    $id
-	 * @param  array  $attributes
+	 * @param  int    $id
+	 * @param  array  $joining
 	 * @return bool
 	 */
 	public function attach($id, $attributes = array())
 	{
-		if ($id instanceof Model) $id = $id->get_key();
-		
 		$joining = array_merge($this->join_record($id), $attributes);
 
 		return $this->insert_joining($joining);
@@ -101,13 +99,12 @@ class Has_Many_And_Belongs_To extends Relationship {
 	/**
 	 * Detach a record from the joining table of the association.
 	 *
-	 * @param  array|Model|int   $ids
+	 * @param  int   $ids
 	 * @return bool
 	 */
 	public function detach($ids)
 	{
-		if ($ids instanceof Model) $ids = array($ids->get_key());
-		elseif ( ! is_array($ids)) $ids = array($ids);
+		if ( ! is_array($ids)) $ids = array($ids);
 
 		return $this->pivot()->where_in($this->other_key(), $ids)->delete();
 	}
