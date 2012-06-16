@@ -179,3 +179,5 @@ $response->send();
 */
 
 Event::fire('laravel.done', array($response));
+
+$response->foundation->finish();
