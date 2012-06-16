@@ -34,7 +34,7 @@
 
 #### Moving a $_FILE to a permanent location:
 
-	Input::upload('picture', 'path/to/pictures', 'filename.ext');
+	Input::upload('picture', 'path/to/pictures');
 
 > **Note:** You can easily validate file uploads using the [Validator class](/docs/validation).
 
