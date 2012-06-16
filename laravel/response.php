@@ -1,7 +1,7 @@
 <?php namespace Laravel;
 
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
-use Symfony\Component\HttpFoundation\LaravelResponse as FoundationResponse;
+use Symfony\Component\HttpFoundation\Response as FoundationResponse;
 
 class Response {
 
@@ -332,6 +332,16 @@ class Response {
 
 			return $this;
 		}
+	}
+
+	/**
+	 * Render the response when cast to string
+	 *
+	 * @return string
+	 */
+	public function __toString()
+	{
+		return $this->render();
 	}
 
 }
