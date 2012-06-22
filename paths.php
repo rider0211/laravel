@@ -10,7 +10,7 @@
 
 /*
 |----------------------------------------------------------------
-| Application Environments
+| Application Environemtns
 |----------------------------------------------------------------
 |
 | Laravel takes a dead simple approach to environments, and we
