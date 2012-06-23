@@ -393,7 +393,9 @@ class Table {
 	{
 		$parameters = array_merge(compact('type'), $parameters);
 
-		return $this->commands[] = new Fluent($parameters);
+		$this->commands[] = new Fluent($parameters);
+
+		return end($this->commands);
 	}
 
 	/**
@@ -407,7 +409,9 @@ class Table {
 	{
 		$parameters = array_merge(compact('type'), $parameters);
 
-		return $this->columns[] = new Fluent($parameters);
+		$this->columns[] = new Fluent($parameters);
+
+		return end($this->columns);
 	}
 
 }
