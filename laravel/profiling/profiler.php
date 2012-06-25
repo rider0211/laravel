@@ -14,7 +14,7 @@ class Profiler {
 	 * @var array
 	 */
 	protected static $data = array('queries' => array(), 'logs' => array());
-
+	
 	/**
 	 * Get the rendered contents of the Profiler.
 	 *
@@ -28,6 +28,7 @@ class Profiler {
 		// type applications, so we will not send anything in those scenarios.
 		if ( ! Request::ajax())
 		{
+			static::$data['time'] = number_format((microtime(true) - LARAVEL_START) * 1000, 2);
 			return render('path: '.__DIR__.'/template'.BLADE_EXT, static::$data);
 		}
 	}
