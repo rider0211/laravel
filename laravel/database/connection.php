@@ -1,6 +1,4 @@
-<?php namespace Laravel\Database;
-
-use PDO, PDOStatement, Laravel\Config, Laravel\Event;
+<?php namespace Laravel\Database; use PDO, PDOStatement, Laravel\Config, Laravel\Event;
 
 class Connection {
 
@@ -73,24 +71,13 @@ class Connection {
 	{
 		if (isset($this->grammar)) return $this->grammar;
 
-		if (isset(\Laravel\Database::$registrar[$this->driver()]))
-		{
-			\Laravel\Database::$registrar[$this->driver()]['query']();
-		}
-
-		switch ($this->driver())
+		switch (isset($this->config['grammar']) ? $this->config['grammar'] : $this->driver())
 		{
 			case 'mysql':
 				return $this->grammar = new Query\Grammars\MySQL($this);
 
-			case 'sqlite':
-				return $this->grammar = new Query\Grammars\SQLite($this);
-
 			case 'sqlsrv':
 				return $this->grammar = new Query\Grammars\SQLServer($this);
-
-			case 'pgsql':
-				return $this->grammar = new Query\Grammars\Postgres($this);
 
 			default:
 				return $this->grammar = new Query\Grammars\Grammar($this);
@@ -100,14 +87,14 @@ class Connection {
 	/**
 	 * Execute a callback wrapped in a database transaction.
 	 *
-	 * @param  callback  $callback
+	 * @param  Closure  $callback
 	 * @return void
 	 */
 	public function transaction($callback)
 	{
 		$this->pdo->beginTransaction();
 
-		// After beginning the database transaction, we will call the callback
+		// After beginning the database transaction, we will call the Closure
 		// so that it can do its database work. If an exception occurs we'll
 		// rollback the transaction and re-throw back to the developer.
 		try
@@ -178,8 +165,6 @@ class Connection {
 	 */
 	public function query($sql, $bindings = array())
 	{
-		$sql = trim($sql);
-
 		list($statement, $result) = $this->execute($sql, $bindings);
 
 		// The result we return depends on the type of query executed against the
@@ -192,13 +177,6 @@ class Connection {
 		elseif (stripos($sql, 'update') === 0 or stripos($sql, 'delete') === 0)
 		{
 			return $statement->rowCount();
-		}
-		// For insert statements that use the "returning" clause, which is allowed
-		// by database systems such as Postgres, we need to actually return the
-		// real query result so the consumer can get the ID.
-		elseif (stripos($sql, 'insert') === 0 and stripos($sql, 'returning') !== false)
-		{
-			return $this->fetch($statement, Config::get('database.fetch'));
 		}
 		else
 		{
@@ -230,19 +208,6 @@ class Connection {
 		$bindings = array_values($bindings);
 
 		$sql = $this->grammar()->shortcut($sql, $bindings);
-
-		// Next we need to translate all DateTime bindings to their date-time
-		// strings that are compatible with the database. Each grammar may
-		// define it's own date-time format according to its needs.
-		$datetime = $this->grammar()->datetime;
-
-		for ($i = 0; $i < count($bindings); $i++)
-		{
-			if ($bindings[$i] instanceof \DateTime)
-			{
-				$bindings[$i] = $bindings[$i]->format($datetime);
-			}
-		}
 
 		// Each database operation is wrapped in a try / catch so we can wrap
 		// any database exceptions in our custom exception class, which will
@@ -322,7 +287,7 @@ class Connection {
 	 */
 	public function driver()
 	{
-		return $this->config['driver'];
+		return $this->pdo->getAttribute(PDO::ATTR_DRIVER_NAME);
 	}
 
 	/**

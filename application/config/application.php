@@ -17,19 +17,6 @@ return array(
 
 	/*
 	|--------------------------------------------------------------------------
-	| Asset URL
-	|--------------------------------------------------------------------------
-	|
-	| The base URL used for your application's asset files. This is useful if
-	| you are serving your assets through a different server or a CDN. If it
-	| is not set, we'll default to the application URL above.
-	|
-	*/
-
-	'asset_url' => '',
-
-	/*
-	|--------------------------------------------------------------------------
 	| Application Index
 	|--------------------------------------------------------------------------
 	|
@@ -51,23 +38,13 @@ return array(
 	| remain secret and should not be shared with anyone. Make it about 32
 	| characters of random gibberish.
 	|
+	| The "auto_key" option tells Laravel to automatically set this key value
+	| if one has not already been set. This is generally done on the first
+	| request to the Laravel splash screen.
+	|
 	*/
 
 	'key' => 'YourSecretKeyGoesHere!',
-
-	/*
-	|--------------------------------------------------------------------------
-	| Profiler Toolbar
-	|--------------------------------------------------------------------------
-	|
-	| Laravel includes a beautiful profiler toolbar that gives you a heads
-	| up display of the queries and logs performed by your application.
-	| This is wonderful for development, but, of course, you should
-	| disable the toolbar for production applications..
-	|
-	*/
-
-	'profiler' => false,
 
 	/*
 	|--------------------------------------------------------------------------
@@ -139,47 +116,45 @@ return array(
 	*/
 
 	'aliases' => array(
-		'Auth'       	=> 'Laravel\\Auth',
-		'Authenticator' => 'Laravel\\Auth\\Drivers\\Driver',
-		'Asset'      	=> 'Laravel\\Asset',
-		'Autoloader' 	=> 'Laravel\\Autoloader',
-		'Blade'      	=> 'Laravel\\Blade',
-		'Bundle'     	=> 'Laravel\\Bundle',
-		'Cache'      	=> 'Laravel\\Cache',
-		'Config'     	=> 'Laravel\\Config',
-		'Controller' 	=> 'Laravel\\Routing\\Controller',
-		'Cookie'     	=> 'Laravel\\Cookie',
-		'Crypter'    	=> 'Laravel\\Crypter',
-		'DB'         	=> 'Laravel\\Database',
-		'Eloquent'   	=> 'Laravel\\Database\\Eloquent\\Model',
-		'Event'      	=> 'Laravel\\Event',
-		'File'       	=> 'Laravel\\File',
-		'Filter'     	=> 'Laravel\\Routing\\Filter',
-		'Form'       	=> 'Laravel\\Form',
-		'Hash'       	=> 'Laravel\\Hash',
-		'HTML'       	=> 'Laravel\\HTML',
-		'Input'      	=> 'Laravel\\Input',
-		'IoC'        	=> 'Laravel\\IoC',
-		'Lang'       	=> 'Laravel\\Lang',
-		'Log'        	=> 'Laravel\\Log',
-		'Memcached'  	=> 'Laravel\\Memcached',
-		'Paginator'  	=> 'Laravel\\Paginator',
-		'Profiler'  	=> 'Laravel\\Profiling\\Profiler',
-		'URL'        	=> 'Laravel\\URL',
-		'Redirect'   	=> 'Laravel\\Redirect',
-		'Redis'      	=> 'Laravel\\Redis',
-		'Request'    	=> 'Laravel\\Request',
-		'Response'   	=> 'Laravel\\Response',
-		'Route'      	=> 'Laravel\\Routing\\Route',
-		'Router'     	=> 'Laravel\\Routing\\Router',
-		'Schema'     	=> 'Laravel\\Database\\Schema',
-		'Section'    	=> 'Laravel\\Section',
-		'Session'    	=> 'Laravel\\Session',
-		'Str'        	=> 'Laravel\\Str',
-		'Task'       	=> 'Laravel\\CLI\\Tasks\\Task',
-		'URI'        	=> 'Laravel\\URI',
-		'Validator'  	=> 'Laravel\\Validator',
-		'View'       	=> 'Laravel\\View',
+		'Auth'       => 'Laravel\\Auth',
+		'Asset'      => 'Laravel\\Asset',
+		'Autoloader' => 'Laravel\\Autoloader',
+		'Blade'      => 'Laravel\\Blade',
+		'Bundle'     => 'Laravel\\Bundle',
+		'Cache'      => 'Laravel\\Cache',
+		'Config'     => 'Laravel\\Config',
+		'Controller' => 'Laravel\\Routing\\Controller',
+		'Cookie'     => 'Laravel\\Cookie',
+		'Crypter'    => 'Laravel\\Crypter',
+		'DB'         => 'Laravel\\Database',
+		'Eloquent'   => 'Laravel\\Database\\Eloquent\\Model',
+		'Event'      => 'Laravel\\Event',
+		'File'       => 'Laravel\\File',
+		'Filter'     => 'Laravel\\Routing\\Filter',
+		'Form'       => 'Laravel\\Form',
+		'Hash'       => 'Laravel\\Hash',
+		'HTML'       => 'Laravel\\HTML',
+		'Input'      => 'Laravel\\Input',
+		'IoC'        => 'Laravel\\IoC',
+		'Lang'       => 'Laravel\\Lang',
+		'Log'        => 'Laravel\\Log',
+		'Memcached'  => 'Laravel\\Memcached',
+		'Paginator'  => 'Laravel\\Paginator',
+		'URL'        => 'Laravel\\URL',
+		'Redirect'   => 'Laravel\\Redirect',
+		'Redis'      => 'Laravel\\Redis',
+		'Request'    => 'Laravel\\Request',
+		'Response'   => 'Laravel\\Response',
+		'Route'      => 'Laravel\\Routing\\Route',
+		'Router'     => 'Laravel\\Routing\\Router',
+		'Schema'     => 'Laravel\\Database\\Schema',
+		'Section'    => 'Laravel\\Section',
+		'Session'    => 'Laravel\\Session',
+		'Str'        => 'Laravel\\Str',
+		'Task'       => 'Laravel\\CLI\\Tasks\\Task',
+		'URI'        => 'Laravel\\URI',
+		'Validator'  => 'Laravel\\Validator',
+		'View'       => 'Laravel\\View',
 	),
 
 );

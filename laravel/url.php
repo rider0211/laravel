@@ -35,7 +35,7 @@ class URL {
 	 * @param  bool    $https
 	 * @return string
 	 */
-	public static function home($https = null)
+	public static function home($https = false)
 	{
 		$route = Router::find('home');
 
@@ -61,19 +61,43 @@ class URL {
 
 		$base = 'http://localhost';
 
-		// If the application's URL configuration is set, we will just use that
+		// If the application URL configuration is set, we will just use that
 		// instead of trying to guess the URL from the $_SERVER array's host
-		// and script variables as this is a more reliable method.
+		// and script variables as this is more reliable.
 		if (($url = Config::get('application.url')) !== '')
 		{
 			$base = $url;
 		}
-		else
+		elseif (isset($_SERVER['HTTP_HOST']))
 		{
-			$base = Request::foundation()->getRootUrl();
+			$base = static::guess();
 		}
 
 		return static::$base = $base;
+	}
+
+	/**
+	 * Guess the application URL based on the $_SERVER variables.
+	 *
+	 * @return string
+	 */
+	protected static function guess()
+	{
+		$protocol = (Request::secure()) ? 'https://' : 'http://';
+
+		// Basically, by removing the basename, we are removing everything after
+		// the and including the front controller from the URI. Leaving us with
+		// the installation path for the application.
+		$script = $_SERVER['SCRIPT_NAME'];
+
+		$path = str_replace(basename($script), '', $script);
+
+		// Now that we have the URL, all we need to do is attach the protocol
+		// protocol and HTTP_HOST to build the URL for the application, and
+		// we also trim off trailing slashes for cleanliness.
+		$uri = $protocol.$_SERVER['HTTP_HOST'].$path;
+
+		return rtrim($uri, '/');
 	}
 
 	/**
@@ -91,19 +115,9 @@ class URL {
 	 * @param  bool    $https
 	 * @return string
 	 */
-	public static function to($url = '', $https = null)
+	public static function to($url = '', $https = false)
 	{
-		// If the given URL is already valid or begins with a hash, we'll just return
-		// the URL unchanged since it is already well formed. Otherwise we will add
-		// the base URL of the application and return the full URL.
-		if (static::valid($url) or starts_with($url, '#'))
-		{
-			return $url;
-		}
-
-		// Unless $https is specified (true or false) then maintain the current request
-		// security for any new links generated.  So https for all secure links.
-		if (is_null($https)) $https = Request::secure();
+		if (filter_var($url, FILTER_VALIDATE_URL) !== false) return $url;
 
 		$root = static::base().'/'.Config::get('application.index');
 
@@ -113,10 +127,6 @@ class URL {
 		if ($https and Config::get('application.ssl'))
 		{
 			$root = preg_replace('~http://~', 'https://', $root, 1);
-		}
-		else
-		{
-			$root = preg_replace('~https://~', 'http://', $root, 1);
 		}
 
 		return rtrim($root, '/').'/'.ltrim($url, '/');
@@ -161,7 +171,7 @@ class URL {
 		}
 		// If no route was found that handled the given action, we'll just
 		// generate the URL using the typical controller routing setup
-		// for URIs and turn SSL to false by default.
+		// for URIs and turn SSL to false.
 		else
 		{
 			return static::convention($action, $parameters);
@@ -178,7 +188,7 @@ class URL {
 	 */
 	protected static function explicit($route, $action, $parameters)
 	{
-		$https = array_get(current($route), 'https', null);
+		$https = array_get(current($route), 'https', false);
 
 		return static::to(static::transpose(key($route), $parameters), $https);
 	}
@@ -201,6 +211,8 @@ class URL {
 		// URIs that begin with that string and no others.
 		$root = $bundle['handles'] ?: '';
 
+		$https = false;
+
 		$parameters = implode('/', $parameters);
 
 		// We'll replace both dots and @ signs in the URI since both are used
@@ -222,15 +234,7 @@ class URL {
 	 */
 	public static function to_asset($url, $https = null)
 	{
-		if (static::valid($url)) return $url;
-
-		// If a base asset URL is defined in the configuration, use that and don't
-		// try and change the HTTP protocol. This allows the delivery of assets
-		// through a different server or third-party content delivery network.
-		if ($root = Config::get('application.asset_url', false))
-		{
-			return rtrim($root, '/').'/'.ltrim($url, '/');
-		}
+		if (is_null($https)) $https = Request::secure();
 
 		$url = static::to($url, $https);
 
@@ -258,6 +262,7 @@ class URL {
 	 *
 	 * @param  string  $name
 	 * @param  array   $parameters
+	 * @param  bool    $https
 	 * @return string
 	 */
 	public static function to_route($name, $parameters = array())
@@ -270,7 +275,7 @@ class URL {
 		// To determine whether the URL should be HTTPS or not, we look for the "https"
 		// value on the route action array. The route has control over whether the URL
 		// should be generated with an HTTPS protocol string or just HTTP.
-		$https = array_get(current($route), 'https', null);
+		$https = array_get(current($route), 'https', false);
 
 		$uri = trim(static::transpose(key($route), $parameters), '/');
 
@@ -299,21 +304,10 @@ class URL {
 
 		// If there are any remaining optional place-holders, we'll just replace
 		// them with empty strings since not every optional parameter has to be
-		// in the array of parameters that were passed to us.
-		$uri = preg_replace('/\(.+?\)/', '', $uri);
+		// in the array of parameters that were passed.
+		$uri = str_replace(array_keys(Router::$optional), '', $uri);
 
 		return trim($uri, '/');
-	}
-
-	/**
-	 * Determine if the given URL is valid.
-	 *
-	 * @param  string  $url
-	 * @return bool
-	 */
-	public static function valid($url)
-	{
-		return filter_var($url, FILTER_VALIDATE_URL) !== false;
 	}
 
 }

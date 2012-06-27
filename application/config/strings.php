@@ -95,7 +95,6 @@ return array(
 		'series',
 		'sheep',
 		'species',
-		'moose',
 	),
 
 	/*

@@ -46,19 +46,6 @@ class HTML {
 	}
 
 	/**
-	 * Convert HTML special characters.
-	 *
-	 * The encoding specified in the application configuration file will be used.
-	 *
-	 * @param  string  $value
-	 * @return string
-	 */
-	public static function specialchars($value)
-	{
-		return htmlspecialchars($value, ENT_QUOTES, Config::get('application.encoding'), false);
-	}
-
-	/**
 	 * Generate a link to a JavaScript file.
 	 *
 	 * <code>
@@ -137,7 +124,7 @@ class HTML {
 	 * @param  bool    $https
 	 * @return string
 	 */
-	public static function link($url, $title, $attributes = array(), $https = null)
+	public static function link($url, $title, $attributes = array(), $https = false)
 	{
 		$url = URL::to($url, $https);
 
@@ -319,8 +306,6 @@ class HTML {
 	{
 		$html = '';
 
-		if (count($list) == 0) return $html;
-
 		foreach ($list as $key => $value)
 		{
 			// If the value is an array, we will recurse the function so that we can
@@ -328,14 +313,7 @@ class HTML {
 			// lists may exist within nested lists, etc.
 			if (is_array($value))
 			{
-				if (is_int($key))
-				{
-					$html .= static::listing($type, $value);
-				}
-				else
-				{
-					$html .= '<li>'.$key.static::listing($type, $value).'</li>';
-				}
+				$html .= static::listing($type, $value);
 			}
 			else
 			{

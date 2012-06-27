@@ -38,13 +38,6 @@ class View implements ArrayAccess {
 	public static $names = array();
 
 	/**
-	 * The cache content of loaded view files.
-	 *
-	 * @var array
-	 */
-	public static $cache = array();
-
-	/**
 	 * The Laravel view loader event name.
 	 *
 	 * @var string
@@ -110,37 +103,6 @@ class View implements ArrayAccess {
 	}
 
 	/**
-	 * Determine if the given view exists.
-	 *
-	 * @param  string       $view
-	 * @param  boolean      $return_path
-	 * @return string|bool
-	 */
-	public static function exists($view, $return_path = false)
-	{
-		if (starts_with($view, 'name: ') and array_key_exists($name = substr($view, 6), static::$names))
-		{
-			$view = static::$names[$name];
-		}
-		
-		list($bundle, $view) = Bundle::parse($view);
-
-		$view = str_replace('.', '/', $view);
-
-		// We delegate the determination of view paths to the view loader event
-		// so that the developer is free to override and manage the loading
-		// of views in any way they see fit for their application.
-		$path = Event::until(static::loader, array($bundle, $view));
-
-		if ( ! is_null($path))
-		{
-			return $return_path ? $path : true;
-		}
-
-		return false;
-	}
-
-	/**
 	 * Get the path to a given view on disk.
 	 *
 	 * @param  string  $view
@@ -148,7 +110,16 @@ class View implements ArrayAccess {
 	 */
 	protected function path($view)
 	{
-		if ($path = $this->exists($view,true))
+		list($bundle, $view) = Bundle::parse($view);
+
+		$view = str_replace('.', '/', $view);
+
+		// We delegate the determination of view paths to the view loader event
+		// so that the developer is free to override and manage the loading
+		// of views in any way they see fit for their application.
+		$path = Event::first(static::loader, array($bundle, $view));
+
+		if ( ! is_null($path))
 		{
 			return $path;
 		}
@@ -255,18 +226,13 @@ class View implements ArrayAccess {
 	 *		});
 	 * </code>
 	 *
-	 * @param  string|array  $view
-	 * @param  Closure       $composer
+	 * @param  string   $view
+	 * @param  Closure  $composer
 	 * @return void
 	 */
-	public static function composer($views, $composer)
+	public static function composer($view, $composer)
 	{
-		$views = (array) $views;
-
-		foreach ($views as $view)
-		{
-			Event::listen("laravel.composing: {$view}", $composer);
-		}
+		Event::listen("laravel.composing: {$view}", $composer);
 	}
 
 	/**
@@ -320,16 +286,21 @@ class View implements ArrayAccess {
 	 */
 	public function render()
 	{
-		Event::fire("laravel.composing: {$this->view}", array($this));
+		// To allow bundles or other pieces of the application to modify the
+		// view before it is rendered, we'll fire an event, passing in the
+		// view instance so it can modified.
+		$composer = "laravel.composing: {$this->view}";
+
+		Event::fire($composer, array($this));
 
 		// If there are listeners to the view engine event, we'll pass them
 		// the view so they can render it according to their needs, which
 		// allows easy attachment of other view parsers.
 		if (Event::listeners(static::engine))
 		{
-			$result = Event::until(static::engine, array($this));
+			$result = Event::first(static::engine, array($this));
 
-			if ( ! is_null($result)) return $result;
+			if ($result !== false) return $result;
 		}
 
 		return $this->get();
@@ -344,11 +315,6 @@ class View implements ArrayAccess {
 	{
 		$__data = $this->data();
 
-		// The contents of each view file is cached in an array for the
-		// request since partial views may be rendered inside of for
-		// loops which could incur performance penalties.
-		$__contents = $this->load();
-
 		ob_start() and extract($__data, EXTR_SKIP);
 
 		// We'll include the view contents for parsing within a catcher
@@ -356,35 +322,18 @@ class View implements ArrayAccess {
 		// will throw it out to the exception handler.
 		try
 		{
-			eval('?>'.$__contents);
+			include $this->path;
 		}
 
 		// If we caught an exception, we'll silently flush the output
 		// buffer so that no partially rendered views get thrown out
-		// to the client and confuse the user with junk.
+		// to the client and confuse the user.
 		catch (\Exception $e)
 		{
 			ob_get_clean(); throw $e;
 		}
 
 		return ob_get_clean();
-	}
-
-	/**
-	 * Get the contents of the view file from disk.
-	 *
-	 * @return string
-	 */
-	protected function load()
-	{
-		if (isset(static::$cache[$this->path]))
-		{
-			return static::$cache[$this->path];
-		}
-		else
-		{
-			return static::$cache[$this->path] = file_get_contents($this->path);
-		}
 	}
 
 	/**

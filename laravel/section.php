@@ -39,7 +39,7 @@ class Section {
 		}
 		else
 		{
-			static::extend($section, $content);
+			static::append($section, $content);
 		}
 	}
 
@@ -79,28 +79,9 @@ class Section {
 	 */
 	public static function stop()
 	{
-		static::extend($last = array_pop(static::$last), ob_get_clean());
+		static::append($last = array_pop(static::$last), ob_get_clean());
 
 		return $last;
-	}
-
-	/**
-	 * Extend the content in a given section.
-	 *
-	 * @param  string  $section
-	 * @param  string  $content
-	 * @return void
-	 */
-	protected static function extend($section, $content)
-	{
-		if (isset(static::$sections[$section]))
-		{
-			static::$sections[$section] = str_replace('@parent', $content, static::$sections[$section]);
-		}
-		else
-		{
-			static::$sections[$section] = $content;
-		}
 	}
 
 	/**
@@ -110,11 +91,11 @@ class Section {
 	 * @param  string  $content
 	 * @return void
 	 */
-	public static function append($section, $content)
+	protected static function append($section, $content)
 	{
 		if (isset(static::$sections[$section]))
 		{
-			static::$sections[$section] .= $content;
+			static::$sections[$section] = str_replace('@parent', $content, static::$sections[$section]);
 		}
 		else
 		{

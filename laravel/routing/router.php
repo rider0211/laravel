@@ -75,7 +75,7 @@ class Router {
 	 */
 	public static $patterns = array(
 		'(:num)' => '([0-9]+)',
-		'(:any)' => '([a-zA-Z0-9\.\-_%]+)',
+		'(:any)' => '([a-zA-Z0-9\.\-_%=]+)',
 		'(:all)' => '(.*)',
 	);
 
@@ -86,7 +86,7 @@ class Router {
 	 */
 	public static $optional = array(
 		'/(:num?)' => '(?:/([0-9]+)',
-		'/(:any?)' => '(?:/([a-zA-Z0-9\.\-_%]+)',
+		'/(:any?)' => '(?:/([a-zA-Z0-9\.\-_%=]+)',
 		'/(:all?)' => '(?:/(.*)',
 	);
 
@@ -119,7 +119,7 @@ class Router {
 	 *
 	 * <code>
 	 *		// Register a group of URIs for an action
-	 *		Router::share(array(array('GET', '/'), array('POST', '/')), 'home@index');
+	 *		Router::share(array('GET', '/'), array('POST', '/'), 'home@index');
 	 * </code>
 	 *
 	 * @param  array  $routes
@@ -174,8 +174,6 @@ class Router {
 	 */
 	public static function register($method, $route, $action)
 	{
-		if (ctype_digit($route)) $route = "({$route})";
-
 		if (is_string($route)) $route = explode(', ', $route);
 
 		// If the developer is registering multiple request methods to handle
@@ -297,7 +295,7 @@ class Router {
 	 * @param  bool          $https
 	 * @return void
 	 */
-	public static function controller($controllers, $defaults = 'index', $https = null)
+	public static function controller($controllers, $defaults = 'index', $https = false)
 	{
 		foreach ((array) $controllers as $identifier)
 		{

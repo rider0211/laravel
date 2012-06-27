@@ -3,11 +3,11 @@
 class Input {
 
 	/**
-	 * The JSON payload for applications using Backbone.js or similar.
+	 * The applicable input for the request.
 	 *
-	 * @var object
+	 * @var array
 	 */
-	public static $json;
+	public static $input;
 
 	/**
 	 * The key used to store old input in the session.
@@ -23,11 +23,7 @@ class Input {
 	 */
 	public static function all()
 	{
-		$input = array_merge(static::get(), static::query(), static::file());
-
-		unset($input[Request::spoofer]);
-
-		return $input;
+		return array_merge(static::get(), static::file());
 	}
 
 	/**
@@ -62,53 +58,7 @@ class Input {
 	 */
 	public static function get($key = null, $default = null)
 	{
-		$input = Request::foundation()->request->all();
-
-		if (is_null($key))
-		{
-			return array_merge($input, static::query());
-		}
-
-		$value = array_get($input, $key);
-
-		if (is_null($value))
-		{
-			return array_get(static::query(), $key, $default);
-		}
-
-		return $value;
-	}
-
-	/**
-	 * Get an item from the query string.
-	 *
-	 * <code>
-	 *		// Get the "email" item from the query string
-	 *		$email = Input::query('email');
-	 *
-	 *		// Return a default value if the specified item doesn't exist
-	 *		$email = Input::query('name', 'Taylor');
-	 * </code>
-	 *
-	 * @param  string  $key
-	 * @param  mixed   $default
-	 * @return mixed
-	 */
-	public static function query($key = null, $default = null)
-	{
-		return array_get(Request::foundation()->query->all(), $key, $default);
-	}
-
-	/**
-	 * Get the JSON payload for the request.
-	 *
-	 * @return object
-	 */
-	public static function json()
-	{
-		if ( ! is_null(static::$json)) return static::$json;
-
-		return static::$json = json_decode(Request::foundation()->getContent());
+		return array_get(static::$input, $key, $default);
 	}
 
 	/**
@@ -127,7 +77,7 @@ class Input {
 	 */
 	public static function only($keys)
 	{
- 		return array_only(static::get(), $keys);
+ 		return array_intersect_key(static::get(), array_flip((array) $keys));
 	}
 
 	/**
@@ -146,7 +96,7 @@ class Input {
 	 */
 	public static function except($keys)
 	{
-		return array_except(static::get(), $keys);
+		return array_diff_key(static::get(), array_flip($keys));
 	}
 
 	/**
@@ -186,26 +136,18 @@ class Input {
 	 * <code>
 	 *		// Get the array of information for the "picture" upload
 	 *		$picture = Input::file('picture');
+	 *
+	 *		// Get a specific element from within the file's data array
+	 *		$size = Input::file('picture.size');
 	 * </code>
 	 *
-	 * @param  string        $key
-	 * @param  mixed         $default
-	 * @return UploadedFile
+	 * @param  string  $key
+	 * @param  mixed   $default
+	 * @return array
 	 */
 	public static function file($key = null, $default = null)
 	{
 		return array_get($_FILES, $key, $default);
-	}
-
-	/**
-	 * Determine if the uploaded data contains a file.
-	 *
-	 * @param  string  $key
-	 * @return bool
-	 */
-	public static function has_file($key)
-	{
-		return ! is_null(static::file("{$key}.tmp_name"));
 	}
 
 	/**
@@ -214,20 +156,19 @@ class Input {
 	 * This method is simply a convenient wrapper around move_uploaded_file.
 	 *
 	 * <code>
-	 *		// Move the "picture" file to a new permanent location on disk
-	 *		Input::upload('picture', 'path/to/photos', 'picture.jpg');
+	 *		// Move the "picture" file to a permanent location on disk
+	 *		Input::upload('picture', 'path/to/photos/picture.jpg');
 	 * </code>
 	 *
 	 * @param  string  $key
-	 * @param  string  $directory
-	 * @param  string  $name
+	 * @param  string  $path
 	 * @return bool
 	 */
-	public static function upload($key, $directory, $name = null)
+	public static function upload($key, $path)
 	{
 		if (is_null(static::file($key))) return false;
 
-		return Request::foundation()->files->get($key)->move($directory, $name);
+		return move_uploaded_file(static::file("{$key}.tmp_name"), $path);
 	}
 
 	/**
@@ -263,37 +204,6 @@ class Input {
 	public static function flush()
 	{
 		Session::flash(Input::old_input, array());
-	}
-
-	/**
-	 * Merge new input into the current request's input array.
-	 *
-	 * @param  array  $input
-	 * @return void
-	 */
-	public static function merge(array $input)
-	{
-		Request::foundation()->request->add($input);
-	}
-
-	/**
-	 * Replace the input for the current request.
-	 *
-	 * @param  array  $input
-	 * @return void
-	 */
-	public static function replace(array $input)
-	{
-		Request::foundation()->request->replace($input);
-	}
-
-	/**
-	 * Clear the input for the current request.
-	 * @return void
-	 */
-	public static function clear()
-	{
-		Request::foundation()->request->replace(array());
 	}
 
 }
