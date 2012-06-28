@@ -324,7 +324,7 @@ class Postgres extends Grammar {
 	 */
 	protected function type_integer(Fluent $column)
 	{
-		return ($column->increment) ? 'SERIAL' : 'INTEGER';
+		return ($column->increment) ? 'SERIAL' : 'BIGINT';
 	}
 
 	/**
@@ -368,7 +368,7 @@ class Postgres extends Grammar {
 	 */
 	protected function type_date(Fluent $column)
 	{
-		return 'TIMESTAMP';
+		return 'TIMESTAMP(0) WITHOUT TIME ZONE';
 	}
 
 	/**

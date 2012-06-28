@@ -6,13 +6,20 @@ use Laravel\Database\Expression;
 class Grammar extends \Laravel\Database\Grammar {
 
 	/**
+	 * The format for properly saving a DateTime.
+	 *
+	 * @var string
+	 */
+	public $datetime = 'Y-m-d H:i:s';
+
+	/**
 	 * All of the query componenets in the order they should be built.
 	 *
 	 * @var array
 	 */
 	protected $components = array(
 		'aggregate', 'selects', 'from', 'joins', 'wheres',
-		'groupings', 'orderings', 'limit', 'offset',
+		'groupings', 'havings', 'orderings', 'limit', 'offset',
 	);
 
 	/**
@@ -280,6 +287,24 @@ class Grammar extends \Laravel\Database\Grammar {
 	}
 
 	/**
+	 * Compile the HAVING clause for a query.
+	 *
+	 * @param  Query  $query
+	 * @return string
+	 */
+	protected function havings(Query $query)
+	{
+		if (is_null($query->havings)) return '';
+
+		foreach ($query->havings as $having)
+		{
+			$sql[] = 'AND '.$this->wrap($having['column']).' '.$having['operator'].' '.$this->parameter($having['value']);
+		}
+
+		return 'HAVING '.preg_replace('/AND /', '', implode(' ', $sql), 1);
+	}
+
+	/**
 	 * Compile the ORDER BY clause for a query.
 	 *
 	 * @param  Query   $query
@@ -348,6 +373,19 @@ class Grammar extends \Laravel\Database\Grammar {
 		$parameters = implode(', ', array_fill(0, count($values), "($parameters)"));
 
 		return "INSERT INTO {$table} ({$columns}) VALUES {$parameters}";
+	}
+
+	/**
+	 * Compile a SQL INSERT and get ID statment from a Query instance.
+	 *
+	 * @param  Query   $query
+	 * @param  array   $values
+	 * @param  string  $column
+	 * @return string
+	 */
+	public function insert_get_id(Query $query, $values, $column)
+	{
+		return $this->insert($query, $values);
 	}
 
 	/**
