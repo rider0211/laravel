@@ -218,11 +218,9 @@ abstract class Model {
 	{
 		$model = new static(array(), true);
 
-		$model->fill($attributes);
+		if (static::$timestamps) $attributes['updated_at'] = new \DateTime;
 
-		if (static::$timestamps) $model->timestamp();
-
-		return $model->query()->where($model->key(), '=', $id)->update($model->attributes);
+		return $model->query()->where($model->key(), '=', $id)->update($attributes);
 	}
 
 	/**
@@ -255,27 +253,7 @@ abstract class Model {
 	 */
 	public function _with($includes)
 	{
-		$includes = (array) $includes;
-
-		$all_includes = array();
-
-		foreach($includes as $include)
-		{
-			$nested = explode('.', $include);
-
-			$inc = array();
-
-			foreach($nested as $relation)
-			{
-				$inc[] = $relation;
-
-				$all_includes[] = implode('.', $inc);
-			}
-
-		}
-
-		//remove duplicates and reset the array keys.
-		$this->includes = array_values(array_unique($all_includes));
+		$this->includes = (array) $includes;
 
 		return $this;
 	}
@@ -538,7 +516,7 @@ abstract class Model {
 
 		foreach ($this->attributes as $key => $value)
 		{
-			if ( ! array_key_exists($key, $this->original) or $value !== $this->original[$key])
+			if ( ! isset($this->original[$key]) or $value !== $this->original[$key])
 			{
 				$dirty[$key] = $value;
 			}
@@ -727,7 +705,7 @@ abstract class Model {
 	{
 		foreach (array('attributes', 'relationships') as $source)
 		{
-			if (array_key_exists($key, $this->$source)) return !is_null($this->$source[$key]);
+			if (array_key_exists($key, $this->$source)) return true;
 		}
 		
 		if (method_exists($this, $key)) return true;
