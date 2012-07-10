@@ -23,8 +23,7 @@
 1. [Download Laravel](http://laravel.com/download)
 2. Extract the Laravel archive and upload the contents to your web server.
 3. Set the value of the **key** option in the **config/application.php** file to a random, 32 character string.
-4. Verify that the `storage/views` directory is writable.
-5. Navigate to your application in a web browser.
+4. Navigate to your application in a web browser.
 
 If all is well, you should see a pretty Laravel splash page. Get ready, there is lots more to learn!
 
@@ -41,7 +40,7 @@ If you are having problems installing, try the following:
 
 - Make sure the **public** directory is the document root of your web server. (see: Server Configuration below)
 - If you are using mod_rewrite, set the **index** option in **application/config/application.php** to an empty string.
-- Verify that your storage folder and the folders within in are writable by your web server.
+- Verify that your storage folder and the folders within are writable by your web server.
 
 <a name="server-configuration"></a>
 ## Server Configuration: Why Public?
