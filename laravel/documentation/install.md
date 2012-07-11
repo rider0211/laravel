@@ -4,7 +4,11 @@
 
 - [Requirements](#requirements)
 - [Installation](#installation)
+<<<<<<< HEAD
+- [Server Configuration: Why Public?](#server-configuration)
+=======
 - [Server Configuration](#server-configuration)
+>>>>>>> feature/docs-install
 - [Basic Configuration](#basic-configuration)
 - [Environments](#environments)
 - [Cleaner URLs](#cleaner-urls)
@@ -23,7 +27,8 @@
 1. [Download Laravel](http://laravel.com/download)
 2. Extract the Laravel archive and upload the contents to your web server.
 3. Set the value of the **key** option in the **config/application.php** file to a random, 32 character string.
-4. Navigate to your application in a web browser.
+4. Verify that the `storage/views` directory is writable.
+5. Navigate to your application in a web browser.
 
 If all is well, you should see a pretty Laravel splash page. Get ready, there is lots more to learn!
 
@@ -40,7 +45,7 @@ If you are having problems installing, try the following:
 
 - Make sure the **public** directory is the document root of your web server. (see: Server Configuration below)
 - If you are using mod_rewrite, set the **index** option in **application/config/application.php** to an empty string.
-- Verify that your storage folder and the folders within in are writable by your web server.
+- Verify that your storage folder and the folders within are writable by your web server.
 
 <a name="server-configuration"></a>
 ## Server Configuration
@@ -59,6 +64,7 @@ A very basic example of an Apache VirtualHost configuration for MySite might loo
 Notice that while we installed to **/Users/JonSnow/Sites/MySite** our DocumentRoot points to /Users/JonSnow/Sites/MySite/public**.
 
 While pointing the DocumentRoot to the public folder is a commonly used best-practice, it's possible that you may need to use Laravel on a host that does not allow you to update your DocumentRoot. A collection of algorithms to circumvent this need can be found [http://forums.laravel.com/viewtopic.php?id=1258](on the Laravel forums.)
+>>>>>>> feature/docs-install
 
 <a name="basic-configuration"></a>
 ## Basic Configuration
@@ -90,7 +96,7 @@ Next, create an **application/config/local** directory. Any files and options yo
 
 	);
 
-In this example, the local **URL** option will override the **URL** option in **application/config/application.php**. Notice that you only need to specify the options you wish to override. 
+In this example, the local **URL** option will override the **URL** option in **application/config/application.php**. Notice that you only need to specify the options you wish to override.
 
 Isn't it easy? Of course, you are free to create as many environments as you wish!
 
