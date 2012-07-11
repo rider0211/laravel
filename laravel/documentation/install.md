@@ -4,7 +4,7 @@
 
 - [Requirements](#requirements)
 - [Installation](#installation)
-- [Server Configuration: Why Public?](#server-configuration)
+- [Server Configuration](#server-configuration)
 - [Basic Configuration](#basic-configuration)
 - [Environments](#environments)
 - [Cleaner URLs](#cleaner-urls)
@@ -40,12 +40,12 @@ If you are having problems installing, try the following:
 
 - Make sure the **public** directory is the document root of your web server. (see: Server Configuration below)
 - If you are using mod_rewrite, set the **index** option in **application/config/application.php** to an empty string.
-- Verify that your storage folder and the folders within are writable by your web server.
+- Verify that your storage folder and the folders within in are writable by your web server.
 
 <a name="server-configuration"></a>
-## Server Configuration: Why Public?
+## Server Configuration
 
-Like most web-development frameworks, Laravel is designed to protect your application code, bundles, and local storage by placing only files that are necessarily public in the web server's DocumentRoot. This prevents some types of server misconfiguration from making your code (including database passwords and other configuration data) accessible through the web server. It's best to be safe.
+Like most web-development frameworks, Laravel is designed to protect your application code, bundles, and local storage by placing only files that are necessarily public in the web server's DocumentRoot. This prevents some types of server misconfiguration from making your code (including database passwords and other configuration data) accessible through the web server. It's best to be safe. 
 
 In this example let's imagine that we installed Laravel to the directory **/Users/JonSnow/Sites/MySite**.
 
@@ -53,15 +53,12 @@ A very basic example of an Apache VirtualHost configuration for MySite might loo
 
 	<VirtualHost *:80>
 		DocumentRoot /Users/JonSnow/Sites/MySite/public
-		ServerName mysite.local
+		ServerName mysite.dev
 	</VirtualHost>
 
-Notice that while we installed to **/Users/JonSnow/Sites/MySite** our DocumentRoot points to **/Users/JonSnow/Sites/MySite/public**.
+Notice that while we installed to **/Users/JonSnow/Sites/MySite** our DocumentRoot points to /Users/JonSnow/Sites/MySite/public**.
 
-Pointing the DocumentRoot to the public folder is a commonly used best-practice. However, you may need to use Laravel on a host that does not allow you to update your DocumentRoot. This is possible, but before resigning to this option it's best to contact your host and verify that you are unable to change your DocumentRoot to increase the security of your application.
-
-More information about how to use the public folder can be found on the [Laravel Forums](http://forums.laravel.com/viewtopic.php?pid=10023#p10023).
-
+While pointing the DocumentRoot to the public folder is a commonly used best-practice, it's possible that you may need to use Laravel on a host that does not allow you to update your DocumentRoot. A collection of algorithms to circumvent this need can be found [http://forums.laravel.com/viewtopic.php?id=1258](on the Laravel forums.)
 
 <a name="basic-configuration"></a>
 ## Basic Configuration
@@ -93,7 +90,7 @@ Next, create an **application/config/local** directory. Any files and options yo
 
 	);
 
-In this example, the local **URL** option will override the **URL** option in **application/config/application.php**. Notice that you only need to specify the options you wish to override.
+In this example, the local **URL** option will override the **URL** option in **application/config/application.php**. Notice that you only need to specify the options you wish to override. 
 
 Isn't it easy? Of course, you are free to create as many environments as you wish!
 
