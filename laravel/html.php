@@ -137,11 +137,9 @@ class HTML {
 	 * @param  bool    $https
 	 * @return string
 	 */
-	public static function link($url, $title = null, $attributes = array(), $https = null)
+	public static function link($url, $title, $attributes = array(), $https = null)
 	{
 		$url = URL::to($url, $https);
-
-		if (is_null($title)) $title = $url;
 
 		return '<a href="'.$url.'"'.static::attributes($attributes).'>'.static::entities($title).'</a>';
 	}
@@ -154,7 +152,7 @@ class HTML {
 	 * @param  array   $attributes
 	 * @return string
 	 */
-	public static function link_to_secure($url, $title = null, $attributes = array())
+	public static function link_to_secure($url, $title, $attributes = array())
 	{
 		return static::link($url, $title, $attributes, true);
 	}
@@ -170,7 +168,7 @@ class HTML {
 	 * @param  bool    $https
 	 * @return string
 	 */
-	public static function link_to_asset($url, $title = null, $attributes = array(), $https = null)
+	public static function link_to_asset($url, $title, $attributes = array(), $https = null)
 	{
 		$url = URL::to_asset($url, $https);
 
@@ -185,7 +183,7 @@ class HTML {
 	 * @param  array   $attributes
 	 * @return string
 	 */
-	public static function link_to_secure_asset($url, $title = null, $attributes = array())
+	public static function link_to_secure_asset($url, $title, $attributes = array())
 	{
 		return static::link_to_asset($url, $title, $attributes, true);
 	}
@@ -209,7 +207,7 @@ class HTML {
 	 * @param  array   $attributes
 	 * @return string
 	 */
-	public static function link_to_route($name, $title = null, $parameters = array(), $attributes = array())
+	public static function link_to_route($name, $title, $parameters = array(), $attributes = array())
 	{
 		return static::link(URL::to_route($name, $parameters), $title, $attributes);
 	}
@@ -233,7 +231,7 @@ class HTML {
 	 * @param  array   $attributes
 	 * @return string
 	 */
-	public static function link_to_action($action, $title = null, $parameters = array(), $attributes = array())
+	public static function link_to_action($action, $title, $parameters = array(), $attributes = array())
 	{
 		return static::link(URL::to_action($action, $parameters), $title, $attributes);
 	}
@@ -420,7 +418,7 @@ class HTML {
 	    {
 	        return call_user_func_array(static::$macros[$method], $parameters);
 	    }
-
+	    
 	    throw new \Exception("Method [$method] does not exist.");
 	}
 
