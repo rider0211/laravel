@@ -99,7 +99,7 @@ class MySQL extends Grammar {
 	 */
 	protected function unsigned(Table $table, Fluent $column)
 	{
-		if ($column->type == 'integer' && ($column->unsigned || $column->increment))
+		if ($column->type == 'integer' && $column->unsigned)
 		{
 			return ' UNSIGNED';
 		}
@@ -260,7 +260,7 @@ class MySQL extends Grammar {
 	}
 
 	/**
-	 * Generate the SQL statement for a drop unique key command.
+	 * Generate the SQL statement for a drop unqique key command.
 	 *
 	 * @param  Table    $table
 	 * @param  Fluent   $command
