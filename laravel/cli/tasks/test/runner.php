@@ -26,17 +26,7 @@ class Runner extends Task {
 	 */
 	public function core()
 	{
-		if ( ! is_dir(path('bundle').'laravel-tests'))
-		{
-			throw new \Exception("The bundle [laravel-tests] has not been installed!");
-		}
-
-		// When testing the Laravel core, we will just stub the path directly
-		// so the test bundle is not required to be registered in the bundle
-		// configuration, as it is kind of a unique bundle.
-		$this->stub(path('bundle').'laravel-tests/cases');
-
-		$path = path('bundle').'laravel-tests/';
+		$this->stub(path('sys').'tests/cases');
 
 		$this->test();
 	}
