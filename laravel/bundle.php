@@ -66,7 +66,7 @@ class Bundle {
 
 		// It is possible for the developer to specify auto-loader mappings
 		// directly on the bundle registration. This provides a convenient
-		// way to register mappings without a bootstrap.
+		// way to register mappings withuot a bootstrap.
 		if (isset($config['autoloads']))
 		{
 			static::autoloads($bundle, $config);
@@ -201,7 +201,7 @@ class Bundle {
 	}
 
 	/**
-	 * Determine if a bundle exists within the bundles directory.
+	 * Deteremine if a bundle exists within the bundles directory.
 	 *
 	 * @param  string  $bundle
 	 * @return bool

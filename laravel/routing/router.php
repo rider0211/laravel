@@ -75,7 +75,7 @@ class Router {
 	 */
 	public static $patterns = array(
 		'(:num)' => '([0-9]+)',
-		'(:any)' => '([a-zA-Z0-9\.\-_%=]+)',
+		'(:any)' => '([a-zA-Z0-9\.\-_%]+)',
 		'(:all)' => '(.*)',
 	);
 
@@ -86,7 +86,7 @@ class Router {
 	 */
 	public static $optional = array(
 		'/(:num?)' => '(?:/([0-9]+)',
-		'/(:any?)' => '(?:/([a-zA-Z0-9\.\-_%=]+)',
+		'/(:any?)' => '(?:/([a-zA-Z0-9\.\-_%]+)',
 		'/(:all?)' => '(?:/(.*)',
 	);
 
@@ -303,7 +303,7 @@ class Router {
 		{
 			list($bundle, $controller) = Bundle::parse($identifier);
 
-			// First we need to replace the dots with slashes in the controller name
+			// First we need to replace the dots with slashes in thte controller name
 			// so that it is in directory format. The dots allow the developer to use
 			// a cleaner syntax when specifying the controller. We will also grab the
 			// root URI for the controller's bundle.
