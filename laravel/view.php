@@ -118,6 +118,11 @@ class View implements ArrayAccess {
 	 */
 	public static function exists($view, $return_path = false)
 	{
+		if (starts_with($view, 'name: ') and array_key_exists($name = substr($view, 6), static::$names))
+		{
+			$view = static::$names[$name];
+		}
+		
 		list($bundle, $view) = Bundle::parse($view);
 
 		$view = str_replace('.', '/', $view);
@@ -544,6 +549,22 @@ class View implements ArrayAccess {
 	public function __toString()
 	{
 		return $this->render();
+	}
+
+	/**
+	 * Magic Method for handling dynamic functions.
+	 *
+	 * This method handles calls to dynamic with helpers.
+	 */
+	public function __call($method, $parameters)
+	{
+		if (strpos($method, 'with_') === 0)
+		{
+			$key = substr($method, 5);
+			return $this->with($key, $parameters[0]);
+		}
+
+		throw new \Exception("Method [$method] is not defined on the View class.");
 	}
 
 }
