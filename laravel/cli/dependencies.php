@@ -126,15 +126,3 @@ if(! IoC::registered('bundle.provider: github'))
 		return new Tasks\Bundle\Providers\Github;
 	});
 }
-
-/**
- * The "help" task provides information about 
- * artisan usage.
- */
-if(! IoC::registered('task: help'))
-{
-	IoC::singleton('task: help', function()
-	{
-		return new Tasks\Help;
-	});
-}

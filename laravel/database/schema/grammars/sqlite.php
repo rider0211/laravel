@@ -127,7 +127,7 @@ class SQLite extends Grammar {
 	{
 		if ( ! is_null($column->default))
 		{
-			return ' DEFAULT '.$this->wrap($this->default_value($column->default));
+			return ' DEFAULT '.$this->wrap($column->default);
 		}
 	}
 
@@ -202,18 +202,6 @@ class SQLite extends Grammar {
 	}
 
 	/**
-	 * Generate the SQL statement for a rename table command.
-	 *
-	 * @param  Table    $table
-	 * @param  Fluent   $command
-	 * @return string
-	 */
-	public function rename(Table $table, Fluent $command)
-	{
-		return 'ALTER TABLE '.$this->wrap($table).' RENAME TO '.$this->wrap($command->name);
-	}
-
-	/**
 	 * Generate the SQL statement for a drop table command.
 	 *
 	 * @param  Table   $table
@@ -226,7 +214,7 @@ class SQLite extends Grammar {
 	}
 
 	/**
-	 * Generate the SQL statement for a drop unqique key command.
+	 * Generate the SQL statement for a drop unique key command.
 	 *
 	 * @param  Table   $table
 	 * @param  Fluent  $command
@@ -238,7 +226,7 @@ class SQLite extends Grammar {
 	}
 
 	/**
-	 * Generate the SQL statement for a drop unqique key command.
+	 * Generate the SQL statement for a drop unique key command.
 	 *
 	 * @param  Table   $table
 	 * @param  Fluent  $command

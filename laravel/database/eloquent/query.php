@@ -118,7 +118,7 @@ class Query {
 			$new = new $class(array(), true);
 
 			// We need to set the attributes manually in case the accessible property is
-			// set on the array which will prevent the mass assignemnt of attributes if
+			// set on the array which will prevent the mass assignment of attributes if
 			// we were to pass them in using the constructor or fill methods.
 			$new->fill_raw($result);
 
@@ -217,23 +217,22 @@ class Query {
 	 */
 	protected function model_includes()
 	{
-		$relationships = array_keys($this->model->includes);
-		$implicits = array();
+		$includes = array();
 
-		foreach ($relationships as $relationship)
+		foreach ($this->model->includes as $relationship => $constraints)
 		{
-			$parts = explode('.', $relationship);
-
-			$prefix = '';
-			foreach ($parts as $part)
+			// When eager loading relationships, constraints may be set on the eager
+			// load definition; however, is none are set, we need to swap the key
+			// and the value of the array since there are no constraints.
+			if (is_numeric($relationship))
 			{
-				$implicits[$prefix.$part] = NULL;
-				$prefix .= $part.'.';
+				list($relationship, $constraints) = array($constraints, null);
 			}
+
+			$includes[$relationship] = $constraints;
 		}
 
-		// Add all implicit includes to the explicit ones
-		return $this->model->includes + $implicits;
+		return $includes;
 	}
 
 	/**

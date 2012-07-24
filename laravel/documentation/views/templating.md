@@ -10,7 +10,7 @@
 <a name="the-basics"></a>
 ## The Basics
 
-Your application probably uses a common layout across most of its pages. Manually creating this layout within every controller action can be a pain. Specifying a controller layout will make your develompent much more enjoyable. Here's how to get started:
+Your application probably uses a common layout across most of its pages. Manually creating this layout within every controller action can be a pain. Specifying a controller layout will make your development much more enjoyable. Here's how to get started:
 
 #### Specify a "layout" property on your controller:
 
@@ -163,8 +163,6 @@ Great! Now, we can simply return the "profile" view from our route:
 	return View::make('profile');
 
 The profile view will automatically use the "master" template thanks to Blade's **@layout** expression.
-
-**Important:** The **@layout** call must always be on the very first line of the file, with no leading whitespaces or newline breaks.
 
 Sometimes you may want to only append to a section of a layout rather than overwrite it. For example, consider the navigation list in our "master" layout. Let's assume we just want to append a new list item. Here's how to do it:
 

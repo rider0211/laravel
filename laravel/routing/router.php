@@ -75,7 +75,7 @@ class Router {
 	 */
 	public static $patterns = array(
 		'(:num)' => '([0-9]+)',
-		'(:any)' => '([a-zA-Z0-9\.\-_%=]+)',
+		'(:any)' => '([a-zA-Z0-9\.\-_%]+)',
 		'(:all)' => '(.*)',
 	);
 
@@ -86,7 +86,7 @@ class Router {
 	 */
 	public static $optional = array(
 		'/(:num?)' => '(?:/([0-9]+)',
-		'/(:any?)' => '(?:/([a-zA-Z0-9\.\-_%=]+)',
+		'/(:any?)' => '(?:/([a-zA-Z0-9\.\-_%]+)',
 		'/(:all?)' => '(?:/(.*)',
 	);
 
@@ -206,12 +206,7 @@ class Router {
 				continue;
 			}
 
-			$uri = ltrim(str_replace('(:bundle)', static::$bundle, $uri), '/');
-			
-			if($uri == '')
-			{
-				$uri = '/';
-			}
+			$uri = str_replace('(:bundle)', static::$bundle, $uri);
 
 			// If the URI begins with a wildcard, we want to add this route to the
 			// array of "fallback" routes. Fallback routes are always processed
@@ -308,7 +303,7 @@ class Router {
 		{
 			list($bundle, $controller) = Bundle::parse($identifier);
 
-			// First we need to replace the dots with slashes in thte controller name
+			// First we need to replace the dots with slashes in the controller name
 			// so that it is in directory format. The dots allow the developer to use
 			// a cleaner syntax when specifying the controller. We will also grab the
 			// root URI for the controller's bundle.
