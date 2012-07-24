@@ -99,7 +99,7 @@ class MySQL extends Grammar {
 	 */
 	protected function unsigned(Table $table, Fluent $column)
 	{
-		if ($column->type == 'integer' && ($column->unsigned || $column->increment))
+		if ($column->type == 'integer' && $column->unsigned)
 		{
 			return ' UNSIGNED';
 		}
@@ -128,7 +128,7 @@ class MySQL extends Grammar {
 	{
 		if ( ! is_null($column->default))
 		{
-			return " DEFAULT '".$this->default_value($column->default)."'";
+			return " DEFAULT '".$column->default."'";
 		}
 	}
 
@@ -143,7 +143,7 @@ class MySQL extends Grammar {
 	{
 		if ($column->type == 'integer' and $column->increment)
 		{
-			return ' AUTO_INCREMENT PRIMARY KEY';
+			return ' UNSIGNED AUTO_INCREMENT PRIMARY KEY';
 		}
 	}
 
@@ -213,18 +213,6 @@ class MySQL extends Grammar {
 	}
 
 	/**
-	 * Generate the SQL statement for a rename table command.
-	 *
-	 * @param  Table    $table
-	 * @param  Fluent   $command
-	 * @return string
-	 */
-	public function rename(Table $table, Fluent $command)
-	{
-		return 'RENAME TABLE '.$this->wrap($table).' TO '.$this->wrap($command->name);
-	}
-
-	/**
 	 * Generate the SQL statement for a drop table command.
 	 *
 	 * @param  Table    $table
@@ -272,7 +260,7 @@ class MySQL extends Grammar {
 	}
 
 	/**
-	 * Generate the SQL statement for a drop unique key command.
+	 * Generate the SQL statement for a drop unqique key command.
 	 *
 	 * @param  Table    $table
 	 * @param  Fluent   $command
