@@ -287,13 +287,4 @@ class Input {
 		Request::foundation()->request->replace($input);
 	}
 
-	/**
-	 * Clear the input for the current request.
-	 * @return void
-	 */
-	public static function clear()
-	{
-		Request::foundation()->request->replace(array());
-	}
-
 }

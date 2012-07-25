@@ -84,7 +84,7 @@ return array(
 
 	/*
 	|--------------------------------------------------------------------------
-	| Default Application Language
+	| Application Language
 	|--------------------------------------------------------------------------
 	|
 	| The default language of your application. This language will be used by
@@ -93,19 +93,6 @@ return array(
 	*/
 
 	'language' => 'en',
-
-	/*
-	|--------------------------------------------------------------------------
-	| Supported Languages
-	|--------------------------------------------------------------------------
-	|
-	| These languages may also be supported by your application. If a request
-	| enters your application with a URI beginning with one of these values
-	| the default language will automatically be set to that language.
-	|
-	*/
-
-	'languages' => array(),
 
 	/*
 	|--------------------------------------------------------------------------
