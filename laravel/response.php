@@ -93,7 +93,7 @@ class Response {
 	 */
 	public static function json($data, $status = 200, $headers = array())
 	{
-		$headers['Content-Type'] = 'application/json; charset=utf-8';
+		$headers['Content-Type'] = 'application/json';
 
 		return new static(json_encode($data), $status, $headers);
 	}
@@ -113,7 +113,7 @@ class Response {
 	 */
 	public static function eloquent($data, $status = 200, $headers = array())
 	{
-		$headers['Content-Type'] = 'application/json; charset=utf-8';
+		$headers['Content-Type'] = 'application/json';
 
 		return new static(eloquent_to_json($data), $status, $headers);
 	}
@@ -239,7 +239,7 @@ class Response {
 	public function render()
 	{
 		// If the content is a stringable object, we'll go ahead and call
-		// the toString method so that we can get the string content of
+		// to toString method so that we can get the string content of
 		// the content object. Otherwise we'll just cast to string.
 		if (str_object($this->content))
 		{

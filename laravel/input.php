@@ -205,7 +205,7 @@ class Input {
 	 */
 	public static function has_file($key)
 	{
-		return strlen(static::file("{$key}.tmp_name", "")) > 0;
+		return ! is_null(static::file("{$key}.tmp_name"));
 	}
 
 	/**
@@ -285,15 +285,6 @@ class Input {
 	public static function replace(array $input)
 	{
 		Request::foundation()->request->replace($input);
-	}
-
-	/**
-	 * Clear the input for the current request.
-	 * @return void
-	 */
-	public static function clear()
-	{
-		Request::foundation()->request->replace(array());
 	}
 
 }

@@ -2,7 +2,6 @@
 
 ## Contents
 
-- [Help](#help)
 - [Application Configuration](#application-configuration)
 - [Sessions](#sessions)
 - [Migrations](#migrations)
@@ -12,13 +11,6 @@
 - [Routing](#routing)
 - [Application Keys](#keys)
 - [CLI Options](#cli-options)
-
-<a name="help"></a>
-## Help
-
-Description  | Command
-------------- | -------------
-View a list of available artisan commands. | `php artisan help:commands`
 
 <a name="application-configuration"></a>
 ## Application Configuration <small>[(More Information)](/docs/install#basic-configuration)</small>
