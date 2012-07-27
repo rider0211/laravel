@@ -47,7 +47,7 @@ class MySQL extends Grammar {
 	{
 		$columns = $this->columns($table);
 
-		// Once we the array of column definitions, we need to add "add" to the
+		// Once we have the array of column definitions, we need to add "add" to the
 		// front of each definition, then we'll concatenate the definitions
 		// using commas like normal and generate the SQL.
 		$columns = implode(', ', array_map(function($column)
@@ -99,7 +99,7 @@ class MySQL extends Grammar {
 	 */
 	protected function unsigned(Table $table, Fluent $column)
 	{
-		if ($column->type == 'integer' && $column->unsigned)
+		if ($column->type == 'integer' && ($column->unsigned || $column->increment))
 		{
 			return ' UNSIGNED';
 		}
@@ -128,7 +128,7 @@ class MySQL extends Grammar {
 	{
 		if ( ! is_null($column->default))
 		{
-			return " DEFAULT '".$column->default."'";
+			return " DEFAULT '".$this->default_value($column->default)."'";
 		}
 	}
 
@@ -210,6 +210,18 @@ class MySQL extends Grammar {
 		$name = $command->name;
 
 		return 'ALTER TABLE '.$this->wrap($table)." ADD {$type} {$name}({$keys})";
+	}
+
+	/**
+	 * Generate the SQL statement for a rename table command.
+	 *
+	 * @param  Table    $table
+	 * @param  Fluent   $command
+	 * @return string
+	 */
+	public function rename(Table $table, Fluent $command)
+	{
+		return 'RENAME TABLE '.$this->wrap($table).' TO '.$this->wrap($command->name);
 	}
 
 	/**

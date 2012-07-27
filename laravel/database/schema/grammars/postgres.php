@@ -25,7 +25,7 @@ class Postgres extends Grammar {
 	}
 
 	/**
-	 * Geenrate the SQL statements for a table modification command.
+	 * Generate the SQL statements for a table modification command.
 	 *
 	 * @param  Table    $table
 	 * @param  Fluent   $command
@@ -35,7 +35,7 @@ class Postgres extends Grammar {
 	{
 		$columns = $this->columns($table);
 
-		// Once we the array of column definitions, we need to add "add" to the
+		// Once we have the array of column definitions, we need to add "add" to the
 		// front of each definition, then we'll concatenate the definitions
 		// using commas like normal and generate the SQL.
 		$columns = implode(', ', array_map(function($column)
@@ -101,7 +101,7 @@ class Postgres extends Grammar {
 	{
 		if ( ! is_null($column->default))
 		{
-			return " DEFAULT '".$column->default."'";
+			return " DEFAULT '".$this->default_value($column->default)."'";
 		}
 	}
 
@@ -196,6 +196,18 @@ class Postgres extends Grammar {
 		$create = ($unique) ? 'CREATE UNIQUE' : 'CREATE';
 
 		return $create." INDEX {$command->name} ON ".$this->wrap($table)." ({$columns})";
+	}
+
+	/**
+	 * Generate the SQL statement for a rename table command.
+	 *
+	 * @param  Table    $table
+	 * @param  Fluent   $command
+	 * @return string
+	 */
+	public function rename(Table $table, Fluent $command)
+	{
+		return 'ALTER TABLE '.$this->wrap($table).' RENAME TO '.$this->wrap($command->name);
 	}
 
 	/**
@@ -302,7 +314,7 @@ class Postgres extends Grammar {
 	 */
 	public function drop_foreign(Table $table, Fluent $command)
 	{
-		return $this->drop_constraint($table, $command);		
+		return $this->drop_constraint($table, $command);
 	}
 
 	/**

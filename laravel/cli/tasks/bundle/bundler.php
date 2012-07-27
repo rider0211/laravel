@@ -49,7 +49,7 @@ class Bundler extends Task {
 			// all of its registered dependencies as well.
 			//
 			// Each bundle provider implements the Provider interface and
-			// is repsonsible for retrieving the bundle source from its
+			// is responsible for retrieving the bundle source from its
 			// hosting party and installing it into the application.
 			$path = path('bundle').$this->path($bundle);
 
