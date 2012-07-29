@@ -218,9 +218,11 @@ abstract class Model {
 	{
 		$model = new static(array(), true);
 
-		if (static::$timestamps) $attributes['updated_at'] = new \DateTime;
+		$model->fill($attributes);
 
-		return $model->query()->where($model->key(), '=', $id)->update($attributes);
+		if (static::$timestamps) $model->timestamp();
+
+		return $model->query()->where($model->key(), '=', $id)->update($model->attributes);
 	}
 
 	/**
@@ -230,11 +232,9 @@ abstract class Model {
 	 * @param  array   $columns
 	 * @return Model
 	 */
-	public static function find($id, $columns = array('*'))
+	public function _find($id, $columns = array('*'))
 	{
-		$model = new static;
-
-		return $model->query()->where(static::$key, '=', $id)->first($columns);
+		return $this->query()->where(static::$key, '=', $id)->first($columns);
 	}
 
 	/**
@@ -255,7 +255,22 @@ abstract class Model {
 	 */
 	public function _with($includes)
 	{
-		$this->includes = (array) $includes;
+		$includes = (array) $includes;
+
+		$this->includes = array();
+
+		foreach ($includes as $relationship => $constraints)
+		{
+			// When eager loading relationships, constraints may be set on the eager
+			// load definition; however, is none are set, we need to swap the key
+			// and the value of the array since there are no constraints.
+			if (is_numeric($relationship))
+			{
+				list($relationship, $constraints) = array($constraints, null);
+			}
+
+			$this->includes[$relationship] = $constraints;
+		}
 
 		return $this;
 	}
@@ -399,7 +414,7 @@ abstract class Model {
 		// then we can consider the insert successful.
 		else
 		{
-			$id = $this->query()->insert_get_id($this->attributes, $this->sequence());
+			$id = $this->query()->insert_get_id($this->attributes, $this->key());
 
 			$this->set_key($id);
 
@@ -482,7 +497,7 @@ abstract class Model {
 	 */
 	public function changed($attribute)
 	{
-		return array_get($this->attributes, $attribute) !== array_get($this->original, $attribute);
+		return array_get($this->attributes, $attribute) != array_get($this->original, $attribute);
 	}
 
 	/**
@@ -518,7 +533,7 @@ abstract class Model {
 
 		foreach ($this->attributes as $key => $value)
 		{
-			if ( ! isset($this->original[$key]) or $value !== $this->original[$key])
+			if ( ! array_key_exists($key, $this->original) or $value !== $this->original[$key])
 			{
 				$dirty[$key] = $value;
 			}
@@ -707,7 +722,7 @@ abstract class Model {
 	{
 		foreach (array('attributes', 'relationships') as $source)
 		{
-			if (array_key_exists($key, $this->$source)) return true;
+			if (array_key_exists($key, $this->$source)) return !is_null($this->$source[$key]);
 		}
 		
 		if (method_exists($this, $key)) return true;
@@ -738,7 +753,7 @@ abstract class Model {
 	{
 		$meta = array('key', 'table', 'connection', 'sequence', 'per_page', 'timestamps');
 
-		// If the method is actually the name of a static property on the model we'll
+		// If the method is actually the name of a static property on the model, we'll
 		// return the value of the static property. This makes it convenient for
 		// relationships to access these values off of the instances.
 		if (in_array($method, $meta))
@@ -746,10 +761,12 @@ abstract class Model {
 			return static::$$method;
 		}
 
-		// Some methods need to be accessed both staticly and non-staticly so we'll
+		$underscored = array('with', 'find');
+
+		// Some methods need to be accessed both statically and non-statically so we'll
 		// keep underscored methods of those methods and intercept calls to them
 		// here so they can be called either way on the model instance.
-		if (in_array($method, array('with')))
+		if (in_array($method, $underscored))
 		{
 			return call_user_func_array(array($this, '_'.$method), $parameters);
 		}

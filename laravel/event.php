@@ -125,7 +125,7 @@ class Event {
 	}
 
 	/**
-	 * Fire an event and return the the first response.
+	 * Fire an event and return the first response.
 	 *
 	 * Execution will be halted after the first valid response is found.
 	 *
@@ -151,6 +151,8 @@ class Event {
 			// We will simply spin through each payload registered for the event and
 			// fire the flusher, passing each payloads as we go. This allows all
 			// the events on the queue to be processed by the flusher easily.
+			if ( ! isset(static::$queued[$queue])) continue;
+
 			foreach (static::$queued[$queue] as $key => $payload)
 			{
 				array_unshift($payload, $key);

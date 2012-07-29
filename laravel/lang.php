@@ -103,7 +103,7 @@ class Lang {
 	 *		$line = Lang::line('validation.required')->get('sp');
 	 *
 	 *		// Return a default value if the line doesn't exist
-	 *		$line = Lang::line('validation.required', null, 'Default');
+	 *		$line = Lang::line('validation.required')->get(null, 'Default');
 	 * </code>
 	 *
 	 * @param  string  $language
@@ -134,7 +134,7 @@ class Lang {
 		$line = array_get($lines, $line, $default);
 
 		// If the line is not a string, it probably means the developer asked for
-		// the entire langauge file and the value of the requested value will be
+		// the entire language file and the value of the requested value will be
 		// an array containing all of the lines in the file.
 		if (is_string($line))
 		{

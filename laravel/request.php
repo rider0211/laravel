@@ -81,7 +81,7 @@ class Request {
 	 */
 	public static function server($key = null, $default = null)
 	{
-		return array_get(static::foundation()->server->all(), $key, $default);
+		return array_get(static::foundation()->server->all(), strtoupper($key), $default);
 	}
 
 	/**
@@ -102,7 +102,8 @@ class Request {
 	 */
 	public static function ip($default = '0.0.0.0')
 	{
-		return value(static::foundation()->getClientIp(), $default);
+		$client_ip = static::foundation()->getClientIp();
+		return $client_ip === NULL ? $default : $client_ip;
 	}
 
 	/**
