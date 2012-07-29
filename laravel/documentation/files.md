@@ -4,7 +4,6 @@
 
 - [Reading Files](#get)
 - [Writing Files](#put)
-- [Removing files](#delete)
 - [File Uploads](#upload)
 - [File Extensions](#ext)
 - [Checking File Types](#is)
@@ -30,19 +29,12 @@
 
 	File::append('path/to/file', 'appended file content');
 
-<a name="delete"></a>
-## Removing Files
-
-#### Deleting a single file:
-
-	File::delete('path/to/file');
-
 <a name="upload"></a>
 ## File Uploads
 
 #### Moving a $_FILE to a permanent location:
 
-	Input::upload('picture', 'path/to/pictures', 'filename.ext');
+	Input::upload('picture', 'path/to/pictures');
 
 > **Note:** You can easily validate file uploads using the [Validator class](/docs/validation).
 
@@ -73,7 +65,7 @@ The **is** method does not simply check the file extension. The Fileinfo PHP ext
 
 #### Getting the MIME type associated with an extension:
 
-	echo File::mime('gif');
+	echo File::mime('gif'); // outputs 'image/gif'
 
 > **Note:** This method simply returns the MIME type defined for the extension in the **application/config/mimes.php** file.
 

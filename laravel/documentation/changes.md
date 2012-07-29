@@ -2,14 +2,6 @@
 
 ## Contents
 
-- [Laravel 3.2.4](#3.2.4)
-- [Upgrading From 3.2.3](#upgrade-3.2.4)
-- [Laravel 3.2.3](#3.2.3)
-- [Upgrading From 3.2.2](#upgrade-3.2.3)
-- [Laravel 3.2.2](#3.2.2)
-- [Upgrading From 3.2.1](#upgrade-3.2.2)
-- [Laravel 3.2.1](#3.2.1)
-- [Upgrading From 3.2](#upgrade-3.2.1)
 - [Laravel 3.2](#3.2)
 - [Upgrading From 3.1](#upgrade-3.2)
 - [Laravel 3.1.9](#3.1.9)
@@ -33,60 +25,6 @@
 - [Laravel 3.1](#3.1)
 - [Upgrading From 3.0](#upgrade-3.1)
 
-<a name="3.2.4"></a>
-## Laravel 3.2.4
-
-- Speed up many to many eager loading mapping.
-- Tweak the Eloquent::changed() method.
-- Added support for locales in the URI.
-
-<a name="upgrade-3.2.3"></a>
-## Upgrading From 3.2.3
-
-- Replace the **laravel** folder.
-
-<a name="3.2.3"></a>
-## Laravel 3.2.3
-
-- Fixed eager loading bug in Eloquent.
-- Added `laravel.resolving` event for all IoC resolutions.
-
-<a name="upgrade-3.2.3"></a>
-## Upgrading From 3.2.2
-
-- Replace the **laravel** folder.
-
-<a name="3.2.2"></a>
-## Laravel 3.2.2
-
-- Overall improvement of Postgres support.
-- Fix issue in SQL Server Schema grammar.
-- Fix issue with eager loading and `first` or `find`.
-- Fix bug causing parameters to not be passed to `IoC::resolve`.
-- Allow the specification of hostnames in environment setup.
-- Added `DB::last_query` method.
-- Added `password` option to Auth configuration.
-
-<a name="upgrade-3.2.2"></a>
-## Upgrading From 3.2.1
-
-- Replace the **laravel** folder.
-
-<a name="3.2.1"></a>
-## Laravel 3.2.1
-
-- Fixed bug in cookie retrieval when cookie is set on same request.
-- Fixed bug in SQL Server grammar for primary keys.
-- Fixed bug in Validator on PHP 5.4.
-- If HTTP / HTTPS is not specified for generated links, current protocol is used.
-- Fix bug in Eloquent auth driver.
-- Added `format` method to message container.
-
-<a name="upgrade-3.2.1"></a>
-## Upgrading From 3.2
-
-- Replace the **laravel** folder.
-
 <a name="3.2"></a>
 ## Laravel 3.2
 
@@ -97,7 +35,6 @@
 - [Added `unless` structure to Blade template engine](/docs/views/templating#blade-unless).
 - [Added Blade comments](/docs/views/templating#blade-comments).
 - [Added simpler environment management](/docs/install#environments).
-- Added `Blade::extend()` method to define custom blade compilers.
 - Added `View::exists` method.
 - Use [Memcached](http://php.net/manual/en/book.memcached.php) API instead of older [Memcache](http://php.net/manual/en/book.memcache.php) API.
 - Added support for bundles outside of the bundle directory.
@@ -142,21 +79,6 @@
 <a name="upgrade-3.2"></a>
 ## Upgrading From 3.1
 
-- Add new `asset_url` and `profiler` options to application configuration.
-- Replace **auth** configuration file.
-
-Add the following entry to the `aliases` array in `config/application.php`..
-
-	'Profiler'   => 'Laravel\\Profiling\\Profiler',
-
-Add the following code above `Blade::sharpen()` in `application/start.php`..
-
-	if (Config::get('application.profiler'))
-	{
-	    Profiler::attach();
-	}
-
-- Upgrade the **paths.php** file.
 - Replace the **laravel** folder.
 
 <a name="3.1.9"></a>

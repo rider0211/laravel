@@ -3,12 +3,10 @@
 ## Contents
 
 - [Input](#input)
-- [JSON Input](#json)
 - [Files](#files)
 - [Old Input](#old-input)
 - [Redirecting With Old Input](#redirecting-with-old-input)
 - [Cookies](#cookies)
-- [Merging & Replacing](#merge)
 
 <a name="input"></a>
 ## Input
@@ -44,15 +42,6 @@ By default, *null* will be returned if the input item does not exist. However, y
 	if (Input::has('name')) ...
 
 > **Note:** The "has" method will return *false* if the input item is an empty string.
-
-<a name="json"></a>
-## JSON Input
-
-When working with JavaScript MVC frameworks like Backbone.js, you will need to get the JSON posted by the application. To make your life easier, we've included the `Input::json` method:
-
-#### Get JSON input to the application:
-
-	$data = Input::json();
 
 <a name="files"></a>
 ## Files
@@ -133,22 +122,3 @@ Laravel provides a nice wrapper around the $_COOKIE array. However, there are a 
 #### Deleting a cookie:
 
 	Cookie::forget('name');
-
-<a name="merge"></a>
-## Merging & Replacing
-
-Sometimes you may wish to merge or replace the current input. Here's how:
-
-#### Merging new data into the current input:
-
-	Input::merge(array('name' => 'Spock'));
-
-#### Replacing the entire input array with new data:
-
-	Input::merge(array('doctor' => 'Bones', 'captain' => 'Kirk'));
-
-## Clearing Input
-
-To clear all input data for the current request, using the `clear()` method, for example:
-
-	Input::clear();

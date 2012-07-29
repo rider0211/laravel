@@ -2,8 +2,7 @@
 
 use Closure;
 use Laravel\Database;
-use Paginator;
-use Laravel\Database\Query\Grammars\Postgres;
+use Laravel\Paginator;
 use Laravel\Database\Query\Grammars\SQLServer;
 
 class Query {
@@ -140,7 +139,7 @@ class Query {
 	 */
 	public function select($columns = array('*'))
 	{
-		$this->selects = is_array($columns) ? $columns : array($columns);
+		$this->selects = (array) $columns;
 		return $this;
 	}
 
@@ -395,7 +394,7 @@ class Query {
 	}
 
 	/**
-	 * Add nested constraints to the query.
+	 * Add a nested where condition to the query.
 	 *
 	 * @param  Closure  $callback
 	 * @param  string   $connector
@@ -403,7 +402,24 @@ class Query {
 	 */
 	public function where_nested($callback, $connector = 'AND')
 	{
-		call_user_func($callback, $this);
+		$type = 'where_nested';
+
+		// To handle a nested where statement, we will actually instantiate a new
+		// Query instance and run the callback over that instance, which will
+		// allow the developer to have a fresh query instance
+		$query = new Query($this->connection, $this->grammar, $this->from);
+
+		call_user_func($callback, $query);
+
+		// Once the callback has been run on the query, we will store the nested
+		// query instance on the where clause array so that it's passed to the
+		// query's query grammar instance when building.
+		if ($query->wheres !== null)
+		{
+			$this->wheres[] = compact('type', 'query', 'connector');
+		}
+
+		$this->bindings = array_merge($this->bindings, $query->bindings);
 
 		return $this;
 	}
@@ -735,23 +751,19 @@ class Query {
 	 * Insert an array of values into the database table and return the ID.
 	 *
 	 * @param  array   $values
-	 * @param  string  $column
+	 * @param  string  $sequence
 	 * @return int
 	 */
-	public function insert_get_id($values, $column = 'id')
+	public function insert_get_id($values, $sequence = null)
 	{
-		$sql = $this->grammar->insert_get_id($this, $values, $column);
+		$sql = $this->grammar->insert($this, $values);
 
-		$result = $this->connection->query($sql, array_values($values));
+		$this->connection->query($sql, array_values($values));
 
-		if ($this->grammar instanceof Postgres)
-		{
-			return (int) $result[0]->$column;
-		}
-		else
-		{
-			return (int) $this->connection->pdo->lastInsertId();
-		}
+		// Some database systems (Postgres) require a sequence name to be
+		// given when retrieving the auto-incrementing ID, so we'll pass
+		// the given sequence into the method just in case.
+		return (int) $this->connection->pdo->lastInsertId($sequence);
 	}
 
 	/**

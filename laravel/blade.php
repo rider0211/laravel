@@ -53,7 +53,7 @@ class Blade {
 				return;
 			}
 
-			$compiled = Blade::compiled($view->path);
+			$compiled = path('storage').'views/'.md5($view->path);
 
 			// If the view doesn't exist or has been modified since the last time it
 			// was compiled, we will recompile the view into pure PHP from it's
@@ -213,12 +213,12 @@ class Blade {
 
 		foreach ($matches[0] as $forelse)
 		{
-			preg_match('/\s*\(\s*(\S*)\s/', $forelse, $variable);
+			preg_match('/\$[^\s]*/', $forelse, $variable);
 
 			// Once we have extracted the variable being looped against, we can add
 			// an if statement to the start of the loop that checks if the count
 			// of the variable being looped against is greater than zero.
-			$if = "<?php if (count({$variable[1]}) > 0): ?>";
+			$if = "<?php if (count({$variable[0]}) > 0): ?>";
 
 			$search = '/(\s*)@forelse(\s*\(.*\))/';
 
@@ -278,7 +278,7 @@ class Blade {
 	 */
 	protected static function compile_structure_closings($value)
 	{
-		$pattern = '/(\s*)@(endif|endforeach|endfor|endwhile|break)(\s*)/';
+		$pattern = '/(\s*)@(endif|endforeach|endfor|endwhile)(\s*)/';
 
 		return preg_replace($pattern, '$1<?php $2; ?>$3', $value);
 	}

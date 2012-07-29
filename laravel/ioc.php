@@ -114,7 +114,7 @@ class IoC {
 		// its nested dependencies recursively until they are each resolved.
 		if ($concrete == $type or $concrete instanceof Closure)
 		{
-			$object = static::build($concrete, $parameters);
+			$object = static::build($concrete);
 		}
 		else
 		{
@@ -124,12 +124,10 @@ class IoC {
 		// If the requested type is registered as a singleton, we want to cache off
 		// the instance in memory so we can return it later without creating an
 		// entirely new instances of the object on each subsequent request.
-		if (isset(static::$registry[$type]['singleton']) && static::$registry[$type]['singleton'] === true)
+		if (isset(static::$registry[$type]['singleton']))
 		{
 			static::$singletons[$type] = $object;
 		}
-
-		Event::fire('laravel.resolving', array($type, $object));
 
 		return $object;
 	}

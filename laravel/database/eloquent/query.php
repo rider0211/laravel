@@ -129,9 +129,9 @@ class Query {
 		{
 			foreach ($this->model_includes() as $relationship => $constraints)
 			{
-				// If the relationship is nested, we will skip loading it here and let
+				// If the relationship is nested, we will skip laoding it here and let
 				// the load method parse and set the nested eager loads on the right
-				// relationship when it is getting ready to eager load.
+				// relationship when it is getting ready to eager laod.
 				if (str_contains($relationship, '.'))
 				{
 					continue;
@@ -217,23 +217,22 @@ class Query {
 	 */
 	protected function model_includes()
 	{
-		$relationships = array_keys($this->model->includes);
-		$implicits = array();
+		$includes = array();
 
-		foreach ($relationships as $relationship)
+		foreach ($this->model->includes as $relationship => $constraints)
 		{
-			$parts = explode('.', $relationship);
-
-			$prefix = '';
-			foreach ($parts as $part)
+			// When eager loading relationships, constraints may be set on the eager
+			// load definition; however, is none are set, we need to swap the key
+			// and the value of the array since there are no constraints.
+			if (is_numeric($relationship))
 			{
-				$implicits[$prefix.$part] = NULL;
-				$prefix .= $part.'.';
+				list($relationship, $constraints) = array($constraints, null);
 			}
+
+			$includes[$relationship] = $constraints;
 		}
 
-		// Add all implicit includes to the explicit ones
-		return $this->model->includes + $implicits;
+		return $includes;
 	}
 
 	/**

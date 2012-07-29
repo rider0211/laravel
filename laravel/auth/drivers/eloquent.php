@@ -15,36 +15,27 @@ class Eloquent extends Driver {
 		if (filter_var($id, FILTER_VALIDATE_INT) !== false)
 		{
 			return $this->model()->find($id);
-		}
+		} 
 	}
 
 	/**
 	 * Attempt to log a user into the application.
 	 *
-	 * @param  array $arguments
+	 * @param  array  $arguments
 	 * @return void
 	 */
 	public function attempt($arguments = array())
 	{
-		$user = $this->model()->where(function($query) use($arguments)
-		{
-			$username = Config::get('auth.username');
-			
-			$query->where($username, '=', $arguments['username']);
+		$username = Config::get('auth.username');
 
-			foreach(array_except($arguments, array('username', 'password', 'remember')) as $column => $val)
-			{
-			    $query->where($column, '=', $val);
-			}
-		})->first();
+		$user = $this->model()->where($username, '=', $arguments['username'])->first();
 
-		// If the credentials match what is in the database we will just
+		// This driver uses a basic username and password authentication scheme
+		// so if the credentials match what is in the database we will just
 		// log the user into the application and remember them if asked.
 		$password = $arguments['password'];
 
-		$password_field = Config::get('auth.password', 'password');
-
-		if ( ! is_null($user) and Hash::check($password, $user->get_attribute($password_field)))
+		if ( ! is_null($user) and Hash::check($password, $user->password))
 		{
 			return $this->login($user->id, array_get($arguments, 'remember'));
 		}

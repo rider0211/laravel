@@ -54,17 +54,9 @@ Sometimes you will need a little more control over the response sent to the brow
 		return Response::make('Hello World!', 200, $headers);
 	});
 
-#### Returning a custom response containing a view, with binding data:
+#### Returning a custom response containing a view:
 
-	return Response::view('home', array('foo' => 'bar'));
-
-#### Returning a JSON response:
-
-	return Response::json(array('name' => 'Batman'));
-
-#### Returning Eloquent models as JSON:
-
-	return Response::eloquent(User::find(1));
+	return Response::view('home', 200, $headers);
 
 <a name="binding-data-to-views"></a>
 ## Binding Data To Views

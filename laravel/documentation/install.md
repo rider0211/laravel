@@ -4,7 +4,6 @@
 
 - [Requirements](#requirements)
 - [Installation](#installation)
-- [Server Configuration](#server-configuration)
 - [Basic Configuration](#basic-configuration)
 - [Environments](#environments)
 - [Cleaner URLs](#cleaner-urls)
@@ -23,8 +22,7 @@
 1. [Download Laravel](http://laravel.com/download)
 2. Extract the Laravel archive and upload the contents to your web server.
 3. Set the value of the **key** option in the **config/application.php** file to a random, 32 character string.
-4. Verify that the `storage/views` directory is writable.
-5. Navigate to your application in a web browser.
+4. Navigate to your application in a web browser.
 
 If all is well, you should see a pretty Laravel splash page. Get ready, there is lots more to learn!
 
@@ -39,27 +37,8 @@ Installing the following goodies will help you take full advantage of Laravel, b
 
 If you are having problems installing, try the following:
 
-- Make sure the **public** directory is the document root of your web server. (see: Server Configuration below)
+- Make sure the **public** directory is the document root of your web server.
 - If you are using mod_rewrite, set the **index** option in **application/config/application.php** to an empty string.
-- Verify that your storage folder and the folders within are writable by your web server.
-
-<a name="server-configuration"></a>
-## Server Configuration
-
-Like most web-development frameworks, Laravel is designed to protect your application code, bundles, and local storage by placing only files that are necessarily public in the web server's DocumentRoot. This prevents some types of server misconfiguration from making your code (including database passwords and other configuration data) accessible through the web server. It's best to be safe. 
-
-In this example let's imagine that we installed Laravel to the directory **/Users/JonSnow/Sites/MySite**.
-
-A very basic example of an Apache VirtualHost configuration for MySite might look like this.
-
-	<VirtualHost *:80>
-		DocumentRoot /Users/JonSnow/Sites/MySite/public
-		ServerName mysite.dev
-	</VirtualHost>
-
-Notice that while we installed to **/Users/JonSnow/Sites/MySite** our DocumentRoot points to **/Users/JonSnow/Sites/MySite/public**.
-
-While pointing the DocumentRoot to the public folder is a commonly used best-practice, it's possible that you may need to use Laravel on a host that does not allow you to update your DocumentRoot. A collection of algorithms to circumvent this need can be found [on the Laravel forums.](http://forums.laravel.com/viewtopic.php?id=1258)
 
 <a name="basic-configuration"></a>
 ## Basic Configuration
@@ -73,15 +52,11 @@ It's **extremely** important that you change the **application key** option befo
 <a name="environments"></a>
 ## Environments
 
-Most likely, the configuration options you need for local development are not the same as the options you need on your production server. Laravel's default environment handling mechanism is URL based, which will make setting up environments a breeze. Pop open the `paths.php` file in the root of your Laravel installation. You should see an array like this:
+Most likely, the configuration options you need for local development are not the same as the options you need on your production server. Laravel's default environment handling mechanism is the **LARAVEL_ENV** environment variable. To get started, set the environment variable in your **httpd.conf** file:
 
-	$environments = array(
+	SetEnv LARAVEL_ENV local
 
-		'local' => array('http://localhost*', '*.dev'),
-
-	);
-
-This tells Laravel that any URLs beginning with "localhost" or ending with ".dev" should be considered part of the "local" environment.
+> **Note:** Using a web server other than Apache? Check your server's documentation to learn how to set environment variables.
 
 Next, create an **application/config/local** directory. Any files and options you place in this directory will override the options in the base **application/config** directory. For example, you may wish to create an **application.php** file within your new **local** configuration directory:
 
@@ -91,9 +66,11 @@ Next, create an **application/config/local** directory. Any files and options yo
 
 	);
 
-In this example, the local **URL** option will override the **URL** option in **application/config/application.php**. Notice that you only need to specify the options you wish to override.
+In this example, the local **URL** option will override the **URL** option in **application/config/application.php**. Notice that you only need to specify the options you wish to override. 
 
-Isn't it easy? Of course, you are free to create as many environments as you wish!
+If you do not have access to your server's configuration files, you may manually set the **LARAVEL_ENV** variable at the top of Laravel's **paths.php** file:
+
+	$_SERVER['LARAVEL_ENV'] = 'local';
 
 <a name="cleaner-urls"></a>
 ## Cleaner URLs

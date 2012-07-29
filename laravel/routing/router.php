@@ -75,7 +75,7 @@ class Router {
 	 */
 	public static $patterns = array(
 		'(:num)' => '([0-9]+)',
-		'(:any)' => '([a-zA-Z0-9\.\-_%=]+)',
+		'(:any)' => '([a-zA-Z0-9\.\-_%]+)',
 		'(:all)' => '(.*)',
 	);
 
@@ -86,7 +86,7 @@ class Router {
 	 */
 	public static $optional = array(
 		'/(:num?)' => '(?:/([0-9]+)',
-		'/(:any?)' => '(?:/([a-zA-Z0-9\.\-_%=]+)',
+		'/(:any?)' => '(?:/([a-zA-Z0-9\.\-_%]+)',
 		'/(:all?)' => '(?:/(.*)',
 	);
 
@@ -297,7 +297,7 @@ class Router {
 	 * @param  bool          $https
 	 * @return void
 	 */
-	public static function controller($controllers, $defaults = 'index', $https = null)
+	public static function controller($controllers, $defaults = 'index', $https = false)
 	{
 		foreach ((array) $controllers as $identifier)
 		{
