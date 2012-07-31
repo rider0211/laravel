@@ -15,7 +15,6 @@
 - [Setter & Getter Methods](#getter-and-setter-methods)
 - [Mass-Assignment](#mass-assignment)
 - [Converting Models To Arrays](#to-array)
-- [Deleting Models](#delete)
 
 <a name="the-basics"></a>
 ## The Basics
@@ -224,7 +223,7 @@ Want to join on a different foreign key? No problem. Just pass it in the second 
 
 	return $this->has_many('Comment', 'my_foreign_key');
 
-You may be wondering: _If the dynamic properties return the relationship and require less keystrokes, why would I ever use the relationship methods?_ Actually, relationship methods are very powerful. They allow you to continue to chain query methods before retrieving the relationship. Check this out:
+You may be wondering: _If the dynamic properties return the relationship and require less keystokes, why would I ever use the relationship methods?_ Actually, relationship methods are very powerful. They allow you to continue to chain query methods before retrieving the relationship. Check this out:
 
 	echo Post::find(1)->comments()->order_by('votes', 'desc')->take(10)->get();
 
@@ -243,9 +242,8 @@ Many-to-many relationships are the most complicated of the three relationships. 
 	id   - INTEGER
 	name - VARCHAR
 
-**Role_User:**
+**Roles_Users:**
 
-    id      - INTEGER
 	user_id - INTEGER
 	role_id - INTEGER
 
@@ -275,17 +273,6 @@ As you may have noticed, the default name of the intermediate table is the singu
 	     public function roles()
 	     {
 	          return $this->has_many_and_belongs_to('Role', 'user_roles');
-	     }
-
-	}
-
-By default only certain fields from the pivot table will be returned (the two **id** fields, and the timestamps). If your pivot table contains additional columns, you can fetch them too by using the **with()** method :
-
-	class User extends Eloquent {
-
-	     public function roles()
-	     {
-	          return $this->has_many_and_belongs_to('Role', 'user_roles')->with('column');
 	     }
 
 	}
@@ -332,7 +319,7 @@ However, you may often only want to insert a new record into the intermediate ta
 	$user->roles()->attach($role_id);
 
 It's also possible to attach data for fields in the intermediate table (pivot table), to do this add a second array variable to the attach command containing the data you want to attach:
-
+	
 	$user->roles()->attach($role_id, array('expires' => $expires));
 
 <a name="sync-method"></a>
@@ -428,14 +415,14 @@ If you find yourself eager loading the same models often, you may want to use **
 	class Book extends Eloquent {
 
 	     public $includes = array('author');
-
+	     
 	     public function author()
 	     {
 	          return $this->belongs_to('Author');
 	     }
 
 	}
-
+	
 **$includes** takes the same arguments that **with** takes. The following is now eagerly loaded.
 
 	foreach (Book::all() as $book)
@@ -538,12 +525,3 @@ Sometimes you may wish to limit the attributes that are included in your model's
 		public static $hidden = array('password');
 
 	}
-
-<a name="delete"></a>
-## Deleting Models
-
-Because Eloquent inherits all the features and methods of Fluent queries, deleting models is a snap:
-
-	$author->delete();
-
-Note, however, than this won't delete any related models (e.g. all the author's Book models will still exist), unless you have set up [foreign keys](/docs/database/schema#foreign-keys) and cascading deletes.

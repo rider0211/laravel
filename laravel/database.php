@@ -1,6 +1,5 @@
 <?php namespace Laravel;
 
-use Closure;
 use Laravel\Database\Expression;
 use Laravel\Database\Connection;
 

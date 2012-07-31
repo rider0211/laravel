@@ -106,7 +106,7 @@ class Response {
 	 *		return Response::eloquent($data, 200, array('header' => 'value'));
 	 * </code>
 	 *
-	 * @param  Eloquent|array   $data
+	 * @param  Eloquenet|array  $data
 	 * @param  int              $status
 	 * @param  array            $headers
 	 * @return Response
@@ -239,7 +239,7 @@ class Response {
 	public function render()
 	{
 		// If the content is a stringable object, we'll go ahead and call
-		// the toString method so that we can get the string content of
+		// to toString method so that we can get the string content of
 		// the content object. Otherwise we'll just cast to string.
 		if (str_object($this->content))
 		{
