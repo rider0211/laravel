@@ -64,8 +64,7 @@ class Log {
 	 * Format a log message for logging.
 	 *
 	 * @param  string  $type
-	 * @param  string  $message
-	 * @return string
+	 * @param  
 	 */
 	protected static function format($type, $message)
 	{

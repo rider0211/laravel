@@ -85,7 +85,6 @@ class IoC {
 	 * </code>
 	 *
 	 * @param  string  $type
-	 * @param  array   $parameters
 	 * @return mixed
 	 */
 	public static function resolve($type, $parameters = array())

@@ -44,7 +44,7 @@ class Schema {
 	 * Rename a database table in the schema.
 	 *
 	 * @param  string  $table
-	 * @param  string  $new_name
+	 * @param  string  $name
 	 * @return void
 	 */
 	public static function rename($table, $new_name)

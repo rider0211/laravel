@@ -61,8 +61,6 @@ class Has_Many_And_Belongs_To extends Relationship {
 	 *
 	 * By default, the name is the models sorted and joined with underscores.
 	 *
-	 * @param  Model   $model
-	 * @param  string  $associated
 	 * @return string
 	 */
 	protected function joining($model, $associated)
@@ -88,7 +86,7 @@ class Has_Many_And_Belongs_To extends Relationship {
 	 * Insert a new record into the joining table of the association.
 	 *
 	 * @param  int    $id
-	 * @param  array  $attributes
+	 * @param  array  $joining
 	 * @return bool
 	 */
 	public function attach($id, $attributes = array())
@@ -319,9 +317,8 @@ class Has_Many_And_Belongs_To extends Relationship {
 	/**
 	 * Match eagerly loaded child models to their parent models.
 	 *
-	 * @param  string  $relationship
-	 * @param  array   $parents
-	 * @param  array   $children
+	 * @param  array  $parents
+	 * @param  array  $children
 	 * @return void
 	 */
 	public function match($relationship, &$parents, $children)
@@ -386,7 +383,7 @@ class Has_Many_And_Belongs_To extends Relationship {
 	/**
 	 * Set the columns on the joining table that should be fetched.
 	 *
-	 * @param  array         $columns
+	 * @param  array         $column
 	 * @return Relationship
 	 */
 	public function with($columns)

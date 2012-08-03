@@ -255,7 +255,7 @@ class View implements ArrayAccess {
 	 *		});
 	 * </code>
 	 *
-	 * @param  string|array  $views
+	 * @param  string|array  $view
 	 * @param  Closure       $composer
 	 * @return void
 	 */

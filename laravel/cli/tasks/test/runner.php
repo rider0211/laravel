@@ -10,7 +10,6 @@ class Runner extends Task {
 	/**
 	 * Run all of the unit tests for the application.
 	 *
-	 * @param  array  $bundles
 	 * @return void
 	 */
 	public function run($bundles = array())
