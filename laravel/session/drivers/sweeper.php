@@ -3,7 +3,7 @@
 interface Sweeper {
 
 	/**
-	 * Delete all expired sessions from persistent storage.
+	 * Delete all expired sessions from persistant storage.
 	 *
 	 * @param  int   $expiration
 	 * @return void
