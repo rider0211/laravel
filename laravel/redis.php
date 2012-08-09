@@ -17,7 +17,7 @@ class Redis {
 	protected $port;
 
 	/**
-	 * The database number the connection selects on load.
+	 * The databse number the connection selects on load.
 	 *
 	 * @var int
 	 */
