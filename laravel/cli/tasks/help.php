@@ -8,6 +8,7 @@ class Help extends Task {
 	/**
 	 * List available artisan commands. 
 	 *
+	 * @param  array  $arguments
 	 * @return void
 	 */
 	public function commands()

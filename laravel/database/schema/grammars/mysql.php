@@ -323,7 +323,7 @@ class MySQL extends Grammar {
 	 * Drop a foreign key constraint from the table.
 	 *
 	 * @param  Table   $table
-	 * @param  Fluent  $command
+	 * @param  Fluent  $fluent
 	 * @return string
 	 */
 	public function drop_foreign(Table $table, Fluent $command)
@@ -383,7 +383,7 @@ class MySQL extends Grammar {
 	 */
 	protected function type_boolean(Fluent $column)
 	{
-		return 'TINYINT(1)';
+		return 'TINYINT';
 	}
 
 	/**

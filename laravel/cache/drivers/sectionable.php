@@ -63,7 +63,6 @@ abstract class Sectionable extends Driver {
 	 * @param  string  $key
 	 * @param  mixed   $default
 	 * @param  int     $minutes
-	 * @param  string  $function
 	 * @return mixed
 	 */
 	public function remember_in_section($section, $key, $default, $minutes, $function = 'put')

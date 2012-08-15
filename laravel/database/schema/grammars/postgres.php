@@ -309,7 +309,7 @@ class Postgres extends Grammar {
 	 * Drop a foreign key constraint from the table.
 	 *
 	 * @param  Table   $table
-	 * @param  Fluent  $command
+	 * @param  Fluent  $fluent
 	 * @return string
 	 */
 	public function drop_foreign(Table $table, Fluent $command)
