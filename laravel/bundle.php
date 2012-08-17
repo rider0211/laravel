@@ -461,16 +461,4 @@ class Bundle {
 		return array_keys(static::$bundles);
 	}
 
-	/**
-	 * Expand given bundle path of form "[bundle::]path/...".
-	 *
-	 * @param  string  $path
-	 * @return string
-	 */
-	public static function expand($path)
-	{
-		list($bundle, $element) = static::parse($path);
-		return static::path($bundle).$element;
-	}
-
 }
