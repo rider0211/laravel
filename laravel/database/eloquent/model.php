@@ -445,7 +445,7 @@ abstract class Model {
 	 *
 	 * @return void
 	 */
-	public function timestamp()
+	protected function timestamp()
 	{
 		$this->updated_at = new \DateTime;
 
