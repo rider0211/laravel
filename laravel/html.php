@@ -13,7 +13,7 @@ class HTML {
 	 * Registers a custom macro.
 	 *
 	 * @param  string   $name
-	 * @param  Closure  $macro
+	 * @param  Closure  $input
 	 * @return void
 	 */
 	public static function macro($name, $macro)

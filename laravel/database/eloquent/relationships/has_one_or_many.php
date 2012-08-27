@@ -7,25 +7,16 @@ class Has_One_Or_Many extends Relationship {
 	/**
 	 * Insert a new record for the association.
 	 *
-	 * If save is successful, the model will be returned, otherwise false.
-	 *
 	 * @param  Model|array  $attributes
-	 * @return Model|false
+	 * @return bool
 	 */
 	public function insert($attributes)
 	{
-		if ($attributes instanceof Model)
-		{
-			$attributes->set_attribute($this->foreign_key(), $this->base->get_key());
-			
-			return $attributes->save() ? $attributes : false;
-		}
-		else
-		{
-			$attributes[$this->foreign_key()] = $this->base->get_key();
+		$attributes = ($attributes instanceof Model) ? $attributes->attributes : $attributes;
 
-			return $this->model->create($attributes);
-		}
+		$attributes[$this->foreign_key()] = $this->base->get_key();
+
+		return $this->model->create($attributes);
 	}
 
 	/**

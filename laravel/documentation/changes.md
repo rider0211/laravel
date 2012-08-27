@@ -2,8 +2,6 @@
 
 ## Contents
 
-- [Laravel 3.2.5](#3.2.5)
-- [Upgrading From 3.2.4](#upgrade-3.2.5)
 - [Laravel 3.2.4](#3.2.4)
 - [Upgrading From 3.2.3](#upgrade-3.2.4)
 - [Laravel 3.2.3](#3.2.3)
@@ -35,21 +33,12 @@
 - [Laravel 3.1](#3.1)
 - [Upgrading From 3.0](#upgrade-3.1)
 
-<a name="3.2.5"></a>
-
-- Revert nested where code back to 3.2.3 tag.
-
-<a name="upgrade-3.2.5"></a>
-## Upgrading From 3.2.4
-
-- Replace the **laravel** folder.
-
 <a name="3.2.4"></a>
 ## Laravel 3.2.4
 
 - Speed up many to many eager loading mapping.
 - Tweak the Eloquent::changed() method.
-- Various bug fixes and improvements.
+- Added support for locales in the URI.
 
 <a name="upgrade-3.2.3"></a>
 ## Upgrading From 3.2.3

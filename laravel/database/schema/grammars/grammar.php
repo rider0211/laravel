@@ -9,7 +9,7 @@ abstract class Grammar extends \Laravel\Database\Grammar {
 	 * Generate the SQL statement for creating a foreign key.
 	 *
 	 * @param  Table    $table
-	 * @param  Fluent  $command
+	 * @param  Command  $command
 	 * @return string
 	 */
 	public function foreign(Table $table, Fluent $command)
@@ -51,10 +51,22 @@ abstract class Grammar extends \Laravel\Database\Grammar {
 	}
 
 	/**
-	 * Drop a constraint from the table.
+	 * Generate the SQL statement for a drop table command.
 	 *
 	 * @param  Table   $table
 	 * @param  Fluent  $command
+	 * @return string
+	 */
+	public function drop(Table $table, Fluent $command)
+	{
+		return 'DROP TABLE '.$this->wrap($table);
+	}
+
+	/**
+	 * Drop a constraint from the table.
+	 *
+	 * @param  Table   $table
+	 * @param  Fluent  $fluent
 	 * @return string
 	 */
 	protected function drop_constraint(Table $table, Fluent $command)
