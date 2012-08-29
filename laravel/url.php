@@ -26,7 +26,7 @@ class URL {
 	 */
 	public static function current()
 	{
-		return static::to(URI::current());
+		return static::to(URI::current(), null, false, false);
 	}
 
 	/**
@@ -89,9 +89,11 @@ class URL {
 	 *
 	 * @param  string  $url
 	 * @param  bool    $https
+	 * @param  bool    $asset
+	 * @param  bool    $locale
 	 * @return string
 	 */
-	public static function to($url = '', $https = null)
+	public static function to($url = '', $https = null, $asset = false, $locale = true)
 	{
 		// If the given URL is already valid or begins with a hash, we'll just return
 		// the URL unchanged since it is already well formed. Otherwise we will add
@@ -105,12 +107,14 @@ class URL {
 		// security for any new links generated.  So https for all secure links.
 		if (is_null($https)) $https = Request::secure();
 
-		$root = static::base().'/'.Config::get('application.index');
+		$root = static::base();
 
-		// If multiple languages are being supported via URIs, we will append current
-		// language to the URI so all redirects and URLs generated include the
-		// current language so it is not lost on further requests.
-		if (count(Config::get('application.languages')) > 0)
+		if ( ! $asset)
+		{
+			$root .= '/'.Config::get('application.index');
+		}
+
+		if ( ! $asset and $locale and count(Config::get('application.languages')) > 0)
 		{
 			$root .= '/'.Config::get('application.language');
 		}
@@ -240,7 +244,7 @@ class URL {
 			return rtrim($root, '/').'/'.ltrim($url, '/');
 		}
 
-		$url = static::to($url, $https);
+		$url = static::to($url, $https, true);
 
 		// Since assets are not served by Laravel, we do not need to come through
 		// the front controller. So, we'll remove the application index specified
@@ -248,11 +252,6 @@ class URL {
 		if (($index = Config::get('application.index')) !== '')
 		{
 			$url = str_replace($index.'/', '', $url);
-		}
-
-		if (count(Config::get('application.languages')) > 0)
-		{
-			$url = str_replace(Config::get('application.language').'/', '', $url);
 		}
 
 		return $url;
