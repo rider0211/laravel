@@ -206,12 +206,7 @@ class Router {
 				continue;
 			}
 
-			$uri = ltrim(str_replace('(:bundle)', static::$bundle, $uri), '/');
-			
-			if($uri == '')
-			{
-				$uri = '/';
-			}
+			$uri = str_replace('(:bundle)', static::$bundle, $uri);
 
 			// If the URI begins with a wildcard, we want to add this route to the
 			// array of "fallback" routes. Fallback routes are always processed
