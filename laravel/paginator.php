@@ -183,7 +183,7 @@ class Paginator {
 			$links = $this->slider($adjacent);
 		}
 
-		$content = '<ul>' . $this->previous() . $links . $this->next() . '</ul>';
+		$content = $this->previous().' '.$links.' '.$this->next();
 
 		return '<div class="pagination">'.$content.'</div>';
 	}
@@ -300,7 +300,7 @@ class Paginator {
 		// the "first" element should be a span instead of a link.
 		if ($disabled($this->page, $this->last))
 		{
-			return '<li'.HTML::attributes(array('class'=>"{$class} disabled")).'><a href="#">'.$text.'</a>';
+			return HTML::span($text, array('class' => "{$class} disabled"));
 		}
 		else
 		{
@@ -349,7 +349,7 @@ class Paginator {
 		{
 			if ($this->page == $page)
 			{
-				$pages[] = '<li class="active"><a href="#">'.$page.'</a></li>';
+				$pages[] = HTML::span($page, array('class' => 'current'));
 			}
 			else
 			{
@@ -372,7 +372,7 @@ class Paginator {
 	{
 		$query = '?page='.$page.$this->appendage($this->appends);
 
-		return '<li'.HTML::attributes(compact($class)).'>'. HTML::link(URI::current().$query, $text, [], Request::secure()).'</li>';
+		return HTML::link(URI::current().$query, $text, compact('class'), Request::secure());
 	}
 
 	/**
