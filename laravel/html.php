@@ -10,13 +10,6 @@ class HTML {
 	public static $macros = array();
 
 	/**
-	 * Cache application encoding locally to save expensive calls to config::get().
-	 *
-	 * @var string
-	 */
-	public static $encoding = null;
-
-	/**
 	 * Registers a custom macro.
 	 *
 	 * @param  string   $name
@@ -38,8 +31,7 @@ class HTML {
 	 */
 	public static function entities($value)
 	{
-		if(static::$encoding===null) static::$encoding = Config::get('application.encoding');
-		return htmlentities($value, ENT_QUOTES, static::$encoding, false);
+		return htmlentities($value, ENT_QUOTES, Config::get('application.encoding'), false);
 	}
 
 	/**
@@ -50,8 +42,7 @@ class HTML {
 	 */
 	public static function decode($value)
 	{
-		if(static::$encoding===null) static::$encoding = Config::get('application.encoding');
-		return html_entity_decode($value, ENT_QUOTES, static::$encoding);
+		return html_entity_decode($value, ENT_QUOTES, Config::get('application.encoding'));
 	}
 
 	/**
@@ -64,8 +55,7 @@ class HTML {
 	 */
 	public static function specialchars($value)
 	{
-		if(static::$encoding===null) static::$encoding = Config::get('application.encoding');
-		return htmlspecialchars($value, ENT_QUOTES, static::$encoding, false);
+		return htmlspecialchars($value, ENT_QUOTES, Config::get('application.encoding'), false);
 	}
 
 	/**
