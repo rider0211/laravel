@@ -102,14 +102,13 @@ class Input {
 	/**
 	 * Get the JSON payload for the request.
 	 *
-	 * @param  bool    $as_array
 	 * @return object
 	 */
-	public static function json($as_array = false)
+	public static function json()
 	{
 		if ( ! is_null(static::$json)) return static::$json;
 
-		return static::$json = json_decode(Request::foundation()->getContent(), $as_array);
+		return static::$json = json_decode(Request::foundation()->getContent());
 	}
 
 	/**
