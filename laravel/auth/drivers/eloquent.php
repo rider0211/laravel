@@ -7,20 +7,14 @@ class Eloquent extends Driver {
 	 *
 	 * If the user is a guest, null should be returned.
 	 *
-	 * @param  int|object  $token
+	 * @param  int         $id
 	 * @return mixed|null
 	 */
-	public function retrieve($token)
+	public function retrieve($id)
 	{
-		// We return an object here either if the passed token is an integer (ID)
-		// or if we are passed a model object of the correct type
-		if (filter_var($token, FILTER_VALIDATE_INT) !== false)
+		if (filter_var($id, FILTER_VALIDATE_INT) !== false)
 		{
-			return $this->model()->find($token);
-		}
-		else if (get_class($token) == Config::get('auth.model'))
-		{
-			return $token;
+			return $this->model()->find($id);
 		}
 	}
 
@@ -50,7 +44,7 @@ class Eloquent extends Driver {
 
 		$password_field = Config::get('auth.password', 'password');
 
-		if ( ! is_null($user) and Hash::check($password, $user->{$password_field}))
+		if ( ! is_null($user) and Hash::check($password, $user->get_attribute($password_field)))
 		{
 			return $this->login($user->id, array_get($arguments, 'remember'));
 		}
