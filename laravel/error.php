@@ -41,7 +41,7 @@ class Error {
 		{
 			$response = Event::first('500');
 
-			echo Response::prepare($response)->render();
+			return Response::prepare($response)->send();
 		}
 
 		exit(1);

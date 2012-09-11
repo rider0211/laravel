@@ -25,7 +25,6 @@ The **Str** class also provides three convenient methods for manipulating string
 #### Limiting the number of characters in a string:
 
 	echo Str::limit($string, 10);
-	echo Str::limit_exact($string, 10);
 
 #### Limiting the number of words in a string:
 
