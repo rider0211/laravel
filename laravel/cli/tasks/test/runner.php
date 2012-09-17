@@ -86,9 +86,9 @@ class Runner extends Task {
 		
 		// fix the spaced directories problem when using the command line
 		// strings with spaces inside should be wrapped in quotes.
-		$esc_path = escapeshellarg($path);
+		$path = escapeshellarg($path);
 
-		passthru('phpunit --configuration '.$esc_path, $status);
+		passthru('phpunit --configuration '.$path, $status);
 
 		@unlink($path);
 
