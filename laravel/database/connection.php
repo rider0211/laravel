@@ -21,7 +21,7 @@ class Connection {
 	/**
 	 * The query grammar instance for the connection.
 	 *
-	 * @var Query\Grammars\Grammar
+	 * @var Grammars\Grammar
 	 */
 	protected $grammar;
 
