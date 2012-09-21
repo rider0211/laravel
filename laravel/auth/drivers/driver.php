@@ -127,8 +127,6 @@ abstract class Driver {
 		$this->cookie($this->recaller(), null, -2000);
 
 		Session::forget($this->token());
-
-    $this->token = null;
 	}
 
 	/**
