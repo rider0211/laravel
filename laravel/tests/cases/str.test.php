@@ -96,8 +96,6 @@ class StrTest extends PHPUnit_Framework_TestCase {
 		$this->assertEquals('Users', Str::plural('User'));
 		$this->assertEquals('user', Str::plural('user', 1));
 		$this->assertEquals('users', Str::plural('user', 2));
-		$this->assertEquals('chassis', Str::plural('chassis', 2));
-		$this->assertEquals('traffic', Str::plural('traffic', 2));
 	}
 
 	/**
