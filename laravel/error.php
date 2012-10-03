@@ -15,18 +15,6 @@ class Error {
 
 		ob_get_level() and ob_end_clean();
 
-		$message = $exception->getMessage();
-
-		// For Laravel view errors we want to show a prettier error:
-		$file = $exception->getFile();
-
-		if (str_contains($exception->getFile(), 'eval()') and str_contains($exception->getFile(), 'laravel/view.php'))
-		{
-			$message = 'Error rendering view: ['.View::$last['name'].']'.PHP_EOL.PHP_EOL.$message;
-
-			$file = View::$last['path'];
-		}
-
 		// If detailed errors are enabled, we'll just format the exception into
 		// a simple error message and display it on the screen. We don't use a
 		// View in case the problem is in the View class.
@@ -34,9 +22,9 @@ class Error {
 		{
 			echo "<html><h2>Unhandled Exception</h2>
 				  <h3>Message:</h3>
-				  <pre>".$message."</pre>
+				  <pre>".$exception->getMessage()."</pre>
 				  <h3>Location:</h3>
-				  <pre>".$file." on line ".$exception->getLine()."</pre>";
+				  <pre>".$exception->getFile()." on line ".$exception->getLine()."</pre>";
 
 			if ($trace)
 			{

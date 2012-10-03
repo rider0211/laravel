@@ -137,7 +137,7 @@ $languages[] = Config::get('application.language');
 
 foreach ($languages as $language)
 {
-	if (preg_match("#^{$language}(?:$|/)#i", $uri))
+	if (starts_with($uri, $language))
 	{
 		Config::set('application.language', $language);
 

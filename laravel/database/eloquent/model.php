@@ -528,7 +528,7 @@ abstract class Model {
 
 		foreach ($this->attributes as $key => $value)
 		{
-			if ( ! array_key_exists($key, $this->original) or $value != $this->original[$key])
+			if ( ! isset($this->original[$key]) or $value !== $this->original[$key])
 			{
 				$dirty[$key] = $value;
 			}
@@ -544,7 +544,7 @@ abstract class Model {
 	 */
 	public function get_key()
 	{
-		return array_get($this->attributes, static::$key);
+		return $this->get_attribute(static::$key);
 	}
 
 	/**
@@ -721,7 +721,7 @@ abstract class Model {
 		{
 			if (array_key_exists($key, $this->$source)) return true;
 		}
-
+		
 		if (method_exists($this, $key)) return true;
 	}
 
