@@ -107,7 +107,7 @@ class Asset_Container {
 	 * @param  string  $source
 	 * @param  array   $dependencies
 	 * @param  array   $attributes
-	 * @return Asset_Container
+	 * @return void
 	 */
 	public function add($name, $source, $dependencies = array(), $attributes = array())
 	{
