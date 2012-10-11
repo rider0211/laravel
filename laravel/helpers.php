@@ -10,7 +10,7 @@
  */
 function e($value)
 {
-	return HTML::entities($value);
+	return Laravel\HTML::entities($value);
 }
 
 /**
@@ -23,7 +23,7 @@ function e($value)
  */
 function __($key, $replacements = array(), $language = null)
 {
-	return Lang::line($key, $replacements, $language);
+	return Laravel\Lang::line($key, $replacements, $language);
 }
 
 /**
