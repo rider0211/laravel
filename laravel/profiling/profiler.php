@@ -145,10 +145,9 @@ class Profiler {
 	{
 		foreach ($bindings as $binding)
 		{
-			$binding = Database::escape($binding);
+			$binding = Database::connection()->pdo->quote($binding);
 
 			$sql = preg_replace('/\?/', $binding, $sql, 1);
-			$sql = htmlspecialchars($sql);
 		}
 
 		static::$data['queries'][] = array($sql, $time);
