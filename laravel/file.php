@@ -331,8 +331,6 @@ class File {
 	 */
 	public static function latest($directory, $options = fIterator::SKIP_DOTS)
 	{
-		$latest = null;
-
 		$time = 0;
 
 		$items = new fIterator($directory, $options);
@@ -342,11 +340,7 @@ class File {
 		// with a UNIX timestamp greater than the latest one.
 		foreach ($items as $item)
 		{
-			if ($item->getMTime() > $time) 
-			{
-				$latest = $item;
-				$time = $item->getMTime();
-			}
+			if ($item->getMTime() > $time) $latest = $item;
 		}
 
 		return $latest;
