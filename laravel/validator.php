@@ -75,7 +75,7 @@ class Validator {
 	/**
 	 * Create a new validator instance.
 	 *
-	 * @param  array  $attributes
+	 * @param  mixed  $attributes
 	 * @param  array  $rules
 	 * @param  array  $messages
 	 * @return void
