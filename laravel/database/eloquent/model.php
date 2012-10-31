@@ -333,7 +333,7 @@ abstract class Model {
 	 * @param  string        $table
 	 * @param  string        $foreign
 	 * @param  string        $other
-	 * @return Has_Many_And_Belongs_To
+	 * @return Relationship
 	 */
 	public function has_many_and_belongs_to($model, $table = null, $foreign = null, $other = null)
 	{
@@ -457,8 +457,7 @@ abstract class Model {
 	 *
 	 * @return void
 	 */
-	public function touch()
-	{
+	public function touch(){
 		$this->timestamp();
 		$this->save();
 	}

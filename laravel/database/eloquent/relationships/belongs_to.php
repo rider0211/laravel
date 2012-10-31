@@ -87,18 +87,16 @@ class Belongs_To extends Relationship {
 	{
 		$foreign = $this->foreign_key();
 
-		$dictionary = array();
-
-		foreach ($parents as $parent)
+		foreach ($children as &$child)
 		{
-			$dictionary[$parent->get_key()] = $parent;
-		}
-
-		foreach ($children as $child)
-		{
-			if (array_key_exists($child->$foreign, $dictionary))
+			$parent = array_first($parents, function($k, $v) use (&$child, $foreign)
 			{
-				$child->relationships[$relationship] = $dictionary[$child->$foreign];
+				return $v->get_key() == $child->$foreign;
+			});
+
+			if ( ! is_null($parent))
+			{
+				$child->relationships[$relationship] = $parent;
 			}
 		}
 	}
