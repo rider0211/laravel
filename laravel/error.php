@@ -30,23 +30,20 @@ class Error {
 		// If detailed errors are enabled, we'll just format the exception into
 		// a simple error message and display it on the screen. We don't use a
 		// View in case the problem is in the View class.
-
 		if (Config::get('error.detail'))
 		{
-			$response_body = "<html><h2>Unhandled Exception</h2>
-				<h3>Message:</h3>
-				<pre>".$message."</pre>
-				<h3>Location:</h3>
-				<pre>".$file." on line ".$exception->getLine()."</pre>";
+			echo "<html><h2>Unhandled Exception</h2>
+				  <h3>Message:</h3>
+				  <pre>".$message."</pre>
+				  <h3>Location:</h3>
+				  <pre>".$file." on line ".$exception->getLine()."</pre>";
 
 			if ($trace)
 			{
-				$response_body .= "
+				echo "
 				  <h3>Stack Trace:</h3>
 				  <pre>".$exception->getTraceAsString()."</pre></html>";
 			}
-
-			$response = Response::make($response_body, 500);
 		}
 
 		// If we're not using detailed error messages, we'll use the event
@@ -56,12 +53,8 @@ class Error {
 		{
 			$response = Event::first('500');
 
-			$response = Response::prepare($response);
+			echo Response::prepare($response)->render();
 		}
-
-		$response->render();
-		$response->send();
-		$response->foundation->finish();
 
 		exit(1);
 	}

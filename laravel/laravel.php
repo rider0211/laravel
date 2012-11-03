@@ -1,7 +1,5 @@
 <?php namespace Laravel;
 
-use Router;
-
 /*
 |--------------------------------------------------------------------------
 | Bootstrap The Framework Core
@@ -104,7 +102,7 @@ foreach (Bundle::$bundles as $bundle => $config)
 |
 */
 
-Router::register('*', '(:all)', function()
+Routing\Router::register('*', '(:all)', function()
 {
 	return Event::first('404');
 });
@@ -162,7 +160,7 @@ URI::$uri = $uri;
 |
 */
 
-Request::$route = Router::route(Request::method(), $uri);
+Request::$route = Routing\Router::route(Request::method(), $uri);
 
 $response = Request::$route->call();
 
