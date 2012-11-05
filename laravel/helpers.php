@@ -316,10 +316,10 @@ function head($array)
  *
  * <code>
  *		// Create a URL to a location within the application
- *		$url = url('user/profile');
+ *		$url = path('user/profile');
  *
  *		// Create a HTTPS URL to a location within the application
- *		$url = url('user/profile', true);
+ *		$url = path('user/profile', true);
  * </code>
  *
  * @param  string  $url
