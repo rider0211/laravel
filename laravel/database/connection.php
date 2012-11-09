@@ -101,7 +101,7 @@ class Connection {
 	 * Execute a callback wrapped in a database transaction.
 	 *
 	 * @param  callback  $callback
-	 * @return bool
+	 * @return void
 	 */
 	public function transaction($callback)
 	{
@@ -121,7 +121,7 @@ class Connection {
 			throw $e;
 		}
 
-		return $this->pdo->commit();
+		$this->pdo->commit();
 	}
 
 	/**
