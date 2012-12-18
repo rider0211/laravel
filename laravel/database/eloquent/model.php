@@ -226,6 +226,18 @@ abstract class Model {
 	}
 
 	/**
+	 * Find a model by its primary key.
+	 *
+	 * @param  string  $id
+	 * @param  array   $columns
+	 * @return Model
+	 */
+	public function _find($id, $columns = array('*'))
+	{
+		return $this->query()->where(static::$key, '=', $id)->first($columns);
+	}
+
+	/**
 	 * Get all of the models in the database.
 	 *
 	 * @return array
@@ -750,7 +762,7 @@ abstract class Model {
 			return static::$$method;
 		}
 
-		$underscored = array('with', 'query');
+		$underscored = array('with', 'find', 'query');
 
 		// Some methods need to be accessed both staticly and non-staticly so we'll
 		// keep underscored methods of those methods and intercept calls to them
