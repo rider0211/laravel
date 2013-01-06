@@ -129,14 +129,7 @@ class Crypter {
 	 */
 	protected static function unpad($value)
 	{
-		if (MB_STRING)
-		{
-			$pad = ord(mb_substr($value, -1, 1, Config::get('application.encoding')));
-		}
-		else
-		{
-			$pad = ord(substr($value, -1));
-		}
+		$pad = ord($value[($length = Str::length($value)) - 1]);
 
 		if ($pad and $pad < static::$block)
 		{
@@ -145,12 +138,7 @@ class Crypter {
 			// as the padding appears to have been changed.
 			if (preg_match('/'.chr($pad).'{'.$pad.'}$/', $value))
 			{
-				if (MB_STRING)
-				{
-					return mb_substr($value, 0, Str::length($value) - $pad, Config::get('application.encoding'));
-				}
-
-				return substr($value, 0, Str::length($value) - $pad);
+				return substr($value, 0, $length - $pad);
 			}
 
 			// If the padding characters do not match the expected padding

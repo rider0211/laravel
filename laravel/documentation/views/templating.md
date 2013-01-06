@@ -166,9 +166,9 @@ Not only does Blade provide clean, elegant syntax for common PHP control structu
 	<html>
 		<ul class="navigation">
 			@section('navigation')
-				<li>Example Item 1</li>
-				<li>Example Item 2</li>
-			@endsection
+				<li>Nav Item 1</li>
+				<li>Nav Item 2</li>
+			@yield_section
 		</ul>
 
 		<div class="content">
