@@ -213,7 +213,7 @@ if (isset($environment))
 |
 */
 
-if (Request::cli())
+if (defined('STDIN'))
 {
 	$console = CLI\Command::options($_SERVER['argv']);
 
