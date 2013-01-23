@@ -56,31 +56,7 @@ class Log {
 			Event::fire('laravel.log', array($type, $message));
 		}
 
-		$trace=debug_backtrace();
-
-		foreach($trace as $item)
-		{
-			if ($item['class'] == __CLASS__)
-			{
-				continue;
-			}
-
-			$caller = $item;
-
-			break;
-		}
-
-		$function = $caller['function'];
-		if (isset($caller['class']))
-		{
-			$class = $caller['class'] . '::';
-		}
-		else
-		{
-			$class = '';
-		}
-
-		$message = static::format($type, $class . $function . ' - ' . $message);
+		$message = static::format($type, $message);
 
 		File::append(path('storage').'logs/'.date('Y-m-d').'.log', $message);
 	}
