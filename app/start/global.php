@@ -11,12 +11,12 @@
 |
 */
 
-ClassLoader::addDirectories(array(
+ClassLoader::register(new ClassLoader(array(
 
 	app_path().'/controllers',
 	app_path().'/models',
 
-));
+)));
 
 /*
 |--------------------------------------------------------------------------
