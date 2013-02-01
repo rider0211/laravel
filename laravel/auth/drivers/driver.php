@@ -3,7 +3,6 @@
 use Laravel\Str;
 use Laravel\Cookie;
 use Laravel\Config;
-use Laravel\Event;
 use Laravel\Session;
 use Laravel\Crypter;
 
@@ -113,8 +112,6 @@ abstract class Driver {
 
 		if ($remember) $this->remember($token);
 
-		Event::fire('laravel.auth: login');
-
 		return true;
 	}
 
@@ -130,8 +127,6 @@ abstract class Driver {
 		$this->cookie($this->recaller(), null, -2000);
 
 		Session::forget($this->token());
-
-		Event::fire('laravel.auth: logout');
 
 		$this->token = null;
 	}

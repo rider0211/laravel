@@ -222,7 +222,7 @@ class Input {
 	 * @param  string  $key
 	 * @param  string  $directory
 	 * @param  string  $name
-	 * @return Symfony\Component\HttpFoundation\File\File
+	 * @return bool
 	 */
 	public static function upload($key, $directory, $name = null)
 	{

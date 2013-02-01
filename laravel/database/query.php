@@ -810,11 +810,11 @@ class Query {
 	}
 
 	/**
-	 * Insert an array of values into the database table and return the key.
+	 * Insert an array of values into the database table and return the ID.
 	 *
 	 * @param  array   $values
 	 * @param  string  $column
-	 * @return mixed
+	 * @return int
 	 */
 	public function insert_get_id($values, $column = 'id')
 	{
@@ -822,12 +822,7 @@ class Query {
 
 		$result = $this->connection->query($sql, array_values($values));
 
-		// If the key is not auto-incrementing, we will just return the inserted value
-		if (isset($values[$column]))
-		{
-			return $values[$column];
-		}
-		else if ($this->grammar instanceof Postgres)
+		if ($this->grammar instanceof Postgres)
 		{
 			return (int) $result[0]->$column;
 		}

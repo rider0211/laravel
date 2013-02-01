@@ -13,7 +13,7 @@ return array(
 	|
 	*/
 
-	'previous' => '&laquo; Prapa',
-	'next'     => 'Para &raquo;',
+	'previous' => '&laquo; Προηγούμενο',
+	'next'     => 'Επόμενο &raquo;',
 
 );
