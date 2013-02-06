@@ -182,15 +182,13 @@ class Form {
 	 * @param  array   $attributes
 	 * @return string
 	 */
-	public static function label($name, $value, $attributes = array(), $escape_html = true)
+	public static function label($name, $value, $attributes = array())
 	{
 		static::$labels[] = $name;
 
 		$attributes = HTML::attributes($attributes);
 
-		if ($escape_html) {
-			$value = HTML::entities($value);
-		}
+		$value = HTML::entities($value);
 
 		return '<label for="'.$name.'"'.$attributes.'>'.$value.'</label>';
 	}
