@@ -31,19 +31,6 @@ class IoC {
 		static::$registry[$name] = compact('resolver', 'singleton');
 	}
 
-    /**
-     * Unregister an object
-     *
-     * @param string $name
-     */
-    public static function unregister($name)
-    {
-        if (array_key_exists($name, static::$registry)) {
-            unset(static::$registry[$name]);
-            unset(static::$singletons[$name]);
-        }
-    }
-
 	/**
 	 * Determine if an object has been registered in the container.
 	 *
@@ -154,7 +141,6 @@ class IoC {
 	 * @param  string  $type
 	 * @param  array   $parameters
 	 * @return mixed
-     * @throws \Exception
 	 */
 	protected static function build($type, $parameters = array())
 	{
@@ -207,7 +193,7 @@ class IoC {
 			$dependency = $parameter->getClass();
 
 			// If the person passed in some parameters to the class
-			// then we should probably use those instead of trying
+			// then we should probably use those instead of trying 
 			// to resolve a new instance of the class
 			if (count($arguments) > 0)
 			{
@@ -219,7 +205,7 @@ class IoC {
 			}
 			else
 			{
-				$dependencies[] = static::resolve($dependency->name);
+				$dependencies[] = static::resolve($dependency->name);				
 			}
 		}
 
@@ -232,7 +218,6 @@ class IoC {
 	 *
 	 * @param ReflectionParameter
 	 * @return default value
-     * @throws \Exception
 	 */
 	protected static function resolveNonClass($parameter)
 	{
@@ -244,6 +229,6 @@ class IoC {
 		{
 			throw new \Exception("Unresolvable dependency resolving [$parameter].");
 		}
-	}
+	}	
 
 }
