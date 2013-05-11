@@ -441,7 +441,7 @@ abstract class Model {
 	}
 
 	/**
-	 * Updates the timestamp on the model and immediately saves it.
+	 *Updates the timestamp on the model and immediately saves it.
 	 *
 	 * @return void
 	 */
@@ -562,12 +562,11 @@ abstract class Model {
 	 *
 	 * @param  string  $key
 	 * @param  mixed   $value
-	 * @return Model
+	 * @return void
 	 */
 	public function set_attribute($key, $value)
 	{
 		$this->attributes[$key] = $value;
-		return $this;
 	}
 
 	/**
@@ -770,7 +769,7 @@ abstract class Model {
 		}
 		elseif (starts_with($method, 'set_'))
 		{
-			return $this->set_attribute(substr($method, 4), $parameters[0]);
+			$this->set_attribute(substr($method, 4), $parameters[0]);
 		}
 
 		// Finally we will assume that the method is actually the beginning of a
