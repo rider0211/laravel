@@ -38,7 +38,7 @@ return array(
 	"countmin"       => "The :attribute must have at least :min selected elements.",
 	"different"      => "Поля :attribute и :other должны различаться.",
 	"email"          => "Поле :attribute имеет неверный формат.",
-	"exists"         => "Выбранное значение для :attribute не верно.",
+	"exists"         => "Выбранное значение для :attribute уже существует.",
 	"image"          => "Поле :attribute должно быть картинкой.",
 	"in"             => "Выбранное значение для :attribute не верно.",
 	"integer"        => "Поле :attribute должно быть целым числом.",
