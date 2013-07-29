@@ -8,7 +8,7 @@ return array(
 	|--------------------------------------------------------------------------
 	|
 	| This option controls the authentication driver that will be utilized.
-	| This driver manages the retrieval and authentication of the users
+	| This drivers manages the retrieval and authentication of the users
 	| attempting to get access to protected areas of your application.
 	|
 	| Supported: "database", "eloquent"
@@ -56,7 +56,11 @@ return array(
 
 	'reminder' => array(
 
-		'email' => 'emails.auth.reminder', 'table' => 'password_reminders',
+		'email' => 'emails.auth.reminder',
+
+		'table' => 'password_reminders',
+
+		'expire' => 60,
 
 	),
 
