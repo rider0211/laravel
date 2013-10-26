@@ -55,11 +55,6 @@ return array(
 			'queue'   => 'your-queue-name',
 		),
 
-		'redis' => array(
-			'driver' => 'redis',
-			'queue'  => 'default',
-		),		
-
 	),
 
 );
