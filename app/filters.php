@@ -35,12 +35,7 @@ App::after(function($request, $response)
 
 Route::filter('auth', function()
 {
-	if (Auth::guest())
-	{
-		if (Request::ajax()) App::abort(401);
-
-		return Redirect::guest('login');
-	}
+	if (Auth::guest()) return Redirect::guest('login');
 });
 
 
