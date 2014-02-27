@@ -50,7 +50,6 @@ return array(
 
 		'iron' => array(
 			'driver'  => 'iron',
-			'host'    => 'mq-aws-us-east-1.iron.io',
 			'project' => 'your-project-id',
 			'token'   => 'your-token',
 			'queue'   => 'your-queue-name',
