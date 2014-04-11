@@ -56,19 +56,6 @@ return array(
 
 	/*
 	|--------------------------------------------------------------------------
-	| Application Fallback Locale
-	|--------------------------------------------------------------------------
-	|
-	| The fallback locale determines the locale to use when the current one
-	| is not available. You may change the value to correspond to any of
-	| the language folders that are provided through your application.
-	|
-	*/
-
-	'fallback_locale' => 'en',
-
-	/*
-	|--------------------------------------------------------------------------
 	| Encryption Key
 	|--------------------------------------------------------------------------
 	|
@@ -79,6 +66,8 @@ return array(
 	*/
 
 	'key' => 'YourSecretKey!!!',
+
+	'cipher' => MCRYPT_RIJNDAEL_128,
 
 	/*
 	|--------------------------------------------------------------------------
@@ -180,6 +169,7 @@ return array(
 		'Schema'          => 'Illuminate\Support\Facades\Schema',
 		'Seeder'          => 'Illuminate\Database\Seeder',
 		'Session'         => 'Illuminate\Support\Facades\Session',
+		'SoftDeletingTrait' => 'Illuminate\Database\Eloquent\SoftDeletingTrait',
 		'SSH'             => 'Illuminate\Support\Facades\SSH',
 		'Str'             => 'Illuminate\Support\Str',
 		'URL'             => 'Illuminate\Support\Facades\URL',
