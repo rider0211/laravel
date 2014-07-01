@@ -13,10 +13,7 @@
 
 App::before(function($request)
 {
-	if (App::isDownForMaintenance())
-	{
-		return Response::make('Be right back!');
-	}
+	//
 });
 
 
