@@ -52,6 +52,26 @@ return array(
 	|
 	*/
 
-	'storage' => __DIR__.'/../app/storage',
+	'storage' => __DIR__.'/../storage',
+
+	/*
+	|--------------------------------------------------------------------------
+	| Generator Paths
+	|--------------------------------------------------------------------------
+	|
+	| These paths are used by the various class generators and other pieces
+	| of the framework that need to determine where to store these types
+	| of classes. Of course, they may be changed to any path you wish.
+	|
+	*/
+
+	'commands' => __DIR__.'/../app/src/Console',
+	'config' => __DIR__.'/../app/config',
+	'controllers' => __DIR__.'/../app/src/Http/Controllers',
+	'database' => __DIR__.'/../app/database',
+	'filters' => __DIR__.'/../app/src/Http/Filters',
+	'lang' => __DIR__.'/../app/lang',
+	'requests' => __DIR__.'/../app/src/Http/Requests',
+	'src' => __DIR__.'/../app/src',
 
 );
