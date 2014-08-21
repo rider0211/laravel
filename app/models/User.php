@@ -1,6 +1,5 @@
-<?php namespace App;
+<?php
 
-use Eloquent;
 use Illuminate\Auth\UserTrait;
 use Illuminate\Auth\UserInterface;
 use Illuminate\Auth\Reminders\RemindableTrait;
@@ -22,6 +21,6 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 	 *
 	 * @var array
 	 */
-	protected $hidden = ['password', 'remember_token'];
+	protected $hidden = array('password', 'remember_token');
 
 }
