@@ -1,7 +1,6 @@
 <?php namespace App\Http\Filters;
 
 use Illuminate\Http\Request;
-use Illuminate\Routing\Route;
 use Auth, Redirect, Response;
 
 class AuthFilter {
@@ -9,11 +8,10 @@ class AuthFilter {
 	/**
 	 * Run the request filter.
 	 *
-	 * @param  \Illuminate\Routing\Route  $route
 	 * @param  \Illuminate\Http\Request  $request
 	 * @return mixed
 	 */
-	public function filter(Route $route, Request $request)
+	public function filter(Request $request)
 	{
 		if (Auth::guest())
 		{
