@@ -23,7 +23,7 @@ class AuthFilter {
 			}
 			else
 			{
-				return Redirect::guest('auth/login');
+				return Redirect::guest('login');
 			}
 		}
 	}
