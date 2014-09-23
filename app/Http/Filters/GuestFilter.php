@@ -1,6 +1,5 @@
 <?php namespace App\Http\Filters;
 
-use Illuminate\Contracts\Auth\Authenticator;
 use Illuminate\Http\RedirectResponse;
 
 class GuestFilter {
