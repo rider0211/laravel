@@ -1,6 +1,6 @@
 <?php
 
-return [
+return array(
 
 	/*
 	|--------------------------------------------------------------------------
@@ -17,58 +17,6 @@ return [
 
 	/*
 	|--------------------------------------------------------------------------
-	| Base Path
-	|--------------------------------------------------------------------------
-	|
-	| The base path is the root of the Laravel installation. Most likely you
-	| will not need to change this value. But, if for some wild reason it
-	| is necessary you will do so here, just proceed with some caution.
-	|
-	*/
-
-	'base' => __DIR__.'/..',
-
-	/*
-	|--------------------------------------------------------------------------
-	| Configuration Path
-	|--------------------------------------------------------------------------
-	|
-	| This path is used by the configuration loader to load the application
-	| configuration files. In general, you should'nt need to change this
-	| value; however, you can theoretically change the path from here.
-	|
-	*/
-
-	'config' => __DIR__.'/../config',
-
-	/*
-	|--------------------------------------------------------------------------
-	| Database Path
-	|--------------------------------------------------------------------------
-	|
-	| This path is used by the migration generator and migration runner to
-	| know where to place your fresh database migration classes. You're
-	| free to modify the path but you probably will not ever need to.
-	|
-	*/
-
-	'database' => __DIR__.'/../database',
-
-	/*
-	|--------------------------------------------------------------------------
-	| Language Path
-	|--------------------------------------------------------------------------
-	|
-	| This path is used by the language file loader to load your application
-	| language files. The purpose of these files is to store your strings
-	| that are translated into other languages for views, e-mails, etc.
-	|
-	*/
-
-	'lang' => __DIR__.'/../resources/lang',
-
-	/*
-	|--------------------------------------------------------------------------
 	| Public Path
 	|--------------------------------------------------------------------------
 	|
@@ -82,6 +30,19 @@ return [
 
 	/*
 	|--------------------------------------------------------------------------
+	| Base Path
+	|--------------------------------------------------------------------------
+	|
+	| The base path is the root of the Laravel installation. Most likely you
+	| will not need to change this value. But, if for some wild reason it
+	| is necessary you will do so here, just proceed with some caution.
+	|
+	*/
+
+	'base' => __DIR__.'/..',
+
+	/*
+	|--------------------------------------------------------------------------
 	| Storage Path
 	|--------------------------------------------------------------------------
 	|
@@ -91,6 +52,6 @@ return [
 	|
 	*/
 
-	'storage' => __DIR__.'/../storage',
+	'storage' => __DIR__.'/../app/storage',
 
-];
+);
