@@ -11,13 +11,16 @@
 |
 */
 
-if (file_exists(__DIR__.'/../.env'))
+try
 {
 	Dotenv::load(__DIR__.'/../');
 
-	//Dotenv::required('APP_ENV');
+	Dotenv::required('APP_ENV');
 }
-
+catch (RuntimeException $e)
+{
+	die('Application environment not configured.'.PHP_EOL);
+}
 
 /*
 |--------------------------------------------------------------------------
@@ -32,5 +35,5 @@ if (file_exists(__DIR__.'/../.env'))
 
 $env = $app->detectEnvironment(function()
 {
-	return getenv('APP_ENV') ?: 'production';
+	return getenv('APP_ENV');
 });
