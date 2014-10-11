@@ -12,17 +12,26 @@ class CsrfMiddleware implements Middleware {
 	 * @param  \Illuminate\Http\Request  $request
 	 * @param  \Closure  $next
 	 * @return mixed
-	 * 
-	 * @throws TokenMismatchException
 	 */
 	public function handle($request, Closure $next)
 	{
-		if ($request->session()->token() != $request->input('_token'))
+		if ($request->method() == 'GET' || $this->tokensMatch($request))
 		{
-			throw new TokenMismatchException;
+			return $next($request);
 		}
 
-		return $next($request);
+		throw new TokenMismatchException;
+	}
+
+	/**
+	 * Determine if the session and input CSRF tokens match.
+	 *
+	 * @param  \Illuminate\Http\Request  $request
+	 * @return bool
+	 */
+	protected function tokensMatch($request)
+	{
+		return $request->session()->token() == $request->input('_token');
 	}
 
 }
