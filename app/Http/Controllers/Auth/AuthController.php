@@ -85,7 +85,7 @@ class AuthController {
 			return redirect('/');
 		}
 
-		return redirect('/auth/login')->withErrors([
+		return redirect('/login')->withErrors([
 			'email' => 'These credentials do not match our records.',
 		]);
 	}
