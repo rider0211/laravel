@@ -24,6 +24,7 @@ class RouteServiceProvider extends ServiceProvider {
 	protected $middleware = [
 		'auth' => 'App\Http\Middleware\Authenticated',
 		'auth.basic' => 'App\Http\Middleware\AuthenticatedWithBasicAuth',
+		'csrf' => 'App\Http\Middleware\CsrfTokenIsValid',
 		'guest' => 'App\Http\Middleware\IsGuest',
 	];
 
@@ -48,7 +49,10 @@ class RouteServiceProvider extends ServiceProvider {
 	 */
 	public function map(Router $router)
 	{
-		// require app_path('Http/routes.php');
+		$router->group(['namespace' => 'App\Http\Controllers'], function($router)
+		{
+			require app_path('Http/routes.php');
+		});
 	}
 
 }
