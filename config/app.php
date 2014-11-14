@@ -78,7 +78,7 @@ return [
 	|
 	*/
 
-	'key' => getenv('APP_KEY') ?: 'YourSecretKey!!!',
+	'key' => 'YourSecretKey!!!',
 
 	'cipher' => MCRYPT_RIJNDAEL_128,
 
