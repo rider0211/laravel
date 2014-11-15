@@ -27,7 +27,23 @@ require __DIR__.'/bootstrap/autoload.php';
 |
 */
 
-$app = require_once __DIR__.'/bootstrap/app.php';
+$app = require_once __DIR__.'/bootstrap/start.php';
+
+/*
+|--------------------------------------------------------------------------
+| Load The Artisan Console Application
+|--------------------------------------------------------------------------
+|
+| We'll need to run the script to load and return the Artisan console
+| application. We keep this in its own script so that we will load
+| the console application independent of running commands which
+| will allow us to fire commands from Routes when we want to.
+|
+*/
+
+$app->setRequestForConsoleEnvironment();
+
+$artisan = Illuminate\Console\Application::start($app);
 
 /*
 |--------------------------------------------------------------------------
@@ -40,10 +56,7 @@ $app = require_once __DIR__.'/bootstrap/app.php';
 |
 */
 
-$status = $app->make('Illuminate\Contracts\Console\Kernel')->handle(
-	new Symfony\Component\Console\Input\ArgvInput,
-	new Symfony\Component\Console\Output\ConsoleOutput
-);
+$status = $artisan->run();
 
 /*
 |--------------------------------------------------------------------------
@@ -55,5 +68,7 @@ $status = $app->make('Illuminate\Contracts\Console\Kernel')->handle(
 | down the process. This is the last thing to happen to the request.
 |
 */
+
+$app->shutdown();
 
 exit($status);
