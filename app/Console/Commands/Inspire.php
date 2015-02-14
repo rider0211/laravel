@@ -2,6 +2,8 @@
 
 use Illuminate\Console\Command;
 use Illuminate\Foundation\Inspiring;
+use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Input\InputArgument;
 
 class Inspire extends Command {
 
