@@ -15,7 +15,7 @@ class Authenticate
     protected $auth;
 
     /**
-     * Create a new middelware instance.
+     * Create a new filter instance.
      *
      * @param  Guard  $auth
      * @return void
