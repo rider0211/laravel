@@ -2,7 +2,7 @@
 
 /*
 |--------------------------------------------------------------------------
-| Application Routes
+| Routes File
 |--------------------------------------------------------------------------
 |
 | Here is where you can register all of the routes in an application.
@@ -17,7 +17,7 @@ Route::get('/', function () {
 
 /*
 |--------------------------------------------------------------------------
-| Web Routes
+| Application Routes
 |--------------------------------------------------------------------------
 |
 | This route group applies the "web" middleware group to every route
