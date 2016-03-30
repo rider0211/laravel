@@ -12,42 +12,19 @@ class Authenticate
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \Closure  $next
-     * @param  string  ...$guards
+     * @param  string|null  $guard
      * @return mixed
      */
-    public function handle($request, Closure $next, ...$guards)
+    public function handle($request, Closure $next, $guard = null)
     {
-        if ($this->check($guards)) {
-            return $next($request);
-        }
-
-        if ($request->ajax() || $request->wantsJson()) {
-            return response('Unauthorized.', 401);
-        } else {
-            return redirect()->guest('login');
-        }
-    }
-
-    /**
-     * Determine if the user is logged in to any of the given guards.
-     *
-     * @param  array  $guards
-     * @return bool
-     */
-    protected function check(array $guards)
-    {
-        if (empty($guards)) {
-            return Auth::check();
-        }
-
-        foreach ($guards as $guard) {
-            if (Auth::guard($guard)->check()) {
-                Auth::shouldUse($guard);
-
-                return true;
+        if (Auth::guard($guard)->guest()) {
+            if ($request->ajax() || $request->wantsJson()) {
+                return response('Unauthorized.', 401);
+            } else {
+                return redirect()->guest('login');
             }
         }
 
-        return false;
+        return $next($request);
     }
 }
