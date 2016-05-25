@@ -4,7 +4,6 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Auth\AuthenticationException;
 
 class Authenticate
 {
@@ -15,38 +14,40 @@ class Authenticate
      * @param  \Closure  $next
      * @param  string  ...$guards
      * @return mixed
-     *
-     * @throws \Illuminate\Auth\AuthenticationException
      */
     public function handle($request, Closure $next, ...$guards)
     {
-        $this->authenticate($guards);
+        if ($this->check($guards)) {
+            return $next($request);
+        }
 
-        return $next($request);
+        if ($request->ajax() || $request->wantsJson()) {
+            return response('Unauthorized.', 401);
+        } else {
+            return redirect()->guest('login');
+        }
     }
 
     /**
      * Determine if the user is logged in to any of the given guards.
      *
      * @param  array  $guards
-     * @return void
-     *
-     * @throws \Illuminate\Auth\AuthenticationException
+     * @return bool
      */
-    protected function authenticate(array $guards)
+    protected function check(array $guards)
     {
-        if (count($guards) <= 1) {
-            Auth::guard(array_first($guards))->authenticate();
-
-            return Auth::shouldUse($guard);
+        if (empty($guards)) {
+            return Auth::check();
         }
 
         foreach ($guards as $guard) {
             if (Auth::guard($guard)->check()) {
-                return Auth::shouldUse($guard);
+                Auth::shouldUse($guard);
+
+                return true;
             }
         }
 
-        throw new AuthenticationException;
+        return false;
     }
 }
