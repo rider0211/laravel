@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\ResetsPasswords;
 
-class ResetPasswordController extends Controller
+class PasswordController extends Controller
 {
     /*
     |--------------------------------------------------------------------------
@@ -21,12 +21,12 @@ class ResetPasswordController extends Controller
     use ResetsPasswords;
 
     /**
-     * Create a new controller instance.
+     * Create a new password controller instance.
      *
      * @return void
      */
     public function __construct()
     {
-        $this->middleware('guest');
+        $this->middleware($this->guestMiddleware());
     }
 }
