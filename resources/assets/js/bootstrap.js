@@ -28,6 +28,7 @@ window.Vue = require('vue');
 window.axios = require('axios');
 
 window.axios.defaults.headers.common = {
+    'X-CSRF-TOKEN': window.Laravel.csrfToken,
     'X-Requested-With': 'XMLHttpRequest'
 };
 
@@ -37,7 +38,9 @@ window.axios.defaults.headers.common = {
  * allows your team to easily build robust real-time web applications.
  */
 
-// import Echo from "laravel-echo"
+// import Echo from 'laravel-echo'
+
+// window.Pusher = require('pusher-js');
 
 // window.Echo = new Echo({
 //     broadcaster: 'pusher',
