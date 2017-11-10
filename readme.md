@@ -19,7 +19,7 @@ Laravel is a web application framework with expressive, elegant syntax. We belie
 - [Robust background job processing](https://laravel.com/docs/queues).
 - [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
 
-Laravel is accessible, yet powerful, providing tools needed for large, robust applications. A superb combination of simplicity, elegance, and innovation gives you tools you need to build any application with which you are tasked.
+Laravel is accessible, yet powerful, providing tools needed for large, robust applications. A superb combination of simplicity, elegance, and innovation give you tools you need to build any application with which you are tasked.
 
 ## Learning Laravel
 
@@ -34,12 +34,12 @@ We would like to extend our thanks to the following sponsors for helping fund on
 - **[Vehikl](http://vehikl.com)**
 - **[Tighten Co.](https://tighten.co)**
 - **[British Software Development](https://www.britishsoftware.co)**
+- **[Styde](https://styde.net)**
 - [Fragrantica](https://www.fragrantica.com)
 - [SOFTonSOFA](https://softonsofa.com/)
 - [User10](https://user10.com)
 - [Soumettre.fr](https://soumettre.fr/)
 - [CodeBrisk](https://codebrisk.com)
-- [1Forge](https://1forge.com)
 
 ## Contributing
 
