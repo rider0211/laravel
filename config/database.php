@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Support\Str;
+
 return [
 
     /*
@@ -34,6 +36,7 @@ return [
     'connections' => [
 
         'sqlite' => [
+            'url' => env('DATABASE_URL'),
             'driver' => 'sqlite',
             'database' => env('DB_DATABASE', database_path('database.sqlite')),
             'prefix' => '',
@@ -41,6 +44,7 @@ return [
         ],
 
         'mysql' => [
+            'url' => env('DATABASE_URL'),
             'driver' => 'mysql',
             'host' => env('DB_HOST', '127.0.0.1'),
             'port' => env('DB_PORT', '3306'),
@@ -60,6 +64,7 @@ return [
         ],
 
         'pgsql' => [
+            'url' => env('DATABASE_URL'),
             'driver' => 'pgsql',
             'host' => env('DB_HOST', '127.0.0.1'),
             'port' => env('DB_PORT', '5432'),
@@ -74,6 +79,7 @@ return [
         ],
 
         'sqlsrv' => [
+            'url' => env('DATABASE_URL'),
             'driver' => 'sqlsrv',
             'host' => env('DB_HOST', 'localhost'),
             'port' => env('DB_PORT', '1433'),
@@ -117,6 +123,7 @@ return [
 
         'options' => [
             'cluster' => env('REDIS_CLUSTER', 'predis'),
+            'prefix' => Str::slug(env('APP_NAME', 'laravel'), '_').'_database_',
         ],
 
         'default' => [
