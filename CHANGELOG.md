@@ -1,10 +1,6 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/laravel/compare/v5.8.3...develop)
-
-### Changed
-- Require PHP 7.2 ([25cf4c4](https://github.com/laravel/laravel/commit/25cf4c492308b9c5148f9522d8dd8f8f18819f50))
-- Encourage to use PHPUnit 8 ([0582a20](https://github.com/laravel/laravel/commit/0582a20adddc0e6bd16ca05eeae93e6412924ad6))
+## [Unreleased](https://github.com/laravel/laravel/compare/v5.8.3...master)
 
 
 ## [v5.8.16 (2019-05-07)](https://github.com/laravel/laravel/compare/v5.8.3...master)
