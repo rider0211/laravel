@@ -1,6 +1,6 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/laravel/compare/v6.5.2...master)
+## [Unreleased](https://github.com/laravel/laravel/compare/v6.5.2...develop)
 
 
 ## [v6.5.2 (2019-11-21)](https://github.com/laravel/laravel/compare/v6.4.0...v6.5.2)
