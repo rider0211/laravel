@@ -1,98 +1,65 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/laravel/compare/v7.30.0...7.x)
+## [Unreleased](https://github.com/laravel/laravel/compare/v8.3.0...master)
 
 
-## [v7.30.0 (2020-10-30)](https://github.com/laravel/laravel/compare/v7.29.0...v7.30.0)
-
-### Changed
-- Bumped some dependencies
-
-
-## [v7.29.0 (2020-10-29)](https://github.com/laravel/laravel/compare/v7.28.0...v7.29.0)
+## [v8.3.0 (2020-10-29)](https://github.com/laravel/laravel/compare/v8.2.0...v8.3.0)
 
 ### Added
 - PHP 8 Support ([4c25cb9](https://github.com/laravel/laravel/commit/4c25cb953a0bbd4812bf92af71a13920998def1e))
 
 ### Changed
-- Bump minimum PHP version ([#5452](https://github.com/laravel/laravel/pull/5452))
 - Update Faker ([#5461](https://github.com/laravel/laravel/pull/5461))
-- Update minimum Laravel version ([02ca853](https://github.com/laravel/laravel/commit/02ca853809a97f372a3c6dc535c566efff9f6571))
+- Update minimum Laravel version ([86d4ec0](https://github.com/laravel/laravel/commit/86d4ec095f1681df736d53206780d79f5857907c))
+- Revert to per user API rate limit ([#5456](https://github.com/laravel/laravel/pull/5456), [bec982b](https://github.com/laravel/laravel/commit/bec982b0a3962c8a3e1f665e987360bb8c056298))
 
 ### Fixed
 - Delete removed webpack flag ([#5460](https://github.com/laravel/laravel/pull/5460))
 
 
-## [v7.28.0 (2020-09-08)](https://github.com/laravel/laravel/compare/v7.25.0...v7.28.0)
-
-Nothing specific.
-
-
-## [v7.25.0 (2020-08-11)](https://github.com/laravel/laravel/compare/v7.12.0...v7.25.0)
+## [v8.2.0 (2020-10-20)](https://github.com/laravel/laravel/compare/v8.1.0...v8.2.0)
 
 ### Added
-- Add password reset migration ([9e5ba57](https://github.com/laravel/laravel/commit/9e5ba571a60a57ca2c3938bc5bd81d222cb6e618))
-
-### Changed
-- Bump `fruitcake/laravel-cors` ([#5320](https://github.com/laravel/laravel/pull/5320))
-- Set framework version `^7.24` ([#5370](https://github.com/laravel/laravel/pull/5370))
+- Added 'LOG_LEVEL' env variable in `.env.example` ([#5445](https://github.com/laravel/laravel/pull/5445))
+- Add 'multiple_of' translation ([#5449](https://github.com/laravel/laravel/pull/5449))
 
 
-## [v7.12.0 (2020-05-18)](https://github.com/laravel/laravel/compare/v7.6.0...v7.12.0)
+## [v8.1.0 (2020-10-06)](https://github.com/laravel/laravel/compare/v8.0.3...v8.1.0)
 
 ### Added
-- Allow configuring the auth_mode for SMTP mail driver ([#5293](https://github.com/laravel/laravel/pull/5293))
-- Add basic trust host middleware ([5639581](https://github.com/laravel/laravel/commit/5639581ea56ecd556cdf6e6edc37ce5795740fd7))
-
-
-## [v7.6.0 (2020-04-15)](https://github.com/laravel/laravel/compare/v7.3.0...v7.6.0)
+- Added `LOG_LEVEL` env variable ([#5442](https://github.com/laravel/laravel/pull/5442))
 
 ### Changed
-- Disable Telescope in PHPUnit ([#5277](https://github.com/laravel/laravel/pull/5277))
+- Type hint the middleware Request ([#5438](https://github.com/laravel/laravel/pull/5438))
+
+
+## [v8.0.3 (2020-09-22)](https://github.com/laravel/laravel/compare/v8.0.2...v8.0.3)
+
+### Changed
+- Add comment ([a6ca577](https://github.com/laravel/laravel/commit/a6ca5778391b150102637459ac3b2a42d78d495b))
+
+
+## [v8.0.2 (2020-09-22)](https://github.com/laravel/laravel/compare/v8.0.1...v8.0.2)
+
+### Changed
+- Fully qualified user model in seeder ([#5406](https://github.com/laravel/laravel/pull/5406))
+- Update model path in `AuthServiceProvider`'s policies ([#5412](https://github.com/laravel/laravel/pull/5412))
+- Add commented code ([69d0c50](https://github.com/laravel/laravel/commit/69d0c504e3ff01e0fd219e02ebac9b1c22151c2a))
 
 ### Fixed
-- Add both endpoint and url env variables ([#5276](https://github.com/laravel/laravel/pull/5276))
-
-
-## [v7.3.0 (2020-03-24)](https://github.com/laravel/laravel/compare/v7.0.0...v7.3.0)
-
-### Added
-- Add serialize option to array cache config ([#5244](https://github.com/laravel/laravel/pull/5244))
-- Add Mailgun and Postmark mailer ([#5243](https://github.com/laravel/laravel/pull/5243))
-- Add new SQS queue suffix option ([#5252](https://github.com/laravel/laravel/pull/5252))
-- Allow configuring the timeout for the smtp driver ([#5262](https://github.com/laravel/laravel/pull/5262))
-
-### Changed
-- Cleanup session config ([#5261](https://github.com/laravel/laravel/pull/5261))
-
-### Fixed
-- Ensure that `app.debug` is a bool ([5ddbfb8](https://github.com/laravel/laravel/commit/5ddbfb845439fcd5a46c23530b8774421a931760))
-- Fix S3 endpoint url reference ([#5267](https://github.com/laravel/laravel/pull/5267))
-- Update default CORS config ([#5259](https://github.com/laravel/laravel/pull/5259))
+- Swap route order ([292a5b2](https://github.com/laravel/laravel/commit/292a5b26a9293d82ab5a7d0bb81bba02ea71758e))
+- Fix route when uncomment $namespace ([#5424](https://github.com/laravel/laravel/pull/5424))
 
 ### Removed
-- Remove `view.expires` config entry ([641fcfb](https://github.com/laravel/laravel/commit/641fcfb60aa47266c5b4767830dc45bad00c561c))
+- Removed `$namespace` property ([b33852e](https://github.com/laravel/laravel/commit/b33852ecace72791f4bc28b8dd84c108166512bf))
 
 
-## [v7.0.0 (2020-03-03)](https://github.com/laravel/laravel/compare/v6.20.0...v7.0.0)
-
-### Added
-- Add HandleCors middleware ([#5189](https://github.com/laravel/laravel/pull/5189), [0bec06c](https://github.com/laravel/laravel/commit/0bec06cd45a7f6eda0d52f78dd5ff767d94ed5cc))
-- Add new `view.expires` option ([#5209](https://github.com/laravel/laravel/pull/5209), [91dd1f6](https://github.com/laravel/laravel/commit/91dd1f61cdd3c7949593a4435dff8b77322761f2))
-- Add `links` option to filesystem config ([#5222](https://github.com/laravel/laravel/pull/5222))
-- Add Guzzle dependency ([c434eae](https://github.com/laravel/laravel/commit/c434eae43d673a709bb840f5f2e03b58da30682b), [705076f](https://github.com/laravel/laravel/commit/705076ffc28a834a1eb76b3550be2b6269a8fefb))
-- Add array mailer ([#5240](https://github.com/laravel/laravel/pull/5240))
+## [v8.0.1 (2020-09-09)](https://github.com/laravel/laravel/compare/v8.0.0...v8.0.1)
 
 ### Changed
-- Laravel 7 constraint ([054bb43](https://github.com/laravel/laravel/commit/054bb43038f4acb7f356dd668715225ffc2e55ba))
-- Implement new primary key syntax ([#5147](https://github.com/laravel/laravel/pull/5147))
-- Switch to Symfony 5 ([#5157](https://github.com/laravel/laravel/pull/5157))
-- Bumps `nunomaduro/collision` dependency to 4.1 ([#5221](https://github.com/laravel/laravel/pull/5221))
-- Utilize Authentication Middleware Contract ([#5181](https://github.com/laravel/laravel/pull/5181), [#5182](https://github.com/laravel/laravel/pull/5182))
-- Remove auth scaffolding ([b5bb91f](https://github.com/laravel/laravel/commit/b5bb91fea79a3bd5504cbcadfd4766f41f7d01ce), [13e4389](https://github.com/laravel/laravel/commit/13e43893ba2457c3e49898f0066a5ce8d7ea74f4), [3ee0065](https://github.com/laravel/laravel/commit/3ee0065bcd879b82ee42023165f8a8f71e893011))
-- Import facades ([4d565e6](https://github.com/laravel/laravel/commit/4d565e681cbf496e0cdfb58743d4ae8238cef15e))
-- Ignition v2 ([#5211](https://github.com/laravel/laravel/pull/5211))
-- Bumped defaults for Laravel 7 ([#5195](https://github.com/laravel/laravel/pull/5195))
-- Update mail config ([76d8227](https://github.com/laravel/laravel/commit/76d822768dcab14fa1ee1fd1f4a24065234860db), [61ec16f](https://github.com/laravel/laravel/commit/61ec16fe392967766b68d865ed10d56275a78718), [e43d454](https://github.com/laravel/laravel/commit/e43d4546a9c0bde49dae51fd6f4e2766674f1152), [130b8c8](https://github.com/laravel/laravel/commit/130b8c8bcb8f167e7013e7846004b2df3e405b72))
-- Remove hyphen on email ([ffc74ba](https://github.com/laravel/laravel/commit/ffc74ba143a7de4a89f2c3fd525a5621ca879e38))
-- Use `MAIL_MAILER` in test environment ([#5239](https://github.com/laravel/laravel/pull/5239))
+- Re-add property to route service provider ([9cbc381](https://github.com/laravel/laravel/commit/9cbc3819f7b1c268447996d347a1733aa68e16d7))
+
+
+## [v8.0.0 (2020-09-08)](https://github.com/laravel/laravel/compare/v7.30.0...v8.0.0)
+
+Laravel 8 comes with a lot of changes to the base skeleton. Please consult the diff to see what's changed.
