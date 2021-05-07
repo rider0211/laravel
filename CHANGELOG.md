@@ -1,6 +1,6 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/laravel/compare/v8.5.16...8.x)
+## [Unreleased](https://github.com/laravel/laravel/compare/v8.5.16...master)
 
 
 ## [v8.5.16 (2021-04-20)](https://github.com/laravel/laravel/compare/v8.5.15...v8.5.16)
